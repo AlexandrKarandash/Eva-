@@ -1,0 +1,26 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+*.pfx
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Django/local runtime
+db.sqlite3
+staticfiles/
+media/
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/

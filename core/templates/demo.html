@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Crypto | Ayhan Dev Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f0f0f; color: white; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1a1a1a; border: 1px solid #262626; transition: 0.3s; }
+        .card:hover { border-color: #facc15; transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(250, 204, 21, 0.2); }
+        .loader { border: 3px solid #333; border-top: 3px solid #facc15; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        input, select {
+            appearance: none; outline: none; background-color: #000 !important;
+            border: 1px solid #333 !important; color: white !important;
+            padding: 0.75rem 1rem !important; border-radius: 0.75rem !important;
+            font-size: 0.875rem !important; transition: all 0.2s; width: 100%;
+        }
+        input:focus, select:focus { border-color: #facc15 !important; }
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: '▼'; font-size: 10px; color: #666; position: absolute;
+            right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none;
+        }
+
+        /* Анимация пульсации для статуса оплаты */
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="p-6 md:p-10">
+    <div class="max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-black italic tracking-tighter">HOTEL<span class="text-yellow-400">CRYPTO</span> 
+                <span class="text-[10px] font-bold not-italic text-gray-500 ml-2 border border-gray-800 px-2 py-1 rounded uppercase">System Active</span>
+            </h1>
+            <div class="text-right hidden md:block">
+                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Developer</p>
+                <p class="text-sm font-mono text-yellow-400/80">Ayhan Web Engine v3.0</p>
+            </div>
+        </header>
+
+        <div class="bg-[#1a1a1a] p-6 rounded-[2rem] mb-10 border border-zinc-800 shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div class="md:col-span-2 flex flex-col gap-2">
+                    <label class="text-[10px] uppercase text-gray-500 font-black tracking-widest ml-1">Регион ID</label>
+                    <input type="text" id="regionInput" value="2011">
+                </div>
+                
+                <div class="md:col-span-4 flex flex-col gap-2">
+                    <label class="text-[10px] uppercase text-gray-500 font-black tracking-widest ml-1">Даты проживания</label>
+                    <div class="flex gap-2">
+                        <input type="date" id="checkinInput" value="2026-05-22">
+                        <input type="date" id="checkoutInput" value="2026-05-25">
+                    </div>
+                </div>
+
+                <div class="md:col-span-3 flex flex-col gap-2">
+                    <label class="text-[10px] uppercase text-gray-500 font-black tracking-widest ml-1">Тип жилья</label>
+                    <div class="select-wrapper">
+                        <select id="kindInput">
+                            <option value="">Все варианты</option>
+                            <option value="hotel">Отели</option>
+                            <option value="apartment">Апартаменты</option>
+                            <option value="hostel">Хостелы</option>
+                            <option value="guesthouse">Гостевые дома</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="md:col-span-3">
+                    <button onclick="searchHotels(1)" id="searchBtn" class="w-full bg-yellow-400 text-black h-[48px] rounded-xl font-black uppercase text-xs tracking-widest hover:bg-yellow-500 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        Найти предложения
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="hotelList" class="grid gap-4">
+            <div class="text-center py-20 border-2 border-dashed border-zinc-900 rounded-[2rem]">
+                <p class="text-zinc-600 italic tracking-wide">Укажите параметры и нажмите поиск...</p>
+            </div>
+        </div>
+
+        <div id="paginationControls" class="flex flex-wrap justify-center items-center gap-2 mt-8 hidden"></div>
+
+        <div id="detailModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 backdrop-blur-md">
+            <div class="bg-[#1a1a1a] border border-zinc-800 rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+                <div id="modalContent" class="overflow-y-auto no-scrollbar p-6 md:p-10 flex-1"></div>
+                <div class="p-6 border-t border-zinc-800 flex justify-between items-center bg-[#1a1a1a]">
+                    <span class="text-[10px] text-zinc-500 font-mono tracking-tighter uppercase">API Sync Status: Online</span>
+                    <button onclick="closeModal()" class="px-10 py-3 bg-white text-black rounded-xl hover:bg-yellow-400 transition font-black text-xs uppercase tracking-widest">Закрыть</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="bookingModal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center p-4 z-[60] backdrop-blur-xl">
+            <div class="bg-zinc-900 border border-yellow-400/30 rounded-[2rem] max-w-md w-full p-8 shadow-2xl">
+                <h3 class="text-2xl font-black text-white mb-6 italic tracking-tighter uppercase">Оформление <span class="text-yellow-400">брони</span></h3>
+                <div id="bookingForm" class="space-y-4">
+                    <div>
+                        <label class="text-[10px] text-zinc-500 uppercase font-bold mb-2 block">Ваш Email</label>
+                        <input type="email" id="bookEmail" placeholder="ayhan@dev.com">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] text-zinc-500 uppercase font-bold mb-2 block">Имя гостя</label>
+                            <input type="text" id="bookFirstName" placeholder="Ayhan">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-500 uppercase font-bold mb-2 block">Фамилия</label>
+                            <input type="text" id="bookLastName" placeholder="Dev">
+                        </div>
+                    </div>
+                    <button id="finalBookBtn" class="w-full bg-yellow-400 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-white transition-all mt-4">
+                        Перейти к оплате
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="paymentModal" class="hidden fixed inset-0 bg-black/98 flex items-center justify-center p-4 z-[70] backdrop-blur-2xl">
+            <div class="bg-black border-2 border-yellow-400 rounded-[2.5rem] max-w-sm w-full p-8 text-center shadow-[0_0_50px_-12px_rgba(250,204,21,0.4)]">
+                <div class="flex justify-center mb-6">
+                    <div class="w-16 h-16 bg-yellow-400/10 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-yellow-400 pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                </div>
+                <h3 class="text-xl font-black text-white uppercase italic tracking-tighter mb-2">Ожидание <span class="text-yellow-400">USDT</span></h3>
+                <p class="text-zinc-500 text-xs mb-8 uppercase tracking-widest font-bold">Сеть: TRC-20 (Tron)</p>
+                
+                <div class="bg-zinc-900 p-4 rounded-2xl mb-4 border border-zinc-800">
+                    <p class="text-[10px] text-zinc-500 uppercase font-bold mb-2">Адрес для перевода</p>
+                    <p id="payAddress" class="text-white font-mono text-[11px] break-all select-all cursor-pointer hover:text-yellow-400 transition">Загрузка...</p>
+                </div>
+
+                <div class="bg-zinc-900 p-4 rounded-2xl mb-8 border border-zinc-800">
+                    <p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Сумма к оплате</p>
+                    <p class="text-3xl font-black text-white"><span id="payAmount">0.00</span> <span class="text-xs text-yellow-400">USDT</span></p>
+                </div>
+
+                <div class="flex items-center justify-center gap-3 text-[10px] font-black uppercase text-zinc-500 tracking-widest">
+                    <div class="loader !w-4 !h-4"></div>
+                    <span>Проверка транзакции...</span>
+                </div>
+                
+                <button onclick="cancelBooking()" class="mt-8 text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition border-b border-zinc-800 hover:border-white">
+                    Отменить бронирование
+                </button>
+                
+                <p class="mt-6 text-[9px] text-zinc-600 leading-relaxed uppercase">После подтверждения в блокчейне бронирование завершится автоматически</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let isSearching = false;
+    let currentHotelId = null;
+    let currentOrderId = null; // Глобальная переменная для хранения текущего заказа
+    let currentOrderAccessToken = null;
+    let paymentPollingInterval = null;
+
+    async function searchHotels(page = 1) {
+        if (isSearching) return;
+        const btn = document.getElementById('searchBtn');
+        const region = document.getElementById('regionInput').value;
+        const checkin = document.getElementById('checkinInput').value;
+        const checkout = document.getElementById('checkoutInput').value;
+        const kind = document.getElementById('kindInput').value;
+        
+        isSearching = true;
+        if (btn) btn.innerHTML = '<div class="loader"></div>';
+        
+        try {
+            let url = `/api/hotels/search/?region=${region}&checkin=${checkin}&checkout=${checkout}&page=${page}`;
+            if (kind) url += `&kind=${kind}`;
+            
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            const list = document.getElementById('hotelList');
+            if (!data.hotels || data.hotels.length === 0) {
+                list.innerHTML = '<p class="text-white text-center py-10">Отели не найдены</p>';
+                return;
+            }
+
+            list.innerHTML = data.hotels.map(h => `
+                <div class="card p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-6 mb-4 bg-zinc-900">
+                    <div class="flex-1 w-full">
+                        <h3 class="text-xl font-black text-white leading-tight">${h.name}</h3>
+                        <p class="text-zinc-500 text-sm mb-3">${h.address || 'Адрес уточняется'}</p>
+                        <span class="text-[9px] bg-zinc-800 text-yellow-400 px-2 py-1 rounded-full uppercase font-black">${h.kind || 'Отель'}</span>
+                    </div>
+                    <div class="text-right flex flex-row md:flex-col justify-between items-center md:items-end w-full md:w-auto">
+                        <p class="text-white text-3xl font-black tracking-tighter">${Math.round(h.min_price)} <span class="text-xs text-zinc-500 font-normal">USD</span></p>
+                        <button onclick="openHotelDetail('${h.hid || h.id}')" class="md:mt-6 bg-yellow-400 text-black px-8 py-3 rounded-xl font-black text-[10px] uppercase hover:bg-white transition">Выбрать</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            renderPagination(data.current_page, data.total_pages);
+        } catch (e) { 
+            console.error("Search Error:", e);
+        } finally { 
+            isSearching = false; 
+            if (btn) btn.innerHTML = 'Найти предложения'; 
+        }
+    }
+
+    async function openHotelDetail(hotelId) {
+        currentHotelId = hotelId;
+        const checkin = document.getElementById('checkinInput').value;
+        const checkout = document.getElementById('checkoutInput').value;
+        const modal = document.getElementById('detailModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        content.innerHTML = '<div class="text-center py-20"><div class="loader mx-auto"></div><p class="text-white mt-4">Загружаем лучшие цены...</p></div>';
+
+        try {
+            const res = await fetch(`/api/hotels/${hotelId}/?checkin=${checkin}&checkout=${checkout}`);
+            if (!res.ok) throw new Error('Ошибка загрузки данных отеля');
+            
+            const h = await res.json();
+
+            let ratesHtml = h.rates && h.rates.length > 0 ? h.rates.map(r => `
+                <div class="bg-zinc-800/50 p-6 rounded-[1.5rem] flex justify-between items-center border border-zinc-700/50 mb-3">
+                    <div>
+                        <p class="font-black text-white text-lg">${r.room_name}</p>
+                        <p class="text-[10px] text-zinc-500 uppercase font-bold">${r.meal === 'nomeal' || !r.meal ? 'Без питания' : 'Питание включено'}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-black text-white">${Math.round(r.price)} <span class="text-[10px] opacity-50">USD</span></p>
+                        <button onclick="startBooking('${r.book_hash}')" class="mt-3 bg-white text-black px-6 py-2 rounded-xl font-black text-[10px] uppercase hover:bg-yellow-400 transition">Бронировать</button>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-white text-center">К сожалению, нет доступных тарифов на эти даты.</p>';
+
+            content.innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-4xl font-black text-white uppercase leading-none">${h.name}</h2>
+                        <p class="text-zinc-500 mt-2">${h.address}</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-zinc-500 hover:text-white">✕</button>
+                </div>
+                <div class="flex gap-4 overflow-x-auto mb-10 no-scrollbar pb-2">
+                    ${(h.images || []).map(img => `<img src="${img}" class="h-64 w-auto rounded-[2rem] border border-zinc-800 object-cover">`).join('')}
+                </div>
+                <div class="grid gap-3">
+                    <h3 class="text-white font-bold mb-2 uppercase text-sm tracking-widest">Доступные номера</h3>
+                    ${ratesHtml}
+                </div>
+                <div class="mt-10 text-zinc-500 text-sm">
+                    <h4 class="font-bold text-white mb-2 uppercase">Описание</h4>
+                    <p class="leading-relaxed">${h.description || 'Описание временно отсутствует.'}</p>
+                </div>
+            `;
+        } catch (e) { 
+            content.innerHTML = `<div class="text-center py-20"><p class="text-red-500 font-bold">Ошибка: ${e.message}</p></div>`;
+        }
+    }
+
+    async function startBooking(bookHash) {
+        const checkin = document.getElementById('checkinInput').value;
+        const checkout = document.getElementById('checkoutInput').value;
+        document.getElementById('bookingModal').classList.remove('hidden');
+
+        const finalBtn = document.getElementById('finalBookBtn');
+        
+        finalBtn.onclick = async () => {
+            const email = document.getElementById('bookEmail').value;
+            const firstName = document.getElementById('bookFirstName').value;
+            const lastName = document.getElementById('bookLastName').value;
+
+            if(!email || !firstName || !lastName) return alert('Заполните все поля гостя!');
+
+            finalBtn.disabled = true;
+            finalBtn.innerHTML = 'Подготовка оплаты...';
+
+            try {
+                const preRes = await fetch('/api/booking/prebook/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        book_hash: bookHash,
+                        hotel_id: currentHotelId,
+                        checkin, checkout, email
+                    })
+                });
+                const preData = await preRes.json();
+                if(!preRes.ok) throw new Error(preData.error || 'Ошибка валидации');
+
+                // ПЕРЕХОД К ОПЛАТЕ
+                showPaymentScreen(preData.payment.address, preData.payment.amount, preData.internal_order_id, preData.access_token, {
+                    firstName, lastName, email, book_hash: preData.book_hash
+                });
+
+            } catch (e) {
+                alert(e.message);
+                finalBtn.disabled = false;
+                finalBtn.innerHTML = 'Перейти к оплате';
+            }
+        };
+    }
+
+    function showPaymentScreen(address, amount, orderId, accessToken, guestData) {
+        currentOrderId = orderId; // Сохраняем ID заказа для отмены
+        currentOrderAccessToken = accessToken;
+        document.getElementById('bookingModal').classList.add('hidden');
+        document.getElementById('paymentModal').classList.remove('hidden');
+        
+        document.getElementById('payAddress').innerText = address;
+        document.getElementById('payAmount').innerText = amount;
+
+        if (paymentPollingInterval) clearInterval(paymentPollingInterval);
+        
+        paymentPollingInterval = setInterval(async () => {
+            try {
+                const res = await fetch(`/api/booking/check-payment/${orderId}/`, {
+                    headers: {'X-Order-Access-Token': accessToken}
+                });
+                const data = await res.json();
+
+                if (data.status === 'paid') {
+                    clearInterval(paymentPollingInterval);
+                    finishBookingProcess(orderId, guestData);
+                }
+            } catch (e) {
+                console.error("Polling error:", e);
+            }
+        }, 5000);
+    }
+
+    async function finishBookingProcess(orderId, guestData) {
+        const payModal = document.getElementById('paymentModal');
+        payModal.querySelector('h3').innerHTML = '<span class="text-green-500">Оплата принята!</span>';
+        payModal.querySelector('.loader').parentElement.innerHTML = '<span class="text-green-500 font-black">Выкупаем номер...</span>';
+
+        try {
+            const formRes = await fetch('/api/booking/form/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-Order-Access-Token': currentOrderAccessToken},
+                body: JSON.stringify({ book_hash: guestData.book_hash, internal_order_id: orderId, access_token: currentOrderAccessToken })
+            });
+            const formData = await formRes.json();
+            if(!formRes.ok) throw new Error('Ошибка создания формы');
+
+            const finishRes = await fetch('/api/booking/finish/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-Order-Access-Token': currentOrderAccessToken},
+                body: JSON.stringify({
+                    internal_order_id: orderId,
+                    access_token: currentOrderAccessToken,
+                    guests: [{ first_name: guestData.firstName, last_name: guestData.lastName }],
+                    contact_data: { email: guestData.email, phone: "+79001234567" }
+                })
+            });
+            const finishData = await finishRes.json();
+
+            if(finishData.status === 'success') {
+                alert('УРА! Номер выкуплен. Ваучер отправлен на почту.');
+                location.reload();
+            } else { 
+                throw new Error(finishData.error || 'Ошибка завершения'); 
+            }
+        } catch (e) {
+            alert("Критическая ошибка: " + e.message + ". Свяжитесь с поддержкой, ID заказа: " + orderId);
+        }
+    }
+
+    async function cancelBooking() {
+        if (!currentOrderId) return;
+
+        if (!confirm("Вы уверены, что хотите отменить бронирование?")) return;
+
+        try {
+            const res = await fetch(`/api/booking/cancel/${currentOrderId}/`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-Order-Access-Token': currentOrderAccessToken},
+                body: JSON.stringify({ access_token: currentOrderAccessToken })
+            });
+            
+            if (res.ok) {
+                clearInterval(paymentPollingInterval);
+                closeModal();
+                alert("Бронирование отменено");
+            } else {
+                const errorData = await res.json();
+                alert("Ошибка отмены: " + errorData.error);
+            }
+        } catch (e) {
+            console.error("Cancel error:", e);
+            alert("Не удалось отменить бронирование. Попробуйте позже.");
+        }
+    }
+
+    function renderPagination(curr, total) {
+        const p = document.getElementById('paginationControls');
+        if (!p || total <= 1) return p?.classList.add('hidden');
+        p.classList.remove('hidden');
+        p.innerHTML = `
+            <button onclick="searchHotels(${curr-1})" class="px-6 py-2 bg-zinc-900 text-white rounded-xl ${curr===1?'opacity-20 pointer-events-none':''}">Назад</button>
+            <span class="text-yellow-400 mx-4 font-bold">${curr} / ${total}</span>
+            <button onclick="searchHotels(${curr+1})" class="px-6 py-2 bg-zinc-900 text-white rounded-xl ${curr===total?'opacity-20 pointer-events-none':''}">Вперед</button>
+        `;
+    }
+
+    function closeModal() { 
+        document.getElementById('detailModal').classList.add('hidden');
+        document.getElementById('bookingModal').classList.add('hidden');
+        document.getElementById('paymentModal').classList.add('hidden');
+        if(paymentPollingInterval) clearInterval(paymentPollingInterval);
+        document.body.style.overflow = 'auto'; 
+    }
+    </script>
+</body>
+</html>

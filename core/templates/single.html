@@ -1,0 +1,1681 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru" style="overflow-x: hidden; overflow-y: auto;"> 
+<head>
+	<meta charset="UTF-8">
+	<title>Отель</title>
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+	<!-- Open Graph -->
+	<meta property="og:title" content="Aifory Pro"/>
+    <meta property="og:description" content="Бронирование отелей с Aifory.Pro"/>
+	<meta property="og:url" content="https://siteurl.ru"/>
+	<meta property="og:image" content="{% static 'images/logo.svg' %}"/>
+	<!-- End Open Graph -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+	<link rel="stylesheet" href="{% static 'style/main.css' %}?ver=10">
+	<link rel="stylesheet" href="{% static 'style/change.css' %}"> <!-- Файл для правок без scss -->
+</head>
+<body class="load page-main">
+	<header class="header">
+		<div class="section-frame">
+			<div class="header-frame">
+				<a href="/" class="logo">
+					<img src="{% static 'images/logo.svg' %}" alt="">
+				</a>
+				<div class="header-wrap">
+					<nav class="header-menu">
+						<ul>
+							<li><a href="#" class="js-open-menu" data-menu="1">Обмен криптовалюты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="2">Виртуальные карты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="3">Оплата онлайн</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="4">Безналичные операции</a></li>
+						</ul>
+					</nav>
+					<div class="header-btn">
+						<a href="#" class="header-create mob-hide">Создать кошелёк</a>
+						<div class="lang">
+							<p class="lang-active">RU</p>
+							<div class="lang-drop">
+								<a href="#" class="lang-drop-item active">
+									<img src="{% static 'images/flag/RU.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">RU</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+								<a href="#" class="lang-drop-item">
+									<img src="{% static 'images/flag/GB.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">EN</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+							</div>
+						</div>
+						<a href="#" class="header-user mob-hide">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.38 2 7.25 4.13 7.25 6.75C7.25 9.32 9.26 11.4 11.88 11.49C11.96 11.48 12.04 11.48 12.1 11.49C12.12 11.49 12.13 11.49 12.15 11.49C12.16 11.49 12.16 11.49 12.17 11.49C14.73 11.4 16.74 9.32 16.75 6.75C16.75 4.13 14.62 2 12 2Z" fill="#8B5CF6"/><path opacity="0.4" d="M17.08 14.16C14.29 12.3 9.73996 12.3 6.92996 14.16C5.65996 15 4.95996 16.15 4.95996 17.38C4.95996 18.61 5.65996 19.75 6.91996 20.59C8.31996 21.53 10.16 22 12 22C13.84 22 15.68 21.53 17.08 20.59C18.34 19.74 19.04 18.6 19.04 17.36C19.03 16.14 18.34 14.99 17.08 14.16Z" fill="#8B5CF6"/></svg>
+						</a>
+						<div class="burger table-show-flex">
+							<img src="{% static 'images/icon/burger.svg' %}" alt="">
+						</div>
+					</div>
+				</div>
+				<div class="header-popup">
+					<div class="header-popup__item" data-menu="1">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Наличный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">RUB → USDT TRC20</a></li>
+									<li><a href="#">USDT TRC20 → RUB</a></li>
+									<li><a href="#">RUB → BTC</a></li>
+									<li><a href="#">BTC → RUB</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Безналичный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">BTC → USDT</a></li>
+									<li><a href="#">USDT → USDT</a></li>
+									<li><a href="#">USDT → ETH</a></li>
+									<li><a href="#">ETH → USDT</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<a href="#" class="header-popup__link-title">Премиальный обмен</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="2">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Apple Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Google Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для подписок</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">ChatGPT</a></li>
+									<li><a href="#">Cursor AI</a></li>
+									<li><a href="#">Spotify</a></li>
+									<li><a href="#">Netflix</a></li>
+									<li><a href="#">Figma</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для рекламы</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Google Ads</a></li>
+									<li><a href="#">Facebook Ads</a></li>
+									<li><a href="#">Tik Tok Ads</a></li>
+									<li><a href="#">OpenRouter</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="3">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Steam</a></li>
+									<li><a href="#">Spotify</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Telegram Stars</a></li>
+									<li><a href="#">Telegram Premium</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">PlayStation Network</a></li>
+									<li><a href="#">Xbox</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Roblox</a></li>
+									<li><a href="#">Mobile Legends: bang bang</a></li>
+								</ul>
+								<a href="#" class="mob-menu__services">
+									<span>Все сервисы</span>
+									<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="4">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Покупка  крипты с карты</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Вывод крипты на карту</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Возможности</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Оплата в магазинах (QR)</a></li>
+									<li><a href="#">Оплата мобильной связи криптой</a></li>
+									<li><a href="#" class="un-active">Бронирование отелей (скоро)</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mob-menu">
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Обмен криптовалюты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Наличный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">RUB → USDT TRC20</a>
+							<a href="#" class="mob-menu__link">USDT TRC20 → RUB</a>
+							<a href="#" class="mob-menu__link">RUB → BTC</a>
+							<a href="#" class="mob-menu__link">BTC → RUB</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Безналичный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">BTC → USDT</a>
+							<a href="#" class="mob-menu__link">USDT  → USDT</a>
+							<a href="#" class="mob-menu__link">USDT → ETH</a>
+							<a href="#" class="mob-menu__link">ETH → USDT</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__title">Премиальный обмен</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Вирутальные карты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Apple Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Google Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для подписок</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">ChatGPT</a>
+							<a href="#" class="mob-menu__link">Cursor AI</a>
+							<a href="#" class="mob-menu__link">Spotify</a>
+							<a href="#" class="mob-menu__link">Netflix</a>
+							<a href="#" class="mob-menu__link">Figma</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для рекламы</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Google Ads</a>
+							<a href="#" class="mob-menu__link">Facebook Ads</a>
+							<a href="#" class="mob-menu__link">Tik Tok Ads</a>
+							<a href="#" class="mob-menu__link">OpenRouter</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Оплата онлайн</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__link">Steam</a>
+						<a href="#" class="mob-menu__link">Spotify</a>
+						<a href="#" class="mob-menu__link">Telegram Stars</a>
+						<a href="#" class="mob-menu__link">Telegram Premium</a>
+						<a href="#" class="mob-menu__link">PlayStation Network</a>
+						<a href="#" class="mob-menu__link">Xbox</a>
+						<a href="#" class="mob-menu__link">Roblox</a>
+						<a href="#" class="mob-menu__link">Mobile Legends: bang bang</a>
+						<a href="#" class="mob-menu__services">
+							<span>Все сервисы</span>
+							<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Безналичные операции</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Покупка  крипты с карты</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Вывод крипты на карту</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Возможности</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Оплата в магазинах (QR)</a>
+							<a href="#" class="mob-menu__link">Оплата мобильной связи криптой</a>
+							<a href="#" class="mob-menu__link un-acitve">Бронирование отелей (скоро)</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<main>
+        <div class="content-page">
+            <div class="single">
+                <div class="section-frame">
+                    <div class="single-banner">
+                        <div class="single-banner__content">
+                            <h1 class="single-banner__title"></h1>
+                            <div class="single-banner__star">
+                                <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                <img src="{% static 'images/icon/star.svg' %}" alt="">
+                            </div>
+                            <p class="single-banner__address"><span></span> <a href="#" class="js-popup" data-popup="map">Показать на карте</a></p>
+                            <ul class="single-banner__nearby"></ul>
+                        </div>
+                        <div class="single-banner__description">
+                            <div class="single-banner__price">
+                                <b></b>
+                                <p>за сутки</p>
+                            </div>
+                            <a href="#room" class="single-banner__room anchor">Посмотреть номера</a>
+                        </div>
+                    </div>
+                    <div class="single-gallery">
+                        <img src="{% static 'images/gallery/gallery-1.jpg' %}" class="single-gallery__full" alt="">
+                        <div class="single-gallery__list">
+                            <div class="single-gallery__item">
+                                <img src="{% static 'images/gallery/gallery-2.jpg' %}" alt="">
+                            </div>
+                            <div class="single-gallery__item">
+                                <img src="{% static 'images/gallery/gallery-3.jpg' %}" alt="">
+                            </div>
+                            <div class="single-gallery__item">
+                                <img src="{% static 'images/gallery/gallery-4.jpg' %}" alt="">
+                            </div>
+                            <div class="single-gallery__item">
+                                <img src="{% static 'images/gallery/gallery-5.jpg' %}" alt="">
+                            </div>
+                            <div class="single-gallery__item">
+                                <img src="{% static 'images/gallery/gallery-6.jpg' %}" alt="">
+                            </div>
+                            <div class="single-gallery__item">
+                                <img src="{% static 'images/gallery/gallery-7.jpg' %}" alt="">
+                                <div class="single-gallery__all">
+                                    <p>+ 33 фото</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="single-content">
+                        <div class="single-date single-content__item">
+                            <div class="single-date__item">
+                                <p class="single-date__title">Заезд</p>
+                                <div class="single-date__info">
+                                    <b>28 апр 2026, сб</b>
+                                    <p>с 15:00</p>
+                                </div>
+                            </div>
+                            <div class="single-date__item">
+                                <p class="single-date__title">Выезд</p>
+                                <div class="single-date__info">
+                                    <b>30 апр 2026, вс</b>
+                                    <p>до 13:00</p>
+                                </div>
+                            </div>
+                            <a href="#" class="single-content__btn js-popup" data-popup="date">Изменить</a>
+                        </div>
+                        <div class="single-popular single-content__item">
+                            <p class="single-popular__title">Популярные удобства</p>
+                            <div class="single-popular__list">
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/1/Wifi.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Бесплатный интернет</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/1/Lunch.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Бар или ресторан</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/1/Kid.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Детская комната</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/1/Desk.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Конференц зал</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/1/Pool.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Бассейн</p>
+                                </div>
+                            </div>
+                            <a href="#conveniences" class="single-content__btn anchor">Все  удобства</a>
+                        </div>
+                        <div class="single-popular single-content__item">
+                            <p class="single-popular__title">Что есть рядом</p>
+                            <div class="single-popular__list">
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/2/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Эрмитаж</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/2/Cathedral.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Иисакиевский Собор  </p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/2/square.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Дворцовая площадь</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/2/park.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Новая Голландия</p>
+                                </div>
+                                <div class="single-popular__item">
+                                    <div class="single-popular__item-icon">
+                                        <img src="{% static 'images/single-popular/2/Cathedral.svg' %}" alt="">
+                                    </div>
+                                    <p class="single-popular__item-title">Казанский Собор</p>
+                                </div>
+                            </div>
+                            <a href="#" class="single-content__btn">Смотреть на карте</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="room" id="room">
+                <div class="section-frame">
+                    <div class="room-selection">
+                        <p class="room-selection__title">Доступные варианты</p>
+                        <p class="room-selection__info">На 1 ночь, для 2 взрослых</p>
+                        <div class="room-selection__list">
+                            <div class="room-selection__item">
+                                <div class="room-selection__active">
+                                    <p>Двуспальная кровать</p>
+                                    <i class="fa-arrow-down"></i>
+                                </div>
+                                <div class="room-selection__drop">
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Без питания</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак + обед/ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак, обед и ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Всё включено</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="room-selection__item">
+                                <div class="room-selection__active">
+                                    <p>Питание</p>
+                                    <i class="fa-arrow-down"></i>
+                                </div>
+                                <div class="room-selection__drop">
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <i class="fa-check"></i>
+                                        </div>
+                                        <p class="room-selection__drop-title">Без питания</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <i class="fa-check"></i>
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <i class="fa-check"></i>
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак + обед/ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <i class="fa-check"></i>
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак, обед и ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <i class="fa-check"></i>
+                                        </div>
+                                        <p class="room-selection__drop-title">Всё включено</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="room-selection__item">
+                                <div class="room-selection__active">
+                                    <p>Условия отмены</p>
+                                    <i class="fa-arrow-down"></i>
+                                </div>
+                                <div class="room-selection__drop">
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Без питания</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак + обед/ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак, обед и ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Всё включено</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="room-selection__item">
+                                <div class="room-selection__active">
+                                    <p>Оплата</p>
+                                    <i class="fa-arrow-down"></i>
+                                </div>
+                                <div class="room-selection__drop">
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Без питания</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак + обед/ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Завтрак, обед и ужин</p>
+                                    </div>
+                                    <div class="room-selection__check">
+                                        <div class="room-selection__icon">
+                                            <img src="{% static 'images/icon/check.svg' %}" alt="">
+                                        </div>
+                                        <p class="room-selection__drop-title">Всё включено</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-list">
+                        <div class="room-item">
+                            <div class="room-main">
+                                <div class="room-main__photo">
+                                    <img src="{% static 'images/room/room-1.jpg' %}" class="room-main__preview" alt="">
+                                    <div class="room-main__counter">
+                                        <img src="{% static 'images/icon/img.svg' %}" alt="">
+                                        <p>5 фото</p>
+                                    </div>
+                                </div>
+                                <p class="room-main__title">Делюкс Твин</p>
+                                <p class="room-main__person">Вместимость до 2 мест</p>
+                                <p class="room-main__square">1 комн. • 36–53 м²</p>
+                                <div class="room-main__dop">
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Conditioiner.svg' %}" alt="">
+                                        <p>Кондиционер</p>
+                                    </div>
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Bar.svg' %}" alt="">
+                                        <p>Мини-бар</p>
+                                    </div>
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Bathroom.svg' %}" alt="">
+                                        <p>Собственная ванная комната</p>
+                                    </div>
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Safe.svg' %}" alt="">
+                                        <p>Сейф</p>
+                                    </div>
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Desk.svg' %}" alt="">
+                                        <p>Рабочий стол</p>
+                                    </div>
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Pets.svg' %}" alt="">
+                                        <p>Можно с питомцем</p>
+                                    </div>
+                                    <div class="room-main__dop-item">
+                                        <img src="{% static 'images/room/icon/Hair.svg' %}" alt="">
+                                        <p>Фен</p>
+                                    </div>
+                                    <div class="room-main__dop-item hide">
+                                        <img src="{% static 'images/room/icon/Pets.svg' %}" alt="">
+                                        <p>Можно с питомцем</p>
+                                    </div>
+                                </div>
+                                <a href="#" class="room-main__dop-more">Еще</a>
+                            </div>
+                            <div class="room-grid">
+                                <div class="swiper-wrapper">
+                                    <div class="room-grid__item swiper-slide">
+                                        <div class="room-conditions">
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.51622 7.03437V6.25961C2.51649 5.9809 2.61334 5.7137 2.78554 5.51662C2.95773 5.31955 3.1912 5.2087 3.43472 5.2084H5.38301C5.62653 5.2087 5.86 5.31955 6.03219 5.51662C6.20439 5.7137 6.30124 5.9809 6.30151 6.25961V7.03437H6.89916C6.98413 7.03436 7.06889 7.04399 7.1522 7.06312V5.57682C7.1518 5.15875 7.0065 4.75794 6.7482 4.46233C6.48989 4.16671 6.13968 4.00045 5.77439 4H3.04328C2.678 4.00047 2.3278 4.16674 2.06951 4.46235C1.81122 4.75796 1.66593 5.15876 1.66553 5.57682V7.06312C1.74884 7.04399 1.8336 7.03436 1.91857 7.03437H2.51622Z" fill="black"/><path d="M3.43472 5.62888C3.28861 5.62906 3.14853 5.69557 3.04521 5.81382C2.9419 5.93206 2.88378 6.09238 2.88362 6.25961V7.03437H5.93404V6.25961C5.93388 6.09238 5.87577 5.93206 5.77245 5.81382C5.66914 5.69557 5.52905 5.62906 5.38294 5.62888H3.43472ZM1.78583 11.2638H2.73673V12.1546H1.78583V11.2638ZM6.08093 11.2638H7.03183V12.1546H6.08093V11.2638ZM6.8991 7.45485H1.9185C1.67498 7.45516 1.44151 7.56601 1.26931 7.76308C1.09712 7.96016 1.00027 8.22736 1 8.50607V9.7299H7.81493V8.50607C7.81493 8.4868 7.81553 8.46784 7.81619 8.44873C7.80311 8.18037 7.70082 7.92791 7.5303 7.74311C7.35977 7.55831 7.13394 7.45518 6.8991 7.45485ZM1 10.1504H7.81493V10.8433H1V10.1504ZM8.84778 7.06312C8.93109 7.04399 9.01585 7.03436 9.10082 7.03437H9.69848V6.25961C9.69875 5.9809 9.7956 5.7137 9.9678 5.51662C10.14 5.31955 10.3735 5.2087 10.617 5.2084H12.5653C12.8088 5.2087 13.0423 5.31955 13.2144 5.51662C13.3866 5.7137 13.4835 5.9809 13.4838 6.25961V7.03437H14.0814C14.1664 7.03436 14.2512 7.04399 14.3345 7.06312V5.57682C14.3341 5.15876 14.1888 4.75796 13.9305 4.46235C13.6722 4.16674 13.322 4.00047 12.9567 4H10.2255C9.86026 4.00047 9.51006 4.16674 9.25177 4.46235C8.99348 4.75796 8.84819 5.15876 8.84778 5.57682V7.06312Z" fill="black"/><path d="M10.617 5.62891C10.4709 5.62909 10.3308 5.6956 10.2275 5.81384C10.1242 5.93209 10.0661 6.09241 10.0659 6.25963V7.03439H13.1167V6.25963C13.1165 6.09241 13.0584 5.93209 12.9551 5.81384C12.8518 5.6956 12.7117 5.62909 12.5656 5.62891H10.617ZM8.96838 11.2639H9.91928V12.1547H8.96838V11.2639ZM13.2636 11.2639H14.2144V12.1547H13.2636V11.2639ZM8.18262 10.1504H15.0002V10.8434H8.18262V10.1504ZM14.0817 7.45488H9.10112C8.8576 7.45518 8.62413 7.56603 8.45193 7.76311C8.27974 7.96018 8.18288 8.22739 8.18262 8.50609V9.72993H15.0002V8.50609C14.9999 8.22739 14.9031 7.96018 14.7309 7.76311C14.5587 7.56603 14.3252 7.45518 14.0817 7.45488Z" fill="black"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">2 односпальные кровати</p>
+                                            </div>
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.18308 2.00012C6.98915 2.00012 6.83236 2.18144 6.83236 2.4053H6.82947V5.64769C6.82947 5.75518 6.79221 5.85827 6.72587 5.93428C6.65954 6.01029 6.56957 6.05299 6.47576 6.05299C6.38195 6.05299 6.29198 6.01029 6.22565 5.93428C6.15932 5.85827 6.12205 5.75518 6.12205 5.64769V2.4053H6.11937C6.11937 2.18144 5.96217 2.00012 5.76845 2.00012C5.57452 2.00012 5.41752 2.18144 5.41752 2.4053H5.41484V5.64769C5.41484 5.75518 5.37757 5.85827 5.31124 5.93428C5.24491 6.01029 5.15494 6.05299 5.06113 6.05299C4.96732 6.05299 4.87735 6.01029 4.81102 5.93428C4.74469 5.85827 4.70742 5.75518 4.70742 5.64769V2.4053C4.70742 2.18144 4.55022 2.00012 4.3567 2.00012C4.16277 2.00012 4.00557 2.18144 4.00557 2.4053H4V6.45781C4 6.95637 4.43654 7.38472 5.06103 7.57241V12.5367C5.06419 12.7493 5.14011 12.9519 5.27241 13.1009C5.40471 13.2499 5.58282 13.3335 5.76834 13.3335C5.95387 13.3335 6.13197 13.2499 6.26427 13.1009C6.39658 12.9519 6.47249 12.7493 6.47566 12.5367V7.57241C7.10014 7.38472 7.53668 6.95637 7.53668 6.45781V2.4053H7.534C7.534 2.18144 7.3768 2.00012 7.18308 2.00012ZM10.8966 2.00012C9.62697 2.00012 8.59792 4.54018 8.59792 7.67359C8.59792 7.94875 8.60576 8.21943 8.62123 8.48419H9.65894V12.5362C9.66211 12.7488 9.73803 12.9514 9.87033 13.1004C10.0026 13.2495 10.1807 13.333 10.3663 13.333C10.5518 13.333 10.7299 13.2495 10.8622 13.1004C10.9945 12.9514 11.0704 12.7488 11.0736 12.5362V2.01667C11.0151 2.00566 10.9559 2.00012 10.8966 2.00012Z" fill="black"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Питание не включено</p>
+                                            </div>
+                                            <div class="room-conditions__item active">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.3335 1.33337V3.33337" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.6665 1.33337V3.33337" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.3335 6.06006H13.6668" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 5.66671V11.3334C14 13.3334 13 14.6667 10.6667 14.6667H5.33333C3 14.6667 2 13.3334 2 11.3334V5.66671C2 3.66671 3 2.33337 5.33333 2.33337H10.6667C13 2.33337 14 3.66671 14 5.66671Z" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.463 9.13338H10.469" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.463 11.1334H10.469" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.99715 9.13338H8.00314" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.99715 11.1334H8.00314" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.52938 9.13338H5.53537" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.52938 11.1334H5.53537" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Бесплатная отмена до 25 апреля</p>
+                                            </div>
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.3335 8.40662H12.6668" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6668 6.85337V11.62C12.6468 13.52 12.1268 14 10.1468 14H3.85352C1.84018 14 1.3335 13.5 1.3335 11.5134V6.85337C1.3335 5.05337 1.7535 4.47337 3.3335 4.38003C3.4935 4.37337 3.66685 4.3667 3.85352 4.3667H10.1468C12.1601 4.3667 12.6668 4.8667 12.6668 6.85337Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.6668 4.48667V9.14667C14.6668 10.9467 14.2468 11.5267 12.6668 11.62V6.85333C12.6668 4.86667 12.1601 4.36667 10.1468 4.36667H3.85352C3.66685 4.36667 3.4935 4.37333 3.3335 4.38C3.3535 2.48 3.87352 2 5.85352 2H12.1468C14.1601 2 14.6668 2.5 14.6668 4.48667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 11.8733H4.64665" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.07324 11.8733H8.36658" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Оплата сейчас</p>
+                                            </div>
+                                        </div>
+                                        <div class="room-price">
+                                            <p class="room-price__tag">Лучшая цена дня</p>
+                                            <p class="room-price__title">36 000 ₽</p>
+                                            <p class="room-price__person">за 1 ночь для 2 гостей</p>
+                                            <p class="room-price__nalog">Все налоги включены</p>
+                                            <a href="#" class="room-price__add">Забронировать</a>
+                                        </div>
+                                    </div>
+                                    <div class="room-grid__item swiper-slide">
+                                        <div class="room-conditions">
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.51622 7.03437V6.25961C2.51649 5.9809 2.61334 5.7137 2.78554 5.51662C2.95773 5.31955 3.1912 5.2087 3.43472 5.2084H5.38301C5.62653 5.2087 5.86 5.31955 6.03219 5.51662C6.20439 5.7137 6.30124 5.9809 6.30151 6.25961V7.03437H6.89916C6.98413 7.03436 7.06889 7.04399 7.1522 7.06312V5.57682C7.1518 5.15875 7.0065 4.75794 6.7482 4.46233C6.48989 4.16671 6.13968 4.00045 5.77439 4H3.04328C2.678 4.00047 2.3278 4.16674 2.06951 4.46235C1.81122 4.75796 1.66593 5.15876 1.66553 5.57682V7.06312C1.74884 7.04399 1.8336 7.03436 1.91857 7.03437H2.51622Z" fill="black"/><path d="M3.43472 5.62888C3.28861 5.62906 3.14853 5.69557 3.04521 5.81382C2.9419 5.93206 2.88378 6.09238 2.88362 6.25961V7.03437H5.93404V6.25961C5.93388 6.09238 5.87577 5.93206 5.77245 5.81382C5.66914 5.69557 5.52905 5.62906 5.38294 5.62888H3.43472ZM1.78583 11.2638H2.73673V12.1546H1.78583V11.2638ZM6.08093 11.2638H7.03183V12.1546H6.08093V11.2638ZM6.8991 7.45485H1.9185C1.67498 7.45516 1.44151 7.56601 1.26931 7.76308C1.09712 7.96016 1.00027 8.22736 1 8.50607V9.7299H7.81493V8.50607C7.81493 8.4868 7.81553 8.46784 7.81619 8.44873C7.80311 8.18037 7.70082 7.92791 7.5303 7.74311C7.35977 7.55831 7.13394 7.45518 6.8991 7.45485ZM1 10.1504H7.81493V10.8433H1V10.1504ZM8.84778 7.06312C8.93109 7.04399 9.01585 7.03436 9.10082 7.03437H9.69848V6.25961C9.69875 5.9809 9.7956 5.7137 9.9678 5.51662C10.14 5.31955 10.3735 5.2087 10.617 5.2084H12.5653C12.8088 5.2087 13.0423 5.31955 13.2144 5.51662C13.3866 5.7137 13.4835 5.9809 13.4838 6.25961V7.03437H14.0814C14.1664 7.03436 14.2512 7.04399 14.3345 7.06312V5.57682C14.3341 5.15876 14.1888 4.75796 13.9305 4.46235C13.6722 4.16674 13.322 4.00047 12.9567 4H10.2255C9.86026 4.00047 9.51006 4.16674 9.25177 4.46235C8.99348 4.75796 8.84819 5.15876 8.84778 5.57682V7.06312Z" fill="black"/><path d="M10.617 5.62891C10.4709 5.62909 10.3308 5.6956 10.2275 5.81384C10.1242 5.93209 10.0661 6.09241 10.0659 6.25963V7.03439H13.1167V6.25963C13.1165 6.09241 13.0584 5.93209 12.9551 5.81384C12.8518 5.6956 12.7117 5.62909 12.5656 5.62891H10.617ZM8.96838 11.2639H9.91928V12.1547H8.96838V11.2639ZM13.2636 11.2639H14.2144V12.1547H13.2636V11.2639ZM8.18262 10.1504H15.0002V10.8434H8.18262V10.1504ZM14.0817 7.45488H9.10112C8.8576 7.45518 8.62413 7.56603 8.45193 7.76311C8.27974 7.96018 8.18288 8.22739 8.18262 8.50609V9.72993H15.0002V8.50609C14.9999 8.22739 14.9031 7.96018 14.7309 7.76311C14.5587 7.56603 14.3252 7.45518 14.0817 7.45488Z" fill="black"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">2 односпальные кровати</p>
+                                            </div>
+                                            <div class="room-conditions__item active">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.18308 2.00012C6.98915 2.00012 6.83236 2.18144 6.83236 2.4053H6.82947V5.64769C6.82947 5.75518 6.79221 5.85827 6.72587 5.93428C6.65954 6.01029 6.56957 6.05299 6.47576 6.05299C6.38195 6.05299 6.29198 6.01029 6.22565 5.93428C6.15932 5.85827 6.12205 5.75518 6.12205 5.64769V2.4053H6.11937C6.11937 2.18144 5.96217 2.00012 5.76845 2.00012C5.57452 2.00012 5.41752 2.18144 5.41752 2.4053H5.41484V5.64769C5.41484 5.75518 5.37757 5.85827 5.31124 5.93428C5.24491 6.01029 5.15494 6.05299 5.06113 6.05299C4.96732 6.05299 4.87735 6.01029 4.81102 5.93428C4.74469 5.85827 4.70742 5.75518 4.70742 5.64769V2.4053C4.70742 2.18144 4.55022 2.00012 4.3567 2.00012C4.16277 2.00012 4.00557 2.18144 4.00557 2.4053H4V6.45781C4 6.95637 4.43654 7.38472 5.06103 7.57241V12.5367C5.06419 12.7493 5.14011 12.9519 5.27241 13.1009C5.40471 13.2499 5.58282 13.3335 5.76834 13.3335C5.95387 13.3335 6.13197 13.2499 6.26427 13.1009C6.39658 12.9519 6.47249 12.7493 6.47566 12.5367V7.57241C7.10014 7.38472 7.53668 6.95637 7.53668 6.45781V2.4053H7.534C7.534 2.18144 7.3768 2.00012 7.18308 2.00012ZM10.8966 2.00012C9.62697 2.00012 8.59792 4.54018 8.59792 7.67359C8.59792 7.94875 8.60576 8.21943 8.62123 8.48419H9.65894V12.5362C9.66211 12.7488 9.73803 12.9514 9.87033 13.1004C10.0026 13.2495 10.1807 13.333 10.3663 13.333C10.5518 13.333 10.7299 13.2495 10.8622 13.1004C10.9945 12.9514 11.0704 12.7488 11.0736 12.5362V2.01667C11.0151 2.00566 10.9559 2.00012 10.8966 2.00012Z" fill="black"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Завтрак включён</p>
+                                            </div>
+                                            <div class="room-conditions__item active">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.3335 1.33337V3.33337" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.6665 1.33337V3.33337" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.3335 6.06006H13.6668" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 5.66671V11.3334C14 13.3334 13 14.6667 10.6667 14.6667H5.33333C3 14.6667 2 13.3334 2 11.3334V5.66671C2 3.66671 3 2.33337 5.33333 2.33337H10.6667C13 2.33337 14 3.66671 14 5.66671Z" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.463 9.13338H10.469" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.463 11.1334H10.469" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.99715 9.13338H8.00314" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.99715 11.1334H8.00314" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.52938 9.13338H5.53537" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.52938 11.1334H5.53537" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Бесплатная отмена до 25 апреля</p>
+                                            </div>
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.3335 8.40662H12.6668" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6668 6.85337V11.62C12.6468 13.52 12.1268 14 10.1468 14H3.85352C1.84018 14 1.3335 13.5 1.3335 11.5134V6.85337C1.3335 5.05337 1.7535 4.47337 3.3335 4.38003C3.4935 4.37337 3.66685 4.3667 3.85352 4.3667H10.1468C12.1601 4.3667 12.6668 4.8667 12.6668 6.85337Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.6668 4.48667V9.14667C14.6668 10.9467 14.2468 11.5267 12.6668 11.62V6.85333C12.6668 4.86667 12.1601 4.36667 10.1468 4.36667H3.85352C3.66685 4.36667 3.4935 4.37333 3.3335 4.38C3.3535 2.48 3.87352 2 5.85352 2H12.1468C14.1601 2 14.6668 2.5 14.6668 4.48667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 11.8733H4.64665" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.07324 11.8733H8.36658" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Оплата сейчас</p>
+                                            </div>
+                                        </div>
+                                        <div class="room-price">
+                                            <p class="room-price__tag">Лучшая цена с завтраком</p>
+                                            <p class="room-price__title">45 800 ₽</p>
+                                            <p class="room-price__person">за 1 ночь для 2 гостей</p>
+                                            <p class="room-price__nalog">Все налоги включены</p>
+                                            <a href="#" class="room-price__add">Забронировать</a>
+                                        </div>
+                                    </div>
+                                    <div class="room-grid__item swiper-slide">
+                                        <div class="room-conditions">
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.51622 7.03437V6.25961C2.51649 5.9809 2.61334 5.7137 2.78554 5.51662C2.95773 5.31955 3.1912 5.2087 3.43472 5.2084H5.38301C5.62653 5.2087 5.86 5.31955 6.03219 5.51662C6.20439 5.7137 6.30124 5.9809 6.30151 6.25961V7.03437H6.89916C6.98413 7.03436 7.06889 7.04399 7.1522 7.06312V5.57682C7.1518 5.15875 7.0065 4.75794 6.7482 4.46233C6.48989 4.16671 6.13968 4.00045 5.77439 4H3.04328C2.678 4.00047 2.3278 4.16674 2.06951 4.46235C1.81122 4.75796 1.66593 5.15876 1.66553 5.57682V7.06312C1.74884 7.04399 1.8336 7.03436 1.91857 7.03437H2.51622Z" fill="black"/><path d="M3.43472 5.62888C3.28861 5.62906 3.14853 5.69557 3.04521 5.81382C2.9419 5.93206 2.88378 6.09238 2.88362 6.25961V7.03437H5.93404V6.25961C5.93388 6.09238 5.87577 5.93206 5.77245 5.81382C5.66914 5.69557 5.52905 5.62906 5.38294 5.62888H3.43472ZM1.78583 11.2638H2.73673V12.1546H1.78583V11.2638ZM6.08093 11.2638H7.03183V12.1546H6.08093V11.2638ZM6.8991 7.45485H1.9185C1.67498 7.45516 1.44151 7.56601 1.26931 7.76308C1.09712 7.96016 1.00027 8.22736 1 8.50607V9.7299H7.81493V8.50607C7.81493 8.4868 7.81553 8.46784 7.81619 8.44873C7.80311 8.18037 7.70082 7.92791 7.5303 7.74311C7.35977 7.55831 7.13394 7.45518 6.8991 7.45485ZM1 10.1504H7.81493V10.8433H1V10.1504ZM8.84778 7.06312C8.93109 7.04399 9.01585 7.03436 9.10082 7.03437H9.69848V6.25961C9.69875 5.9809 9.7956 5.7137 9.9678 5.51662C10.14 5.31955 10.3735 5.2087 10.617 5.2084H12.5653C12.8088 5.2087 13.0423 5.31955 13.2144 5.51662C13.3866 5.7137 13.4835 5.9809 13.4838 6.25961V7.03437H14.0814C14.1664 7.03436 14.2512 7.04399 14.3345 7.06312V5.57682C14.3341 5.15876 14.1888 4.75796 13.9305 4.46235C13.6722 4.16674 13.322 4.00047 12.9567 4H10.2255C9.86026 4.00047 9.51006 4.16674 9.25177 4.46235C8.99348 4.75796 8.84819 5.15876 8.84778 5.57682V7.06312Z" fill="black"/><path d="M10.617 5.62891C10.4709 5.62909 10.3308 5.6956 10.2275 5.81384C10.1242 5.93209 10.0661 6.09241 10.0659 6.25963V7.03439H13.1167V6.25963C13.1165 6.09241 13.0584 5.93209 12.9551 5.81384C12.8518 5.6956 12.7117 5.62909 12.5656 5.62891H10.617ZM8.96838 11.2639H9.91928V12.1547H8.96838V11.2639ZM13.2636 11.2639H14.2144V12.1547H13.2636V11.2639ZM8.18262 10.1504H15.0002V10.8434H8.18262V10.1504ZM14.0817 7.45488H9.10112C8.8576 7.45518 8.62413 7.56603 8.45193 7.76311C8.27974 7.96018 8.18288 8.22739 8.18262 8.50609V9.72993H15.0002V8.50609C14.9999 8.22739 14.9031 7.96018 14.7309 7.76311C14.5587 7.56603 14.3252 7.45518 14.0817 7.45488Z" fill="black"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">2 односпальные кровати</p>
+                                            </div>
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.18308 2.00012C6.98915 2.00012 6.83236 2.18144 6.83236 2.4053H6.82947V5.64769C6.82947 5.75518 6.79221 5.85827 6.72587 5.93428C6.65954 6.01029 6.56957 6.05299 6.47576 6.05299C6.38195 6.05299 6.29198 6.01029 6.22565 5.93428C6.15932 5.85827 6.12205 5.75518 6.12205 5.64769V2.4053H6.11937C6.11937 2.18144 5.96217 2.00012 5.76845 2.00012C5.57452 2.00012 5.41752 2.18144 5.41752 2.4053H5.41484V5.64769C5.41484 5.75518 5.37757 5.85827 5.31124 5.93428C5.24491 6.01029 5.15494 6.05299 5.06113 6.05299C4.96732 6.05299 4.87735 6.01029 4.81102 5.93428C4.74469 5.85827 4.70742 5.75518 4.70742 5.64769V2.4053C4.70742 2.18144 4.55022 2.00012 4.3567 2.00012C4.16277 2.00012 4.00557 2.18144 4.00557 2.4053H4V6.45781C4 6.95637 4.43654 7.38472 5.06103 7.57241V12.5367C5.06419 12.7493 5.14011 12.9519 5.27241 13.1009C5.40471 13.2499 5.58282 13.3335 5.76834 13.3335C5.95387 13.3335 6.13197 13.2499 6.26427 13.1009C6.39658 12.9519 6.47249 12.7493 6.47566 12.5367V7.57241C7.10014 7.38472 7.53668 6.95637 7.53668 6.45781V2.4053H7.534C7.534 2.18144 7.3768 2.00012 7.18308 2.00012ZM10.8966 2.00012C9.62697 2.00012 8.59792 4.54018 8.59792 7.67359C8.59792 7.94875 8.60576 8.21943 8.62123 8.48419H9.65894V12.5362C9.66211 12.7488 9.73803 12.9514 9.87033 13.1004C10.0026 13.2495 10.1807 13.333 10.3663 13.333C10.5518 13.333 10.7299 13.2495 10.8622 13.1004C10.9945 12.9514 11.0704 12.7488 11.0736 12.5362V2.01667C11.0151 2.00566 10.9559 2.00012 10.8966 2.00012Z" fill="black"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Питание не включено</p>
+                                            </div>
+                                            <div class="room-conditions__item active">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.3335 1.33337V3.33337" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.6665 1.33337V3.33337" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.3335 6.06006H13.6668" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 5.66671V11.3334C14 13.3334 13 14.6667 10.6667 14.6667H5.33333C3 14.6667 2 13.3334 2 11.3334V5.66671C2 3.66671 3 2.33337 5.33333 2.33337H10.6667C13 2.33337 14 3.66671 14 5.66671Z" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.463 9.13338H10.469" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.463 11.1334H10.469" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.99715 9.13338H8.00314" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.99715 11.1334H8.00314" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.52938 9.13338H5.53537" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.52938 11.1334H5.53537" stroke="#1D1D20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Условия отмены</p>
+                                            </div>
+                                            <div class="room-conditions__item">
+                                                <div class="room-conditions__icon">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.3335 8.40662H12.6668" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6668 6.85337V11.62C12.6468 13.52 12.1268 14 10.1468 14H3.85352C1.84018 14 1.3335 13.5 1.3335 11.5134V6.85337C1.3335 5.05337 1.7535 4.47337 3.3335 4.38003C3.4935 4.37337 3.66685 4.3667 3.85352 4.3667H10.1468C12.1601 4.3667 12.6668 4.8667 12.6668 6.85337Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.6668 4.48667V9.14667C14.6668 10.9467 14.2468 11.5267 12.6668 11.62V6.85333C12.6668 4.86667 12.1601 4.36667 10.1468 4.36667H3.85352C3.66685 4.36667 3.4935 4.37333 3.3335 4.38C3.3535 2.48 3.87352 2 5.85352 2H12.1468C14.1601 2 14.6668 2.5 14.6668 4.48667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 11.8733H4.64665" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.07324 11.8733H8.36658" stroke="#1D1D20" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="room-conditions__title">Оплата на месте</p>
+                                            </div>
+                                        </div>
+                                        <div class="room-price">
+                                            <p class="room-price__tag">Предварительная цена</p>
+                                            <p class="room-price__title">40 000 ₽</p>
+                                            <p class="room-price__person">за 1 ночь для 2 гостей</p>
+                                            <p class="room-price__nalog">Все налоги включены</p>
+                                            <a href="#" class="room-price__add">Забронировать</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="location">
+                <div class="section-frame">
+                    <div class="location-wrap">
+                        <p class="location-title">Расположение</p>
+                        <p class="location-info">Адмиралтейский округ, Вознесенский проспект, д. 1, Санкт-Петербург</p>
+                        <a href="#" class="location-btn">
+                            <img src="{% static 'images/icon/location-list.svg' %}" alt="">
+                            <span>Смотреть отели рядом</span>
+                        </a>
+                        <div class="location-map">
+                            <div class="location-map-frame"></div>
+                            <a href="#" class="location-map__size js-popup" data-popup="map">
+                                <img src="{% static 'images/icon/location-map.svg' %}" alt="">
+                            </a>
+                        </div>
+                        <div class="location-list">
+                            <div class="location-group">
+                                <p class="location-list__title">Что вокруг</p>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Исаакиевский собор <span>142 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Здание Адмиралтейства <span>197 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Манеж <span>316 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Медный всадник <span>360 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Эрмитаж <span>594 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Дворцовая площадь <span>629 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Кунсткамера <span>711 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Юсуповский дворец <span>843 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Петрикирхе <span>932 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Казанский собор <span>978 м</span></p>
+                                </div>
+                            </div>
+                            <div class="location-group">
+                                <p class="location-list__title">Достопримечательности</p>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Невский проспект <span>142 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Александро-Невская лавра <span>197 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Константиновский дворец <span>316 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Природный заказник Шунгеровский <span>360 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Парк Александрия <span>594 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Петергоф <span>629 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Колонисткий парк <span>711 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Александровский парк <span>843 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Парк Ольденбургского <span>932 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Екатерининский дворец <span>978 м</span></p>
+                                </div>
+                            </div>
+                            <div class="location-group">
+                                <p class="location-list__title">Аэропорты</p>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Airport.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Аэропорт Пулково <span>142 м</span></p>
+                                </div>
+                                <p class="location-list__title">Вокзалы</p>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Train.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Павловск <span>142 м</span></p>
+                                </div>
+                                <p class="location-list__title">Метро</p>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Subway.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Адмиралтейская <span>142 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Subway.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Сенная площадь <span>142 м</span></p>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-item__icon">
+                                        <img src="{% static 'images/location/Subway.svg' %}" alt="">
+                                    </div>
+                                    <p class="location-item__title">Спасская <span>142 м</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="description">
+                <div class="section-frame">
+                    <div class="description-wrap">
+                        <p class="description-title">Описание отеля</p>
+                        <div class="description-frame">
+                            <div class="description-content">
+                                <div class="description-item">
+                                    <div class="description-item__title">
+                                        <img src="{% static 'images/location/Park.svg' %}" alt="">
+                                        <p>Расположение отеля</p>
+                                    </div>
+                                    <div class="description-item__info">
+                                        <p>Роскошный пятизвёздочный отель Four Seasons Lion Palace St. Petersburg находится в самом центре Санкт-Петербурга, прямо напротив Исаакиевского собора и в 2 минутах ходьбы от Дворцовой площади. До Эрмитажа вы дойдете от отеля за 5 минут, а до Мариинского театра — всего за 15 минут. До Московского вокзала от отеля — 4 км. Аэропорт Пулково находится в 15 км.</p>
+                                    </div>
+                                </div>
+                                <div class="description-item hide">
+                                    <div class="description-item__title">
+                                        <img src="{% static 'images/location/Museum.svg' %}" alt="">
+                                        <p>Достопримечательности</p>
+                                    </div>
+                                    <div class="description-item__info">
+                                        <p>Роскошный пятизвёздочный отель Four Seasons Lion Palace St. Petersburg находится в самом центре Санкт-Петербурга, прямо напротив Исаакиевского собора и в 2 минутах ходьбы от Дворцовой площади. До Эрмитажа вы дойдете от отеля за 5 минут, а до Мариинского театра — всего за 15 минут. До Московского вокзала от отеля — 4 км. Аэропорт Пулково находится в 15 км.</p>
+                                    </div>
+                                </div>
+                                <a href="#" class="description-more">
+                                    <i class="fa-arrow-down"></i>
+                                    <span>Развернуть</span>
+                                </a>
+                            </div>
+                            <div class="description-fact">
+                                <p class="description-fact__title">Факты об отеле</p>
+                                <div class="description-fact__item">
+                                    <p class="description-fact__item-title">Аккредитация</p>
+                                    <p class="description-fact__item-info">Объект прошёл классификацию</p>
+                                </div>
+                                <div class="description-fact__item">
+                                    <p class="description-fact__item-title">Год постройки</p>
+                                    <p class="description-fact__item-info">2013 год</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="services">
+                <div class="section-frame">
+                    <div class="services-wrap">
+                        <h2 class="services-title">Услуги и удобства</h2>
+                        <div class="services-list">
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Star.svg' %}" alt="">
+                                        <p>Популярные</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Бесплатный интернет</li>
+                                        <li>Подходит для детей</li>
+                                        <li>Бассейн</li>
+                                        <li>Бар или ресторан</li>
+                                        <li>Для гостей с ограниченными возможностями</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Hotel.svg' %}" alt="">
+                                        <p>Общее</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Банкомат</li>
+                                        <li>Магазины</li>
+                                        <li>Компьютер</li>
+                                        <li>Кондиционер</li>
+                                        <li>Круглосуточная стойка регистрации</li>
+                                        <li>Круглосуточная стойка регистрации</li>
+                                        <li>Лифт</li>
+                                        <li>Обмен валюты</li>
+                                        <li>Отель для некурящих</li>
+                                        <li>Пресса</li>
+                                        <li>Отопление</li>
+                                        <li>Сувенирный магазин</li>
+                                        <li>Ускоренная регистрация заезда</li>
+                                        <li>Индивидуальная регистрация заезда и отъезда</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Bed.svg' %}" alt="">
+                                        <p>В номерах</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Обслуживание номеров</li>
+                                        <li>Семейные номера</li>
+                                        <li>Телевизор</li>
+                                        <li>Туалетные принадлежности</li>
+                                        <li>Сейф (в номере)</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Disabled.svg' %}" alt="">
+                                        <p>Доступность</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Удобства для гостей с ограниченными физическими возможностями</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Service.svg' %}" alt="">
+                                        <p>Услуги и удобства</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Гладильные услуги <span>оплачиваются одельно</span></li>
+                                        <li>Прачечная <span>оплачиваются одельно</span></li>
+                                        <li>Услуги консьержа</li>
+                                        <li>Химчистка <span>оплачиваются одельно</span></li>
+                                        <li>Чистка обуви <span>оплачиваются одельно</span></li>
+                                        <li>Утюг</li>
+                                        <li>Хранение багажа</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Lunch.svg' %}" alt="">
+                                        <p>Питание</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Бар</li>
+                                        <li>Бесплатный чай/кофе</li>
+                                        <li>Завтрак</li>
+                                        <li>Завтрак в номер</li>
+                                        <li>Ресторан</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Wifi.svg' %}" alt="">
+                                        <p>Интернет</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Бесплатный Wi-Fi</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Global.svg' %}" alt="">
+                                        <p>Персонал говорит</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>на русском</li>
+                                        <li>на английском</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Pool.svg' %}" alt="">
+                                        <p>Бассейн и пляж</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Крытый бассейн</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Desk.svg' %}" alt="">
+                                        <p>Бизнес</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Бизнес-центр</li>
+                                        <li>Организация встреч и банкетов</li>
+                                        <li>Факс и ксерокс</li>
+                                        <li>Конференц-зал</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Beauty.svg' %}" alt="">
+                                        <p>Красота и здоровье</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Паровая баня</li>
+                                        <li>Салон красоты <span>оплачиваются одельно</span></li>
+                                        <li>Сауна</li>
+                                        <li>Спа-центр <span>оплачиваются одельно</span></li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Kid.svg' %}" alt="">
+                                        <p>Дети</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Игровая комната</li>
+                                        <li>Размещение подходит для семей/детей</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Pets.svg' %}" alt="">
+                                        <p>Животные</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Размещение с домашними животными</li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Cleaning.svg' %}" alt="">
+                                        <p>Санитарные меры</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Температурный контроль для персонала</li>
+                                        <li>Индивидуальные средства защиты для персонала</li>
+                                        <li>Усиленные меры дезинфекции</li>
+                                        <li>Температурный контроль для гостей</li>
+                                        <li>Индивидуальные средства защиты для гостей</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="services-wrap">
+                        <h2 class="services-title">Условия размещения</h2>
+                        <div class="services-list services-list_single">
+                            <div class="services-from">
+                                <div class="services-from__title">
+                                    <img src="{% static 'images/services/Calendar.svg' %}" alt="">
+                                    <p>Заселение и выезд</p>
+                                </div>
+                                <div class="services-from__list">
+                                    <div class="services-from__item">
+                                        <p class="services-from__item-title">Заселение</p>
+                                        <p class="services-from__item-info">После 15:00</p>
+                                    </div>
+                                    <div class="services-from__item">
+                                        <p class="services-from__item-title">Выезд</p>
+                                        <p class="services-from__item-info">До 13:00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Lunch.svg' %}" alt="">
+                                        <p>Питание для детей</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Завтрак <span>2450 RUB c гостя (ребёнок с 6 до 12 лет)</span></li>
+                                        <li>Завтрак <span>Бесплатно (ребёнок с 0 до 5 лет)</span></li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Kid.svg' %}" alt="">
+                                        <p>Детская люлька</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Максимальное количество нужно уточнять <span>Стоимость нужно уточнять</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Beds.svg' %}" alt="">
+                                        <p>Дополнительная кровать</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Максимальное количество нужно уточнять <span>4100 RUB с гостя за ноч</span></li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Lunch.svg' %}" alt="">
+                                        <p>Питание</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Завтрак <span>4900 RUB c гостя</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="services-group">
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Airport.svg' %}" alt="">
+                                        <p>Трансфер</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Аэропорт <span>7000 RUB</span></li>
+                                    </ul>
+                                </div>
+                                <div class="services-item">
+                                    <div class="services-item__title">
+                                        <img src="{% static 'images/services/Pets.svg' %}" alt="">
+                                        <p>Животные</p>
+                                    </div>
+                                    <ul class="services-item__info">
+                                        <li>Разрешены любые животные <span>Стоимость нужно уточнять</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dop">
+                <div class="section-frame">
+                    <div class="dop-content"></div>
+                    <!-- <div class="dop-grid">
+                        <div class="dop-item">
+                            <p class="dop-item__title">Оплата</p>
+                            <div class="dop-item__content">
+                                <b>В отеле</b>
+                                <p>Наличными в валюте отеля — RUB</p>
+                                <p>Безналичной оплатой</p>
+                            </div>
+                            <div class="dop-item__content">
+                                <b>На сайте</b>
+                                <p>Для некоторых тарифов доступна оплата банковской картой при бронировании на сайте. Можно частично или полностью оплатить бронирование баллами. Можно оплатить бронирование с помощью промокода, если он у вас есть.</p>
+                            </div>
+                        </div>
+                        <div class="dop-item">
+                            <p class="dop-item__title">Корпоративным клиентам</p>
+                            <div class="dop-item__content">
+                                <p>Если вы хотите оплатить заказ безналичным способом как юридическое лицо, пожалуйста, напишите mail@gmail.com</p>
+                            </div>
+                            <a href="#" class="dop-item__btn">Узнать больше</a>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="similar">
+                <div class="section-frame">
+                    <h2 class="similar-title">Похожие отели</h2>
+                    <div class="similar-list">
+                        <div class="similar-item">
+                            <a href="#" class="similar-item__photo">
+                                <img src="{% static 'images/similar/similar-1.jpg' %}" alt="">
+                            </a>
+                            <div class="similar-item__wrap">
+                                <a href="#" class="similar-item__title">Лотте Отель Санкт-Петербург</a>
+                                <div class="similar-item__rate">
+                                    <img src="{% static 'images/rate-shape.svg' %}" alt="">
+                                    <p>9</p>
+                                </div>
+                            </div>
+                            <ul class="similar-item__near">
+                                <li>635 м от центра Санкт-Петербурга</li>
+                            </ul>
+                            <p class="similar-item__price">от 31 000 ₽</p>
+                        </div>
+                        <div class="similar-item">
+                            <a href="#" class="similar-item__photo">
+                                <img src="{% static 'images/similar/similar-2.jpg' %}" alt="">
+                            </a>
+                            <div class="similar-item__wrap">
+                                <a href="#" class="similar-item__title">Лотте Отель Санкт-Петербург</a>
+                                <div class="similar-item__rate">
+                                    <img src="{% static 'images/rate-shape.svg' %}" alt="">
+                                    <p>9</p>
+                                </div>
+                            </div>
+                            <ul class="similar-item__near">
+                                <li>635 м от центра Санкт-Петербурга</li>
+                            </ul>
+                            <p class="similar-item__price">от 26 000 ₽</p>
+                        </div>
+                        <div class="similar-item">
+                            <a href="#" class="similar-item__photo">
+                                <img src="{% static 'images/similar/similar-3.jpg' %}" alt="">
+                            </a>
+                            <div class="similar-item__wrap">
+                                <a href="#" class="similar-item__title">Лотте Отель Санкт-Петербург</a>
+                                <div class="similar-item__rate">
+                                    <img src="{% static 'images/rate-shape.svg' %}" alt="">
+                                    <p>9</p>
+                                </div>
+                            </div>
+                            <ul class="similar-item__near">
+                                <li>635 м от центра Санкт-Петербурга</li>
+                            </ul>
+                            <p class="similar-item__price">от 50 000 ₽</p>
+                        </div>
+                        <div class="similar-item">
+                            <a href="#" class="similar-item__photo">
+                                <img src="{% static 'images/similar/similar-4.jpg' %}" alt="">
+                            </a>
+                            <div class="similar-item__wrap">
+                                <a href="#" class="similar-item__title">Лотте Отель Санкт-Петербург</a>
+                                <div class="similar-item__rate">
+                                    <img src="{% static 'images/rate-shape.svg' %}" alt="">
+                                    <p>9</p>
+                                </div>
+                            </div>
+                            <ul class="similar-item__near">
+                                <li>635 м от центра Санкт-Петербурга</li>
+                            </ul>
+                            <p class="similar-item__price">от 24 000 ₽</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup-frame target-frame">
+			<form action="#" method="post" class="popup popup-date js-single-date target-box" data-popup="date">
+				<div class="popup-date__title">
+					<p>Выберите даты проживания</p>
+					<i class="fa-close js-popup-close"></i>
+				</div>
+				<div class="popup-date__group">
+					<div class="booking-date">
+                        <input type="hidden" class="booking-date__input-from" name="date_from">
+                        <input type="hidden" class="booking-date__input-to" name="date_to">
+                        <div class="booking-date__item from">
+                            <p class="search-label-title">Заезд</p>
+                            <p class="booking-date__title">8 апр. 2026 г.</p>
+                        </div>
+                        <div class="booking-date__item to">
+                            <p class="search-label-title">Выезд</p>
+                            <p class="booking-date__title">12 апр. 2026 г.</p>
+                        </div>
+                        <div class="calendar">
+                            <div class="date-month"></div>
+                            <div class="date-wrap">
+                                <div class="date-week">
+                                    <div class="day-item week">Пн</div>
+                                    <div class="day-item week">Вт</div>
+                                    <div class="day-item week">Ср</div>
+                                    <div class="day-item week">Чт</div>
+                                    <div class="day-item week">Пт</div>
+                                    <div class="day-item week">Сб</div>
+                                    <div class="day-item week">Вс</div>
+                                </div>
+                                <div class="calendar-day">
+                                    <p class="calendar-day__error">Нельзя выбрать период более 30 дней</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="booking-room">
+                        <input type="hidden" name="adults_total" class="booking-room__adults-input" value="2">
+                        <input type="hidden" name="kids_total" class="booking-room__kids-input" value="0">
+                        <div class="booking-room__active">
+                            <p class="search-label-title">1 номер для</p>
+                            <div class="booking-room__title">
+                                <p>2 гостей</p>
+                                <i class="fa-arrow-down"></i>
+                            </div>
+                        </div>
+                        <div class="place-drop">
+                            <div class="place-drop__scroll">
+                                <div class="place-item">
+                                    <p class="place-item__counter">1 номер</p>
+                                    <div class="place-item__wrap">
+                                        <div class="place-adults">
+                                            <p class="place-title">Взрослые</p>
+                                            <div class="place-adults__wrap">
+                                                <div class="place-adults__nav place-adults__minus">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="2" viewBox="0 0 11 2" fill="none"><path d="M0.75 0.75H10.0833" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="place-adults__counter">2</p>
+                                                <div class="place-adults__nav place-adults__plus">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.75 4.75H4.75M4.75 4.75H8.75M4.75 4.75V8.75M4.75 4.75V0.75" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="place-kids">
+                                            <div class="place-kids__nav">
+                                                <p class="place-title">Дети</p>
+                                                <a href="#" class="place-remove">Удалить</a>
+                                            </div>
+                                            <div class="place-kids__list">
+                                                <div class="place-kids__add">
+                                                    <a href="#" class="place-kids__add-btn">
+                                                        <span class="place-kids__add-text">Добавить ребёнка</span>
+                                                        <span class="place-kids__add-icon">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.75 4.75H4.75M4.75 4.75H8.75M4.75 4.75V8.75M4.75 4.75V0.75" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="place-drop__nav">
+                                <a href="#" class="place-drop__add">
+                                    <img src="{% static 'images/icon/plus.svg' %}" alt="">
+                                    <span>Добавить номер</span>
+                                </a>
+                                <a href="#" class="place-drop__more">Забронировать больше</a>
+                                <a href="#" class="place-drop__btn">Готово</a>
+                            </div>
+                        </div>
+                    </div>
+					<label class="booking-sub">
+						<span>Найти</span>
+						<input type="submit">
+					</label>
+				</div>
+			</form>
+            <div class="popup gallery target-box" data-popup="gallery">
+                <div class="gallery-wrap-title">
+                    <p class="gallery-title">Отель Four Seasons Lion Palace St. Petersburg</p>
+                    <i class="fa-close gallery-close js-popup-close"></i>
+                </div>
+                <div class="gallery-wrap">
+                    <a href="#" class="gallery-arrow gallery-prev">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.75 0.75C14.7206 0.75 18.75 4.77944 18.75 9.75C18.75 14.7206 14.7206 18.75 9.75 18.75C4.77944 18.75 0.75 14.7206 0.75 9.75C0.75 4.77944 4.77944 0.75 9.75 0.75Z" fill="white"/><path d="M10.75 12.75L7.75 9.75L10.75 6.75M18.75 9.75C18.75 4.77944 14.7206 0.75 9.75 0.75C4.77944 0.75 0.75 4.77944 0.75 9.75C0.75 14.7206 4.77944 18.75 9.75 18.75C14.7206 18.75 18.75 14.7206 18.75 9.75Z" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                    <div class="gallery-full swiper">
+                        <div class="swiper-wrapper">
+                            <!-- <div class="gallery-slide swiper-slide">
+                                <img src="images/popup-gallery/1.jpg" alt="">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="#" class="gallery-arrow gallery-next">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.75 0.75C14.7206 0.75 18.75 4.77944 18.75 9.75C18.75 14.7206 14.7206 18.75 9.75 18.75C4.77944 18.75 0.75 14.7206 0.75 9.75C0.75 4.77944 4.77944 0.75 9.75 0.75Z" fill="white"/><path d="M8.75 6.75L11.75 9.75L8.75 12.75M18.75 9.75C18.75 4.77944 14.7206 0.75 9.75 0.75C4.77944 0.75 0.75 4.77944 0.75 9.75C0.75 14.7206 4.77944 18.75 9.75 18.75C14.7206 18.75 18.75 14.7206 18.75 9.75Z" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </div>
+                <div class="gallery-dots swiper">
+                    <div class="swiper-wrapper">
+                        <!-- <div class="gallery-dots__slide swiper-slide">
+                            <img src="images/popup-gallery/1.jpg" alt="">
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="popup popup-map target-box" data-popup="map">
+                <div class="popup-map__iframe"></div>
+                <i class="fa-close js-popup-close popup-map__close"></i>
+            </div>
+		</div>
+	</main>
+	<footer class="footer">
+		<div class="section-frame">
+			<div class="footer-frame">
+				<div class="footer-content">
+					<div class="footer-nav">
+						<a href="#" class="footer-logo">
+							<img src="{% static 'images/footer-logo.svg' %}" alt="">
+						</a>
+						<ul class="footer-nav__list">
+							<li class="active" data-menu="1">Обмен криптовалюты</li>
+							<li data-menu="2">Виртуальные карты</li>
+							<li data-menu="1">Оплата онлайн</li>
+							<li data-menu="2">Безналичные операции</li>
+						</ul>
+					</div>
+					<ul class="footer-menu active" data-menu="1">
+						<li>
+							<a href="#" class="footer-menu__drop">Покупка крипты с карты <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="footer-menu" data-menu="2">
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="footer-info">
+					<div class="footer-promo">
+						<p class="footer-promo__title">Получайте новые бонусы быстрее всех</p>
+						<a href="#" class="footer-promo__btn" target="_blank">
+							<img src="{% static 'images/icon/footer-tg.svg' %}" alt="">
+							<span>@Aifory_Pro</span>
+						</a>
+					</div>
+					<a href="#" class="footer-wellcrypto mob-hide">
+						<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<div class="footer-wrap">
+				<div class="footer-wrap-content">
+					<div class="footer-contact">
+						<a href="#" class="footer-wellcrypto mob-show">
+							<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+						</a>
+						<a href="mailto:support@aifory.pro" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-email.svg' %}" alt="">
+							<span>support@aifory.pro</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="#" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-tg-white.svg' %}" alt="">
+							<span>@AiforyPro_Management</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="tel:+79187160760" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-phone.svg' %}" alt="">
+							<span>+7 (918) 716 07 60</span>
+						</a>
+					</div>
+				</div>
+				<div class="footer-social">
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/vk.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/yt.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/inst.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<ul class="footer-copy">
+				<li><a href="#">Политика конфиденциальности</a></li>
+				<li><a href="#">Cookie</a></li>
+				<li><a href="#">Условия пользования</a></li>
+				<li><a href="#">AML</a></li>
+				<li><a href="#">KYB</a></li>
+			</ul>
+		</div>
+	</footer>
+	
+
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+	<script src="{% static 'js/sweetalert.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="{% static 'js/range.js' %}"></script>    
+	<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script type="module" src="{% static 'js/map.js' %}"></script>
+	<script src="{% static 'js/calendar.js' %}"></script>
+	<script src="{% static 'js/hotel-room-render.js' %}"></script>
+    <script src="{% static 'js/room-filters.js' %}"></script>
+	<script src="{% static 'js/hotel-single.js' %}"></script>
+	<script src="{% static 'js/core.js' %}?ver=5"></script>
+	<script src="{% static 'js/common.js' %}?ver=10"></script>
+</body>
+</html>

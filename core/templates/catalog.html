@@ -1,0 +1,1253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru"> 
+<head>
+	<meta charset="UTF-8">
+	<title>Каталог</title>
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+	<!-- Open Graph -->
+	<meta property="og:title" content="Aifory Pro"/>
+    <meta property="og:description" content="Бронирование отелей с Aifory.Pro"/>
+	<meta property="og:url" content="https://siteurl.ru"/>
+	<meta property="og:image" content="{% static 'images/logo.svg' %}"/>
+	<!-- End Open Graph -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+	<link rel="stylesheet" href="{% static 'style/main.css' %}?ver=10">
+	<link rel="stylesheet" href="{% static 'style/change.css' %}"> <!-- Файл для правок без scss -->
+</head>
+<body class="load page-main">
+	<header class="header">
+		<div class="section-frame">
+			<div class="header-frame">
+				<a href="/" class="logo">
+					<img src="{% static 'images/logo.svg' %}" alt="">
+				</a>
+				<div class="header-wrap">
+					<nav class="header-menu">
+						<ul>
+							<li><a href="#" class="js-open-menu" data-menu="1">Обмен криптовалюты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="2">Виртуальные карты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="3">Оплата онлайн</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="4">Безналичные операции</a></li>
+						</ul>
+					</nav>
+					<div class="header-btn">
+						<a href="#" class="header-create mob-hide">Создать кошелёк</a>
+						<div class="lang">
+							<p class="lang-active">RU</p>
+							<div class="lang-drop">
+								<a href="#" class="lang-drop-item active">
+									<img src="{% static 'images/flag/RU.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">RU</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+								<a href="#" class="lang-drop-item">
+									<img src="{% static 'images/flag/GB.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">EN</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+							</div>
+						</div>
+						<a href="#" class="header-user mob-hide">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.38 2 7.25 4.13 7.25 6.75C7.25 9.32 9.26 11.4 11.88 11.49C11.96 11.48 12.04 11.48 12.1 11.49C12.12 11.49 12.13 11.49 12.15 11.49C12.16 11.49 12.16 11.49 12.17 11.49C14.73 11.4 16.74 9.32 16.75 6.75C16.75 4.13 14.62 2 12 2Z" fill="#8B5CF6"/><path opacity="0.4" d="M17.08 14.16C14.29 12.3 9.73996 12.3 6.92996 14.16C5.65996 15 4.95996 16.15 4.95996 17.38C4.95996 18.61 5.65996 19.75 6.91996 20.59C8.31996 21.53 10.16 22 12 22C13.84 22 15.68 21.53 17.08 20.59C18.34 19.74 19.04 18.6 19.04 17.36C19.03 16.14 18.34 14.99 17.08 14.16Z" fill="#8B5CF6"/></svg>
+						</a>
+						<div class="burger table-show-flex">
+							<img src="{% static 'images/icon/burger.svg' %}" alt="">
+						</div>
+					</div>
+				</div>
+				<div class="header-popup">
+					<div class="header-popup__item" data-menu="1">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Наличный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">RUB → USDT TRC20</a></li>
+									<li><a href="#">USDT TRC20 → RUB</a></li>
+									<li><a href="#">RUB → BTC</a></li>
+									<li><a href="#">BTC → RUB</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Безналичный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">BTC → USDT</a></li>
+									<li><a href="#">USDT → USDT</a></li>
+									<li><a href="#">USDT → ETH</a></li>
+									<li><a href="#">ETH → USDT</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<a href="#" class="header-popup__link-title">Премиальный обмен</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="2">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Apple Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Google Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для подписок</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">ChatGPT</a></li>
+									<li><a href="#">Cursor AI</a></li>
+									<li><a href="#">Spotify</a></li>
+									<li><a href="#">Netflix</a></li>
+									<li><a href="#">Figma</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для рекламы</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Google Ads</a></li>
+									<li><a href="#">Facebook Ads</a></li>
+									<li><a href="#">Tik Tok Ads</a></li>
+									<li><a href="#">OpenRouter</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="3">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Steam</a></li>
+									<li><a href="#">Spotify</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Telegram Stars</a></li>
+									<li><a href="#">Telegram Premium</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">PlayStation Network</a></li>
+									<li><a href="#">Xbox</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Roblox</a></li>
+									<li><a href="#">Mobile Legends: bang bang</a></li>
+								</ul>
+								<a href="#" class="mob-menu__services">
+									<span>Все сервисы</span>
+									<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="4">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Покупка  крипты с карты</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Вывод крипты на карту</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Возможности</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Оплата в магазинах (QR)</a></li>
+									<li><a href="#">Оплата мобильной связи криптой</a></li>
+									<li><a href="#" class="un-active">Бронирование отелей (скоро)</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mob-menu">
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Обмен криптовалюты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Наличный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">RUB → USDT TRC20</a>
+							<a href="#" class="mob-menu__link">USDT TRC20 → RUB</a>
+							<a href="#" class="mob-menu__link">RUB → BTC</a>
+							<a href="#" class="mob-menu__link">BTC → RUB</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Безналичный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">BTC → USDT</a>
+							<a href="#" class="mob-menu__link">USDT  → USDT</a>
+							<a href="#" class="mob-menu__link">USDT → ETH</a>
+							<a href="#" class="mob-menu__link">ETH → USDT</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__title">Премиальный обмен</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Вирутальные карты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Apple Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Google Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для подписок</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">ChatGPT</a>
+							<a href="#" class="mob-menu__link">Cursor AI</a>
+							<a href="#" class="mob-menu__link">Spotify</a>
+							<a href="#" class="mob-menu__link">Netflix</a>
+							<a href="#" class="mob-menu__link">Figma</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для рекламы</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Google Ads</a>
+							<a href="#" class="mob-menu__link">Facebook Ads</a>
+							<a href="#" class="mob-menu__link">Tik Tok Ads</a>
+							<a href="#" class="mob-menu__link">OpenRouter</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Оплата онлайн</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__link">Steam</a>
+						<a href="#" class="mob-menu__link">Spotify</a>
+						<a href="#" class="mob-menu__link">Telegram Stars</a>
+						<a href="#" class="mob-menu__link">Telegram Premium</a>
+						<a href="#" class="mob-menu__link">PlayStation Network</a>
+						<a href="#" class="mob-menu__link">Xbox</a>
+						<a href="#" class="mob-menu__link">Roblox</a>
+						<a href="#" class="mob-menu__link">Mobile Legends: bang bang</a>
+						<a href="#" class="mob-menu__services">
+							<span>Все сервисы</span>
+							<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Безналичные операции</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Покупка  крипты с карты</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Вывод крипты на карту</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Возможности</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Оплата в магазинах (QR)</a>
+							<a href="#" class="mob-menu__link">Оплата мобильной связи криптой</a>
+							<a href="#" class="mob-menu__link un-acitve">Бронирование отелей (скоро)</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<main>
+        <div class="catalog">
+            <div class="section-frame">
+                <div class="catalog-frame">
+                    <div class="filter">
+                        <div class="filter-section table-hide js-popup" data-popup="date">
+                            <p class="filter-section-title js-region-title">Регион</p>
+                            <div class="filter-date">
+                                <div class="filter-date__info">
+                                    <p class="filter-date__calendar">Даты не выбраны</p>    
+                                </div>
+                                <img src="{% static 'images/icon/filter-search.svg' %}" class="filter-date__icon" alt="">
+                            </div>
+                        </div>
+                        <div class="filter-wrap">
+                            <div class="filter-swipe table-show-flex"></div>
+                            <form action="#" method="post" class="filter-form">
+                                <div class="filter-section">
+                                    <p class="filter-section-title">Сортировка</p>
+                                    <div class="filter-drop">
+                                        <div class="filter-drop__active">
+                                            <p class="filter-drop__title">По умолчанию</p>
+                                            <i class="fa-arrow-down"></i>
+                                        </div>
+                                        <div class="filter-drop__list">
+                                            <!-- <div class="filter-drop__item active js-checkbox">
+                                                <p>По популярности</p>
+                                                <i class="fa-check"></i>
+                                                <input type="radio" name="sort" value="">
+                                            </div> -->
+                                            <div class="filter-drop__item js-checkbox">
+                                                <p>Сначала дешёвые</p>
+                                                <i class="fa-check"></i>
+                                                <input type="radio" name="sort" value="price_asc">
+                                            </div>
+                                            <div class="filter-drop__item js-checkbox">
+                                                <p>Сначала дорогие</p>
+                                                <i class="fa-check"></i>
+                                                <input type="radio" name="sort" value="price_desc">
+                                            </div>
+                                            <div class="filter-drop__item js-checkbox">
+                                                <p>Начиная от центра города</p>
+                                                <i class="fa-check"></i>
+                                                <input type="radio" name="sort" value="center_asc">
+                                            </div>
+                                            <!-- <div class="filter-drop__item js-checkbox">
+                                                <p>Сначала с высокой оценкой</p>
+                                                <i class="fa-check"></i>
+                                                <input type="radio" name="sort" value="">
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filter-section-main">
+                                    <div class="filter-price-skeleton active">
+                                        <div class="filter-price-skeleton__grid">
+                                            <span></span>
+                                             <span></span>
+                                        </div>
+                                        <i></i>
+                                    </div>
+                                    <div class="filter-item js-hide-price" style="display: none;">
+                                        <p class="filter-item-title">Цена за ночь в <span>USDT</span></p>
+                                        <div class="filter-price">
+                                            <input type="text" name="price-from" inputmode="numeric" class="filter-price__input js-price-from">
+                                            <input type="text" name="price-to" inputmode="numeric" class="filter-price__input js-price-to">
+                                        </div>
+                                        <div class="filter-range filter-price__range">
+                                            <input type="text" name="price" data-step="5" class="js-price-range">
+                                        </div>
+                                    </div>
+                                    <div class="filter-item" data-id="type">
+                                        <p class="filter-item-title">Тип жилья</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox" data-set="hotel">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Отели, мебелированные команаты</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox" data-set="hostel">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Хостелы, жилые помещения</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox" data-set="apartment">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Апартаменты, квартиры</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div class="filter-item">
+                                        <p class="filter-item-title">Расстояние от центра</p>
+                                        <div class="filter-distance">
+                                            <input type="text" name="distance-input" class="js-filter-distance">
+                                            <i class="fa-close distance-remove"></i>
+                                        </div>
+                                        <div class="filter-range filter-distance-range">
+                                            <input type="text" name="distance" data-min="0.5" data-max="30" data-step="1" data-from="30" class="js-distance-range">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="filter-item">
+                                        <p class="filter-item-title">Особенности</p>
+                                        <div class="filter-subitem" id="amenity_features">
+                                            <div class="filter-item__group"></div>
+                                        </div>
+                                    </div>
+                                    <div class="filter-item">
+                                        <p class="filter-item-title">Услуги и удобства</p>
+                                        <div class="filter-subitem" id="amenity_hotel">
+                                            <p class="filter-subitem-title">В отеле</p>
+                                            <div class="filter-item__group"></div>
+                                        </div>
+                                        <div class="filter-subitem" id="amenity_rates">
+                                            <p class="filter-subitem-title">В номере</p>
+                                            <div class="filter-item__group"></div>
+                                        </div>
+                                    </div>
+                                    <!--
+                                    <div class="filter-item">
+                                        <p class="filter-item-title">Особенности</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Можно с домашними животными</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Можно с домашними животными</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Можно с домашними животными</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Можно с домашними животными</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div class="filter-item" id="start">
+                                        <p class="filter-item-title">Звёзды</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox" data-set="5">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox" data-set="4">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox" data-set="3">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox" data-set="2">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox" data-set="1">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <img src="{% static 'images/icon/star.svg' %}" alt="">
+                                                    <p>или без звёзд</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="filter-item">
+                                        <p class="filter-item-title">Районы</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Петроградский</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-more" data-title="Показать еще 10" data-hide="Скрыть">
+                                                <p>Показать еще 10</p>
+                                                <i class="fa-arrow-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="filter-item">
+                                        <p class="filter-item-title">Метро</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Чернышевская</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-more" data-title="Показать еще 15" data-hide="Скрыть">
+                                                <p>Показать еще 15</p>
+                                                <i class="fa-arrow-down"></i>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <!-- FILTER TEMP HIDDEN START: Достопримечательности
+<div class="filter-item">
+                                        <p class="filter-item-title">Достопримечательности</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Эрмитаж</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-more" data-title="Показать еще 15" data-hide="Скрыть">
+                                                <p>Показать еще 15</p>
+                                                <i class="fa-arrow-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+FILTER TEMP HIDDEN END: Достопримечательности -->
+
+                                    <div class="filter-item" id="nearby_metro">
+                                        <p class="filter-item-title">Метро</p>
+                                        <div class="filter-item__group"></div>
+                                    </div>
+                                    <div class="filter-item" id="nearby_attractions">
+                                        <p class="filter-item-title">Достопримечательности</p>
+                                        <div class="filter-item__group"></div>
+                                    </div>
+                                    <div class="filter-item">
+                                        <p class="filter-item-title">Поиск отелей</p>
+                                        <input type="text" name="title" class="filter-item__input" placeholder="Введите название">
+                                    </div>
+                                    <!-- FILTER TEMP HIDDEN START: Сеть отелей
+<div class="filter-item">
+                                        <p class="filter-item-title">Сеть отелей</p>
+                                        <div class="filter-item__group">
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check js-checkbox">
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-check hide js-checkbox" data-hide>
+                                                <div class="filter-check__icon">
+                                                    <i class="fa-check"></i>
+                                                    <input type="checkbox" name="name[]" value="">
+                                                </div>
+                                                <div class="filter-check__title">
+                                                    <p>Accor Hotels</p>
+                                                </div>
+                                            </div>
+                                            <div class="filter-more" data-title="Показать еще 15" data-hide="Скрыть">
+                                                <p>Показать еще 15</p>
+                                                <i class="fa-arrow-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+FILTER TEMP HIDDEN END: Сеть отелей -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="catalog-wrap">
+                        <div class="catalog-banner">
+                            <p class="catalog-banner__map-title show-open-map"></p>
+                            <div class="catalog-banner__content hide-open-map">
+                                <h1></h1>
+                                <p>Выбирайте отели, апартаменты и другие варианты проживания в <span class="js-region-morp"></span> <br> и оплачивайте бронирование криптовалютой через Aifory Pro. Укажите даты поездки, количество гостей и подходящий формат размещения — мы поможем подобрать удобный вариант для отдыха или деловой поездки.</p>
+                            </div>
+                            <div class="catalog-banner__nav hide-open-map">
+                                <a href="#" class="catalog-banner__date js-popup" data-popup="date">Выберите даты</a>
+                                <a href="#" class="catalog-banner__map js-open-map">
+                                    <img src="{% static 'images/icon/show-map.svg' %}" alt="">
+                                    <span>Открыть карту</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="catalog-controls table-show-flex">
+                            <div class="catalog-controls__date js-popup" data-popup="date">
+                                <p class="filter-section-title">Санкт-Петербург, Россия</p>
+                                <div class="filter-date">
+                                    <div class="filter-date__info">
+                                        <p class="filter-date__calendar">Даты не выбраны</p>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="catalog-controls__btn js-open-filter">
+                                <img src="{% static 'images/icon/filter.svg' %}" alt="">
+                            </div>
+                            <div class="catalog-controls__btn js-open-map">
+                                <img src="{% static 'images/icon/map.svg' %}" alt="">
+                            </div>
+                        </div>
+                        <div class="catalog-list"></div>
+                    </div>
+                    <div class="catalog-open">
+                        <form action="#" method="post" class="catalog-search">
+                            <input type="text" name="search" class="catalog-search__input" placeholder="Введите название">
+                            <i class="fa-close catalog-remove-search"></i> 
+                        </form>
+                        <a href="#" class="catalog-open-list js-open-list">
+                            <img src="{% static 'images/icon/list.svg' %}" alt="">
+                            <span>Открыть списком</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="map-window">
+            <div class="map">
+                <div class="catalog-controls table-show-flex">
+                    <div class="catalog-controls__date js-popup" data-popup="date">
+                        <p class="filter-section-title">Санкт-Петербург, Россия</p>
+                        <div class="filter-date">
+                            <div class="filter-date__info">
+                                <p class="filter-date__calendar">Даты не выбраны</p>    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="catalog-controls__btn js-open-filter">
+                        <img src="{% static 'images/icon/filter.svg' %}" alt="">
+                    </div>
+                    <div class="catalog-controls__btn js-open-list">
+                        <i class="fa-close"></i> 
+                    </div>
+                </div>
+                <div id="map" class="map-frame"></div>
+            </div>
+        </div>
+        <div class="popup-frame target-frame">
+			<form action="#" method="post" class="popup popup-date js-date-caralog target-box" data-popup="date">
+				<div class="popup-date__title">
+					<p>Выберите даты проживания</p>
+					<i class="fa-close js-popup-close"></i>
+				</div>
+				<div class="popup-date__group">
+					<div class="booking-search">
+						<label class="booking-search__label">
+							<span class="search-label-title">Направление</span>
+							<input class="booking-search__input" name="city" autocomplete="off" value="Москва">
+						</label>
+                        <div class="region-drop">
+								<div class="region-drop__scroll">
+									<p class="region-drop__title">Регионы</p>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Москва</p>
+										<input type="radio" checked name="region" value="2395">
+									</div>
+                                    <div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Лос Анджелес</p>
+										<input type="radio" name="region" value="2011">
+									</div>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Париж</p>
+										<input type="radio" name="region" value="2734">
+									</div>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Дубай</p>
+										<input type="radio" name="region" value="6053839">
+									</div>
+									<div class="region-drop__empty">
+										<p>Мы не знаем такое место :(</p>
+										<a href="#" class="region-drop__reset">Сбросить</a>
+									</div>
+								</div>
+							</div>
+					</div>
+					<div class="booking-date">
+                        <input type="hidden" class="booking-date__input-from" name="date_from">
+                        <input type="hidden" class="booking-date__input-to" name="date_to">
+                        <div class="booking-date__item from">
+                            <p class="search-label-title">Заезд</p>
+                            <p class="booking-date__title">8 апр. 2026 г.</p>
+                        </div>
+                        <div class="booking-date__item to">
+                            <p class="search-label-title">Выезд</p>
+                            <p class="booking-date__title">12 апр. 2026 г.</p>
+                        </div>
+                        <div class="calendar">
+                            <div class="date-month"></div>
+                            <div class="date-wrap">
+                                <div class="date-week">
+                                    <div class="day-item week">Пн</div>
+                                    <div class="day-item week">Вт</div>
+                                    <div class="day-item week">Ср</div>
+                                    <div class="day-item week">Чт</div>
+                                    <div class="day-item week">Пт</div>
+                                    <div class="day-item week">Сб</div>
+                                    <div class="day-item week">Вс</div>
+                                </div>
+                                <div class="calendar-day">
+                                    <p class="calendar-day__error">Нельзя выбрать период более 30 дней</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="booking-room">
+                        <input type="hidden" name="adults_total" class="booking-room__adults-input" value="2">
+                        <input type="hidden" name="kids_total" class="booking-room__kids-input" value="0">
+                        <div class="booking-room__active">
+                            <p class="search-label-title">1 номер для</p>
+                            <div class="booking-room__title">
+                                <p>2 гостей</p>
+                                <i class="fa-arrow-down"></i>
+                            </div>
+                        </div>
+                        <div class="place-drop">
+                            <div class="place-drop__scroll">
+                                <div class="place-item">
+                                    <p class="place-item__counter">1 номер</p>
+                                    <div class="place-item__wrap">
+                                        <div class="place-adults">
+                                            <p class="place-title">Взрослые</p>
+                                            <div class="place-adults__wrap">
+                                                <div class="place-adults__nav place-adults__minus">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="2" viewBox="0 0 11 2" fill="none"><path d="M0.75 0.75H10.0833" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                                <p class="place-adults__counter">2</p>
+                                                <div class="place-adults__nav place-adults__plus">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.75 4.75H4.75M4.75 4.75H8.75M4.75 4.75V8.75M4.75 4.75V0.75" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="place-kids">
+                                            <div class="place-kids__nav">
+                                                <p class="place-title">Дети</p>
+                                                <a href="#" class="place-remove">Удалить</a>
+                                            </div>
+                                            <div class="place-kids__list">
+                                                <div class="place-kids__add">
+                                                    <a href="#" class="place-kids__add-btn">
+                                                        <span class="place-kids__add-text">Добавить ребёнка</span>
+                                                        <span class="place-kids__add-icon">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.75 4.75H4.75M4.75 4.75H8.75M4.75 4.75V8.75M4.75 4.75V0.75" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="place-drop__nav">
+                                <a href="#" class="place-drop__add">
+                                    <img src="{% static 'images/icon/plus.svg' %}" alt="">
+                                    <span>Добавить номер</span>
+                                </a>
+                                <a href="#" class="place-drop__more">Забронировать больше</a>
+                                <a href="#" class="place-drop__btn">Готово</a>
+                            </div>
+                        </div>
+                    </div>
+					<label class="booking-sub">
+						<span>Найти</span>
+						<input type="submit">
+					</label>
+				</div>
+			</form>
+		</div>
+	</main>
+	<footer class="footer">
+		<div class="section-frame">
+			<div class="footer-frame">
+				<div class="footer-content">
+					<div class="footer-nav">
+						<a href="#" class="footer-logo">
+							<img src="{% static 'images/footer-logo.svg' %}" alt="">
+						</a>
+						<ul class="footer-nav__list">
+							<li class="active" data-menu="1">Обмен криптовалюты</li>
+							<li data-menu="2">Виртуальные карты</li>
+							<li data-menu="1">Оплата онлайн</li>
+							<li data-menu="2">Безналичные операции</li>
+						</ul>
+					</div>
+					<ul class="footer-menu active" data-menu="1">
+						<li>
+							<a href="#" class="footer-menu__drop">Покупка крипты с карты <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="footer-menu" data-menu="2">
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="footer-info">
+					<div class="footer-promo">
+						<p class="footer-promo__title">Получайте новые бонусы быстрее всех</p>
+						<a href="#" class="footer-promo__btn" target="_blank">
+							<img src="{% static 'images/icon/footer-tg.svg' %}" alt="">
+							<span>@Aifory_Pro</span>
+						</a>
+					</div>
+					<a href="#" class="footer-wellcrypto mob-hide">
+						<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<div class="footer-wrap">
+				<div class="footer-wrap-content">
+					<div class="footer-contact">
+						<a href="#" class="footer-wellcrypto mob-show">
+							<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+						</a>
+						<a href="mailto:support@aifory.pro" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-email.svg' %}" alt="">
+							<span>support@aifory.pro</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="#" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-tg-white.svg' %}" alt="">
+							<span>@AiforyPro_Management</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="tel:+79187160760" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-phone.svg' %}" alt="">
+							<span>+7 (918) 716 07 60</span>
+						</a>
+					</div>
+				</div>
+				<div class="footer-social">
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/vk.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/yt.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/inst.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<ul class="footer-copy">
+				<li><a href="#">Политика конфиденциальности</a></li>
+				<li><a href="#">Cookie</a></li>
+				<li><a href="#">Условия пользования</a></li>
+				<li><a href="#">AML</a></li>
+				<li><a href="#">KYB</a></li>
+			</ul>
+		</div>
+	</footer>
+	
+
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+	<script src="{% static 'js/sweetalert.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="{% static 'js/range.js' %}?ver=5"></script>    
+	<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script type="module" src="{% static 'js/map.js' %}?ver=5"></script>
+    <script src="{% static 'js/calendar.js' %}"></script>
+	<script src="{% static 'js/core.js' %}?ver=5"></script>
+	<script src="{% static 'js/common.js' %}?ver=10"></script>
+	<script src="{% static 'js/hotel-search-form.js' %}?ver=2"></script>
+	<script src="{% static 'js/hotel-catalog-render.js' %}?ver=5"></script>
+	<script src="{% static 'js/hotel-search.js' %}?ver=5"></script>
+</body>
+</html>

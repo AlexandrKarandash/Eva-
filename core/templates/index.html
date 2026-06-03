@@ -1,0 +1,1022 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru"> 
+<head>
+	<meta charset="UTF-8">
+	<title>Aifory Pro</title>
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+	<!-- Open Graph -->
+	<meta property="og:title" content="Aifory Pro"/>
+    <meta property="og:description" content="Бронирование отелей с Aifory.Pro"/>
+	<meta property="og:url" content="https://siteurl.ru"/>
+	<meta property="og:image" content="{% static 'images/logo.svg' %}"/>
+	<!-- End Open Graph -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+	<link rel="stylesheet" href="{% static 'style/main.css' %}">
+	<link rel="stylesheet" href="{% static 'style/change.css' %}"> <!-- Файл для правок без scss -->
+</head>
+<body class="load">
+	<header class="header">
+		<div class="section-frame">
+			<div class="header-frame">
+				<a href="#" class="logo">
+					<img src="{% static 'images/logo.svg' %}" alt="">
+				</a>
+				<div class="header-wrap">
+					<nav class="header-menu">
+						<ul>
+							<li><a href="#" class="js-open-menu" data-menu="1">Обмен криптовалюты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="2">Виртуальные карты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="3">Оплата онлайн</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="4">Безналичные операции</a></li>
+						</ul>
+					</nav>
+					<div class="header-btn">
+						<a href="#" class="header-create mob-hide">Создать кошелёк</a>
+						<div class="lang">
+							<p class="lang-active">RU</p>
+							<div class="lang-drop">
+								<a href="#" class="lang-drop-item active">
+									<img src="{% static 'images/flag/RU.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">RU</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+								<a href="#" class="lang-drop-item">
+									<img src="{% static 'images/flag/GB.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">EN</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+							</div>
+						</div>
+						<a href="#" class="header-user mob-hide">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.38 2 7.25 4.13 7.25 6.75C7.25 9.32 9.26 11.4 11.88 11.49C11.96 11.48 12.04 11.48 12.1 11.49C12.12 11.49 12.13 11.49 12.15 11.49C12.16 11.49 12.16 11.49 12.17 11.49C14.73 11.4 16.74 9.32 16.75 6.75C16.75 4.13 14.62 2 12 2Z" fill="#8B5CF6"/><path opacity="0.4" d="M17.08 14.16C14.29 12.3 9.73996 12.3 6.92996 14.16C5.65996 15 4.95996 16.15 4.95996 17.38C4.95996 18.61 5.65996 19.75 6.91996 20.59C8.31996 21.53 10.16 22 12 22C13.84 22 15.68 21.53 17.08 20.59C18.34 19.74 19.04 18.6 19.04 17.36C19.03 16.14 18.34 14.99 17.08 14.16Z" fill="#8B5CF6"/></svg>
+						</a>
+						<div class="burger table-show-flex">
+							<img src="{% static 'images/icon/burger.svg' %}" alt="">
+						</div>
+					</div>
+				</div>
+				<div class="header-popup">
+					<div class="header-popup__item" data-menu="1">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Наличный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">RUB → USDT TRC20</a></li>
+									<li><a href="#">USDT TRC20 → RUB</a></li>
+									<li><a href="#">RUB → BTC</a></li>
+									<li><a href="#">BTC → RUB</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Безналичный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">BTC → USDT</a></li>
+									<li><a href="#">USDT → USDT</a></li>
+									<li><a href="#">USDT → ETH</a></li>
+									<li><a href="#">ETH → USDT</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<a href="#" class="header-popup__link-title">Премиальный обмен</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="2">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Apple Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Google Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для подписок</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">ChatGPT</a></li>
+									<li><a href="#">Cursor AI</a></li>
+									<li><a href="#">Spotify</a></li>
+									<li><a href="#">Netflix</a></li>
+									<li><a href="#">Figma</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для рекламы</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Google Ads</a></li>
+									<li><a href="#">Facebook Ads</a></li>
+									<li><a href="#">Tik Tok Ads</a></li>
+									<li><a href="#">OpenRouter</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="3">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Steam</a></li>
+									<li><a href="#">Spotify</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Telegram Stars</a></li>
+									<li><a href="#">Telegram Premium</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">PlayStation Network</a></li>
+									<li><a href="#">Xbox</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Roblox</a></li>
+									<li><a href="#">Mobile Legends: bang bang</a></li>
+								</ul>
+								<a href="#" class="mob-menu__services">
+									<span>Все сервисы</span>
+									<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="4">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Покупка  крипты с карты</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Вывод крипты на карту</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Возможности</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Оплата в магазинах (QR)</a></li>
+									<li><a href="#">Оплата мобильной связи криптой</a></li>
+									<li><a href="#" class="un-active">Бронирование отелей (скоро)</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mob-menu">
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Обмен криптовалюты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Наличный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">RUB → USDT TRC20</a>
+							<a href="#" class="mob-menu__link">USDT TRC20 → RUB</a>
+							<a href="#" class="mob-menu__link">RUB → BTC</a>
+							<a href="#" class="mob-menu__link">BTC → RUB</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Безналичный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">BTC → USDT</a>
+							<a href="#" class="mob-menu__link">USDT  → USDT</a>
+							<a href="#" class="mob-menu__link">USDT → ETH</a>
+							<a href="#" class="mob-menu__link">ETH → USDT</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__title">Премиальный обмен</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Вирутальные карты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Apple Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Google Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для подписок</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">ChatGPT</a>
+							<a href="#" class="mob-menu__link">Cursor AI</a>
+							<a href="#" class="mob-menu__link">Spotify</a>
+							<a href="#" class="mob-menu__link">Netflix</a>
+							<a href="#" class="mob-menu__link">Figma</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для рекламы</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Google Ads</a>
+							<a href="#" class="mob-menu__link">Facebook Ads</a>
+							<a href="#" class="mob-menu__link">Tik Tok Ads</a>
+							<a href="#" class="mob-menu__link">OpenRouter</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Оплата онлайн</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__link">Steam</a>
+						<a href="#" class="mob-menu__link">Spotify</a>
+						<a href="#" class="mob-menu__link">Telegram Stars</a>
+						<a href="#" class="mob-menu__link">Telegram Premium</a>
+						<a href="#" class="mob-menu__link">PlayStation Network</a>
+						<a href="#" class="mob-menu__link">Xbox</a>
+						<a href="#" class="mob-menu__link">Roblox</a>
+						<a href="#" class="mob-menu__link">Mobile Legends: bang bang</a>
+						<a href="#" class="mob-menu__services">
+							<span>Все сервисы</span>
+							<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Безналичные операции</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Покупка  крипты с карты</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Вывод крипты на карту</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Возможности</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Оплата в магазинах (QR)</a>
+							<a href="#" class="mob-menu__link">Оплата мобильной связи криптой</a>
+							<a href="#" class="mob-menu__link un-acitve">Бронирование отелей (скоро)</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<main>
+		<div class="banner">
+			<div class="section-frame">
+				<div class="banner-wrap">
+					<div class="banner-content">
+						<h1 class="banner-title">Бронирование отелей с&nbsp;Aifory.Pro</h1>
+						<div class="banner-info">
+							<p>Оплачивайте проживание в отелях по всему миру с помощью криптовалюты. <a href="#" target="_blank">Aifory.Pro</a> помогает быстро забронировать номер, обойти ограничения российских карт и комфортно планировать поездки за границу.</p>
+						</div>
+					</div>
+					<img src="{% static 'images/banner-photo.png' %}" class="banner-photo" alt="">
+				</div>
+			</div>
+		</div>
+		<div class="booking">
+			<div class="section-frame">
+				<form action="#" method="post" class="booking-form">
+					<div class="booking-group">
+						<div class="booking-search">
+							<label class="booking-search__label">
+								<span class="search-label-title">Направление</span>
+								<input class="booking-search__input" name="city" autocomplete="off" value="Москва">
+							</label>
+							<div class="region-drop">
+								<div class="region-drop__scroll">
+									<p class="region-drop__title">Регионы</p>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Москва</p>
+										<input type="radio" checked name="region" value="2395">
+									</div>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Лос Анджелес</p>
+										<input type="radio" name="region" value="2011">
+									</div>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Париж</p>
+										<input type="radio" name="region" value="2734">
+									</div>
+									<div class="region-drop__item">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+										<p class="region-drop__item-title">Дубай</p>
+										<input type="radio" name="region" value="6053839">
+									</div>
+									<div class="region-drop__empty">
+										<p>Мы не знаем такое место :(</p>
+										<a href="#" class="region-drop__reset">Сбросить</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="booking-date">
+							<input type="hidden" class="booking-date__input-from" name="date_from">
+							<input type="hidden" class="booking-date__input-to" name="date_to">
+							<div class="booking-date__item from">
+								<p class="search-label-title">Заезд</p>
+								<p class="booking-date__title">8 апр. 2026 г.</p>
+							</div>
+							<div class="booking-date__item to">
+								<p class="search-label-title">Выезд</p>
+								<p class="booking-date__title">12 апр. 2026 г.</p>
+							</div>
+							<div class="calendar">
+								<div class="date-month"></div>
+								<div class="date-wrap">
+									<div class="date-week">
+										<div class="day-item week">Пн</div>
+										<div class="day-item week">Вт</div>
+										<div class="day-item week">Ср</div>
+										<div class="day-item week">Чт</div>
+										<div class="day-item week">Пт</div>
+										<div class="day-item week">Сб</div>
+										<div class="day-item week">Вс</div>
+									</div>
+									<div class="calendar-day">
+										<p class="calendar-day__error">Нельзя выбрать период более 30 дней</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="booking-room">
+							<input type="hidden" name="adults_total" class="booking-room__adults-input" value="2">
+							<input type="hidden" name="kids_total" class="booking-room__kids-input" value="0">
+							<div class="booking-room__active">
+								<p class="search-label-title">1 номер для</p>
+								<div class="booking-room__title">
+									<p>2 гостей</p>
+									<i class="fa-arrow-down"></i>
+								</div>
+							</div>
+							<div class="place-drop">
+								<div class="place-drop__scroll">
+									<div class="place-item">
+										<p class="place-item__counter">1 номер</p>
+										<div class="place-item__wrap">
+											<div class="place-adults">
+												<p class="place-title">Взрослые</p>
+												<div class="place-adults__wrap">
+													<div class="place-adults__nav place-adults__minus">
+														<svg xmlns="http://www.w3.org/2000/svg" width="11" height="2" viewBox="0 0 11 2" fill="none"><path d="M0.75 0.75H10.0833" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+													</div>
+													<p class="place-adults__counter">2</p>
+													<div class="place-adults__nav place-adults__plus">
+														<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.75 4.75H4.75M4.75 4.75H8.75M4.75 4.75V8.75M4.75 4.75V0.75" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+													</div>
+												</div>
+											</div>
+											<div class="place-kids">
+												<div class="place-kids__nav">
+													<p class="place-title">Дети</p>
+													<a href="#" class="place-remove">Удалить</a>
+												</div>
+												<div class="place-kids__list">
+													<div class="place-kids__add">
+														<a href="#" class="place-kids__add-btn">
+															<span class="place-kids__add-text">Добавить ребёнка</span>
+															<span class="place-kids__add-icon">
+																<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.75 4.75H4.75M4.75 4.75H8.75M4.75 4.75V8.75M4.75 4.75V0.75" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+															</span>
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="place-drop__nav">
+									<a href="#" class="place-drop__add">
+										<img src="{% static 'images/icon/plus.svg' %}" alt="">
+										<span>Добавить номер</span>
+									</a>
+									<a href="#" class="place-drop__more">Забронировать больше</a>
+									<a href="#" class="place-drop__btn">Готово</a>
+								</div>
+							</div>
+						</div>
+						<label class="booking-sub">
+							<span>Найти</span>
+							<input type="submit">
+						</label>
+					</div>
+					<div class="booking-toggle">
+						<div class="booking-check js-toggle-checkbox js-checkbox">
+							<input type="checkbox" name="flat" value="true">
+							<div class="booking-check__icon">
+								<img src="{% static 'images/icon/check.svg' %}" alt="">
+							</div>
+							<p class="booking-check__title">Только квартиры</p>
+						</div>
+						<!-- <div class="booking-check active js-toggle-radio js-checkbox" data-radio="target">
+							<input type="radio" name="target" value="Отдых">
+							<div class="booking-check__icon">
+								<img src="{% static 'images/icon/check.svg' %}" alt="">
+							</div>
+							<p class="booking-check__title">Отдых</p>
+						</div>
+						<div class="booking-check js-toggle-radio js-checkbox" data-radio="target">
+							<input type="radio" name="target" value="Работа">
+							<div class="booking-check__icon">
+								<img src="{% static 'images/icon/check.svg' %}" alt="">
+							</div>
+							<p class="booking-check__title">Работа</p>
+						</div> -->
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="popular">
+			<div class="section-frame">
+				<h2 class="page-title">Популярные направления по Росии</h2>
+				<div class="popular-list">
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/1/popular-1.jpg' %}" class="popular-item__preview" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Санкт-Петербург</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/1/popular-2.jpg' %}" class="popular-item__preview" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Москва</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/1/popular-3.jpg' %}" class="popular-item__preview" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Калининград</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/1/popular-4.jpg' %}" class="popular-item__preview" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Ялта</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/1/popular-5.jpg' %}" class="popular-item__preview" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Сочи</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/1/popular-6.jpg' %}" class="popular-item__preview" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Нижний новгород</a>
+							 
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="popular">
+			<div class="section-frame">
+				<h2 class="page-title">Популярные направления по странам</h2>
+				<div class="popular-list popular-list_4">
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-1.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/FR.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Франция</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-2.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/TR.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Турция</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-3.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/ID.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Индонезия</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-4.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/TH.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Тайланд</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-5.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/US.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">США</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-6.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/CA.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Канада</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-7.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/GB.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Германия</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/2/popular-8.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/GB.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Англия</a>
+							 
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="popular">
+			<div class="section-frame">
+				<h2 class="page-title">Популярные направления для путешествий</h2>
+				<div class="popular-list popular-list_4">
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-1.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/FR.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Париж</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-2.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/RU.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Москва</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-3.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/RU.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Санкт-Петербург</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-4.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/BY.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Минск</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-5.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/FR.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Ницца</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-6.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/ID.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Бали</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-7.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/GB.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Лондон</a>
+							 
+						</div>
+					</div>
+					<div class="popular-item">
+						<a href="#" class="popular-item__photo">
+							<img src="{% static 'images/popular/3/popular-8.jpg' %}" class="popular-item__preview" alt="">
+							<img src="{% static 'images/flag/GB.svg' %}" class="popular-item__flag" alt="">
+						</a>
+						<div class="popular-item__content">
+							<a href="#" class="popular-item__title">Нью-Йорк</a>
+							 
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="advantages">
+			<div class="section-frame">
+				<h2 class="page-title">Преимущества бронирования отелей через AiforyPro</h2>
+				<div class="advantages-list">
+					<div class="advantages-item">
+						<div class="advantages-item__title">
+							<img src="{% static 'images/icon/advantages-1.svg' %}" alt="">
+							<p>Оплата криптой</p>
+						</div>
+						<p class="advantages-item__info">Бронируйте отели и оплачивайте проживание криптовалютой — <br> удобно, быстро и без привязки к <br> банковским картам.</p>
+					</div>
+					<div class="advantages-item">
+						<div class="advantages-item__title">
+							<img src="{% static 'images/icon/advantages-2.svg' %}" alt="">
+							<p>Отели по всему миру</p>
+						</div>
+						<p class="advantages-item__info">Выбирайте жильё для поездок за границу: от городских апартаментов <br> до отелей для отдыха и деловых <br> поездок.</p>
+					</div>
+					<div class="advantages-item">
+						<div class="advantages-item__title">
+							<img src="{% static 'images/icon/advantages-3.svg' %}" alt="">
+							<p>Поддержка 24/7</p>
+						</div>
+						<p class="advantages-item__info">Поможем с оплатой, бронированием и&nbsp;вопросами по поездке на каждом <br> этапе — от выбора отеля до <br> заселения.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="faq">
+			<div class="section-frame">
+				<div class="faq-wrap">
+					<h2 class="faq-title">Ответы на вопросы</h2>
+					<div class="faq-list">
+						<div class="faq-item">
+							<div class="faq-item__header">
+								<p class="faq-item__title">Как найти подходящий мне отель или апартаменты?</p>
+								<img src="{% static 'images/icon/faq-arrow.svg' %}" class="faq-item__arrow" alt="">
+							</div>
+							<div class="faq-item__body">
+								<p>Вы можете выбрать направление, даты поездки, количество гостей и желаемый формат проживания. Если нужна помощь, команда Aifory Pro подберёт варианты под ваш бюджет, расположение и требования к отелю или апартаментам.</p>
+							</div>
+						</div>
+						<div class="faq-item">
+							<div class="faq-item__header">
+								<p class="faq-item__title">Как получить подтверждение бронирования?</p>
+								<img src="{% static 'images/icon/faq-arrow.svg' %}" class="faq-item__arrow" alt="">
+							</div>
+							<div class="faq-item__body">
+								<p>После оплаты мы отправим вам подтверждение бронирования на указанный контакт: номер брони, данные объекта размещения, даты проживания и условия заселения. Подтверждение можно показать на ресепшене при заезде.</p>
+							</div>
+						</div>
+						<div class="faq-item">
+							<div class="faq-item__header">
+								<p class="faq-item__title">Как оплатить бронирование?</p>
+								<img src="{% static 'images/icon/faq-arrow.svg' %}" class="faq-item__arrow" alt="">
+							</div>
+							<div class="faq-item__body">
+								<p>Бронирование можно оплатить криптовалютой через Aifory Pro. После согласования отеля и стоимости вы получите реквизиты для оплаты. Как только платёж будет подтверждён, мы оформим бронирование и отправим вам подтверждение.</p>
+							</div>
+						</div>
+						<div class="faq-item">
+							<div class="faq-item__header">
+								<p class="faq-item__title">Как отменить бронирование?</p>
+								<img src="{% static 'images/icon/faq-arrow.svg' %}" class="faq-item__arrow" alt="">
+							</div>
+							<div class="faq-item__body">
+								<p>Отмена зависит от условий выбранного тарифа. Некоторые бронирования можно отменить бесплатно до определённой даты, другие могут быть невозвратными. Напишите в поддержку Aifory Pro — мы проверим условия и подскажем возможные варианты.</p>
+							</div>
+						</div>
+						<div class="faq-item">
+							<div class="faq-item__header">
+								<p class="faq-item__title">Как изменить бронирование?</p>
+								<img src="{% static 'images/icon/faq-arrow.svg' %}" class="faq-item__arrow" alt="">
+							</div>
+							<div class="faq-item__body">
+								<p>Для изменения дат, количества гостей, типа номера или других параметров напишите в поддержку Aifory Pro. Мы проверим возможность изменения у объекта размещения и сообщим, потребуется ли доплата.</p>
+							</div>
+						</div>
+						<div class="faq-item">
+							<div class="faq-item__header">
+								<p class="faq-item__title">Как оставить отзыв?</p>
+								<img src="{% static 'images/icon/faq-arrow.svg' %}" class="faq-item__arrow" alt="">
+							</div>
+							<div class="faq-item__body">
+								<p>После завершения поездки вы можете оставить отзыв о бронировании, отеле и работе сервиса Aifory Pro. Обратная связь помогает нам улучшать сервис и подбирать для клиентов более качественные варианты размещения.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="popup-frame target-frame">
+			<form action="#" method="post" class="popup popup-date target-box" data-popup="date">
+				<div class="popup-date__title">
+					<p>Выберите даты проживания</p>
+					<i class="fa-close js-popup-close"></i>
+				</div>
+				<div class="popup-date__group">
+					<div class="booking-search">
+						<label class="booking-search__label">
+							<span class="search-label-title">Направление</span>
+							<input class="booking-search__input" name="city" autocomplete="off" value="Москва">
+						</label>
+					</div>
+					<div class="booking-date">
+						<div class="booking-date__item">
+							<p class="search-label-title">Заезд</p>
+							<p class="booking-date__title">8 апр. 2026 г.</p>
+						</div>
+						<div class="booking-date__item">
+							<p class="search-label-title">Выезд</p>
+							<p class="booking-date__title">12 апр. 2026 г.</p>
+						</div>
+					</div>
+					<div class="booking-room">
+						<div class="booking-room__active">
+							<p class="search-label-title">1 номер для</p>
+							<div class="booking-room__title">
+								<p>2 гостей</p>
+								<i class="fa-arrow-down"></i>
+							</div>
+						</div>
+					</div>
+					<label class="booking-sub">
+						<span>Найти</span>
+						<input type="submit">
+					</label>
+				</div>
+			</form>
+		</div>
+	</main>
+	<footer class="footer">
+		<div class="section-frame">
+			<div class="footer-frame">
+				<div class="footer-content">
+					<div class="footer-nav">
+						<a href="#" class="footer-logo">
+							<img src="{% static 'images/footer-logo.svg' %}" alt="">
+						</a>
+						<ul class="footer-nav__list">
+							<li class="active" data-menu="1">Обмен криптовалюты</li>
+							<li data-menu="2">Виртуальные карты</li>
+							<li data-menu="1">Оплата онлайн</li>
+							<li data-menu="2">Безналичные операции</li>
+						</ul>
+					</div>
+					<ul class="footer-menu active" data-menu="1">
+						<li>
+							<a href="#" class="footer-menu__drop">Покупка крипты с карты <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="footer-menu" data-menu="2">
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="footer-info">
+					<div class="footer-promo">
+						<p class="footer-promo__title">Получайте новые бонусы быстрее всех</p>
+						<a href="#" class="footer-promo__btn" target="_blank">
+							<img src="{% static 'images/icon/footer-tg.svg' %}" alt="">
+							<span>@Aifory_Pro</span>
+						</a>
+					</div>
+					<a href="#" class="footer-wellcrypto mob-hide">
+						<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<div class="footer-wrap">
+				<div class="footer-wrap-content">
+					<div class="footer-contact">
+						<a href="#" class="footer-wellcrypto mob-show">
+							<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+						</a>
+						<a href="mailto:support@aifory.pro" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-email.svg' %}" alt="">
+							<span>support@aifory.pro</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="#" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-tg-white.svg' %}" alt="">
+							<span>@AiforyPro_Management</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="tel:+79187160760" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-phone.svg' %}" alt="">
+							<span>+7 (918) 716 07 60</span>
+						</a>
+					</div>
+				</div>
+				<div class="footer-social">
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/vk.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/yt.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/inst.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<ul class="footer-copy">
+				<li><a href="#">Политика конфиденциальности</a></li>
+				<li><a href="#">Cookie</a></li>
+				<li><a href="#">Условия пользования</a></li>
+				<li><a href="#">AML</a></li>
+				<li><a href="#">KYB</a></li>
+			</ul>
+		</div>
+	</footer>
+	
+
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+	<script src="{% static 'js/sweetalert.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="{% static 'js/calendar.js' %}"></script>
+	<script src="{% static 'js/core.js' %}?ver=5"></script>
+	<script src="{% static 'js/common.js' %}?ver=10"></script>
+	<script src="{% static 'js/hotel-search-form.js' %}?ver=2"></script>
+	<script src="{% static 'js/hotel-catalog-render.js' %}?ver=2"></script>
+	<script src="{% static 'js/hotel-search.js' %}?ver=2"></script>
+</body>
+</html>

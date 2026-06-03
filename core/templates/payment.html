@@ -1,0 +1,598 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru"> 
+<head>
+	<meta charset="UTF-8">
+	<title>Оплата</title>
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+	<!-- Open Graph -->
+	<meta property="og:title" content="Aifory Pro"/>
+    <meta property="og:description" content="Бронирование отелей с Aifory.Pro"/>
+	<meta property="og:url" content="https://siteurl.ru"/>
+	<meta property="og:image" content="images/logo.svg"/>
+	<!-- End Open Graph -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+	<link rel="stylesheet" href="{% static 'style/main.css' %}">
+	<link rel="stylesheet" href="{% static 'style/change.css' %}"> <!-- Файл для правок без scss -->
+</head>
+<body class="load">
+	<header class="header">
+		<div class="section-frame">
+			<div class="header-frame">
+				<a href="/" class="logo">
+					<img src="{% static 'images/logo.svg' %}" alt="">
+				</a>
+				<div class="header-wrap">
+					<nav class="header-menu">
+						<ul>
+							<li><a href="#" class="js-open-menu" data-menu="1">Обмен криптовалюты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="2">Виртуальные карты</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="3">Оплата онлайн</a></li>
+							<li><a href="#" class="js-open-menu" data-menu="4">Безналичные операции</a></li>
+						</ul>
+					</nav>
+					<div class="header-btn">
+						<a href="#" class="header-create mob-hide">Создать кошелёк</a>
+						<div class="lang">
+							<p class="lang-active">RU</p>
+							<div class="lang-drop">
+								<a href="#" class="lang-drop-item active">
+									<img src="{% static 'images/flag/RU.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">RU</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+								<a href="#" class="lang-drop-item">
+									<img src="{% static 'images/flag/GB.svg' %}" class="lang-drop__flag" alt="">
+									<span class="lang-drop__title">EN</span>
+									<img src="{% static 'images/icon/lang-check.svg' %}" class="lang-drop__check" alt="">
+								</a>
+							</div>
+						</div>
+						<a href="#" class="header-user mob-hide">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.38 2 7.25 4.13 7.25 6.75C7.25 9.32 9.26 11.4 11.88 11.49C11.96 11.48 12.04 11.48 12.1 11.49C12.12 11.49 12.13 11.49 12.15 11.49C12.16 11.49 12.16 11.49 12.17 11.49C14.73 11.4 16.74 9.32 16.75 6.75C16.75 4.13 14.62 2 12 2Z" fill="#8B5CF6"/><path opacity="0.4" d="M17.08 14.16C14.29 12.3 9.73996 12.3 6.92996 14.16C5.65996 15 4.95996 16.15 4.95996 17.38C4.95996 18.61 5.65996 19.75 6.91996 20.59C8.31996 21.53 10.16 22 12 22C13.84 22 15.68 21.53 17.08 20.59C18.34 19.74 19.04 18.6 19.04 17.36C19.03 16.14 18.34 14.99 17.08 14.16Z" fill="#8B5CF6"/></svg>
+						</a>
+						<div class="burger table-show-flex">
+							<img src="{% static 'images/icon/burger.svg' %}" alt="">
+						</div>
+					</div>
+				</div>
+				<div class="header-popup">
+					<div class="header-popup__item" data-menu="1">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Наличный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">RUB → USDT TRC20</a></li>
+									<li><a href="#">USDT TRC20 → RUB</a></li>
+									<li><a href="#">RUB → BTC</a></li>
+									<li><a href="#">BTC → RUB</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Безналичный обмен</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">BTC → USDT</a></li>
+									<li><a href="#">USDT → USDT</a></li>
+									<li><a href="#">USDT → ETH</a></li>
+									<li><a href="#">ETH → USDT</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<a href="#" class="header-popup__link-title">Премиальный обмен</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="2">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Apple Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Google Pay</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Apple</a></li>
+									<li><a href="#">Booking</a></li>
+									<li><a href="#">Uber</a></li>
+									<li><a href="#">Airbnb</a></li>
+									<li><a href="#">Trip.com</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для подписок</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">ChatGPT</a></li>
+									<li><a href="#">Cursor AI</a></li>
+									<li><a href="#">Spotify</a></li>
+									<li><a href="#">Netflix</a></li>
+									<li><a href="#">Figma</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Карта для рекламы</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Google Ads</a></li>
+									<li><a href="#">Facebook Ads</a></li>
+									<li><a href="#">Tik Tok Ads</a></li>
+									<li><a href="#">OpenRouter</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="3">
+						<div class="header-popup__grid header-popup__grid_4">
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Steam</a></li>
+									<li><a href="#">Spotify</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Telegram Stars</a></li>
+									<li><a href="#">Telegram Premium</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">PlayStation Network</a></li>
+									<li><a href="#">Xbox</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<ul class="header-popup__link-list">
+									<li><a href="#">Roblox</a></li>
+									<li><a href="#">Mobile Legends: bang bang</a></li>
+								</ul>
+								<a href="#" class="mob-menu__services">
+									<span>Все сервисы</span>
+									<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="header-popup__item" data-menu="4">
+						<div class="header-popup__grid">
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Покупка  крипты с карты</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Вывод крипты на карту</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Сбербанк</a></li>
+									<li><a href="#">ТБанк</a></li>
+									<li><a href="#">Альфабанк</a></li>
+									<li><a href="#">И другие</a></li>
+								</ul>
+							</div>
+							<div class="header-popup__link">
+								<p class="header-popup__link-title">Возможности</p>
+								<ul class="header-popup__link-list">
+									<li><a href="#">Оплата в магазинах (QR)</a></li>
+									<li><a href="#">Оплата мобильной связи криптой</a></li>
+									<li><a href="#" class="un-active">Бронирование отелей (скоро)</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mob-menu">
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Обмен криптовалюты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Наличный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">RUB → USDT TRC20</a>
+							<a href="#" class="mob-menu__link">USDT TRC20 → RUB</a>
+							<a href="#" class="mob-menu__link">RUB → BTC</a>
+							<a href="#" class="mob-menu__link">BTC → RUB</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Безналичный обмен</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">BTC → USDT</a>
+							<a href="#" class="mob-menu__link">USDT  → USDT</a>
+							<a href="#" class="mob-menu__link">USDT → ETH</a>
+							<a href="#" class="mob-menu__link">ETH → USDT</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__title">Премиальный обмен</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Вирутальные карты</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Apple Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Google Pay</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Apple</a>
+							<a href="#" class="mob-menu__link">Booking</a>
+							<a href="#" class="mob-menu__link">Uber</a>
+							<a href="#" class="mob-menu__link">Airbnb</a>
+							<a href="#" class="mob-menu__link">Trip.com</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для подписок</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">ChatGPT</a>
+							<a href="#" class="mob-menu__link">Cursor AI</a>
+							<a href="#" class="mob-menu__link">Spotify</a>
+							<a href="#" class="mob-menu__link">Netflix</a>
+							<a href="#" class="mob-menu__link">Figma</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Карта для рекламы</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Google Ads</a>
+							<a href="#" class="mob-menu__link">Facebook Ads</a>
+							<a href="#" class="mob-menu__link">Tik Tok Ads</a>
+							<a href="#" class="mob-menu__link">OpenRouter</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Оплата онлайн</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<a href="#" class="mob-menu__link">Steam</a>
+						<a href="#" class="mob-menu__link">Spotify</a>
+						<a href="#" class="mob-menu__link">Telegram Stars</a>
+						<a href="#" class="mob-menu__link">Telegram Premium</a>
+						<a href="#" class="mob-menu__link">PlayStation Network</a>
+						<a href="#" class="mob-menu__link">Xbox</a>
+						<a href="#" class="mob-menu__link">Roblox</a>
+						<a href="#" class="mob-menu__link">Mobile Legends: bang bang</a>
+						<a href="#" class="mob-menu__services">
+							<span>Все сервисы</span>
+							<img src="{% static 'images/icon/services-arrow.svg' %}" alt="">
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="mob-menu__item">
+				<div class="mob-menu__title color js-link-parent">
+					<p>Безналичные операции</p>
+					<i class="fa-arrow-down"></i>
+				</div>
+				<div class="mob-menu__content js-list-parent">
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Покупка  крипты с карты</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Вывод крипты на карту</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Сбербанк</a>
+							<a href="#" class="mob-menu__link">ТБанк</a>
+							<a href="#" class="mob-menu__link">Альфабанк</a>
+							<a href="#" class="mob-menu__link">И другие</a>
+						</div>
+					</div>
+					<div class="mob-menu__section">
+						<div class="mob-menu__title js-link-drop">
+							<p>Возможности</p>
+							<i class="fa-arrow-down"></i>
+						</div>
+						<div class="mob-menu__children js-list-drop">
+							<a href="#" class="mob-menu__link">Оплата в магазинах (QR)</a>
+							<a href="#" class="mob-menu__link">Оплата мобильной связи криптой</a>
+							<a href="#" class="mob-menu__link un-acitve">Бронирование отелей (скоро)</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<main>
+        <div class="payment">
+            <div class="section-frame">
+                <div class="payment-wrap-title">
+                    <div class="payment-title">
+                        <h1>Заказ № <span></span></h1>
+                        <img src="{% static 'images/icon/copy.svg' %}" class="payment-copy" data-copy="5320" alt="">
+                        <p class="payment-shape">Номер заказа скопирован</p>
+                    </div>
+                    <a href="/" class="payment-new-search mob-hide">
+                        <span>Перейти к новому поиску</span>
+                        <i class="fa-arrow-next"></i>
+                    </a>
+                </div>
+                <div class="payment-wrap flex-start">
+                    <div class="payment-wrap-item js-payment-info hide">
+                        <p class="payment-info-title">Информация по заказу</p>
+                        <div class="payment-list">
+                            <div class="payment-item">
+                                <p class="payment-item__title">Отель Four Seasons Lion Palace St. Petersburg</p>
+                                <p class="payment-item__info">Заезд: <b>28 апр 2026, сб</b> <span>с 15:00</span></p>
+                                <p class="payment-item__info">Выезд: <b>30 апр 2026, вс</b> <span>до 13:00</span></p>
+                            </div>
+                             <div class="payment-item">
+                                <p class="payment-item__title">Террасса Кинг с центральным видом на Исаакиевский собор</p>
+                                <p class="payment-item__info">Тип питания: <b>Без питания</b></p>
+                                <p class="payment-item__info">Тип кровати: <b>Двуспальная кровать</b></p>
+                            </div>
+                             <div class="payment-item">
+                                <p class="payment-item__info">Проживающие:</p>
+                                <p class="payment-item__person">Иван Иванов, Анна Иванова</p>
+                            </div>
+                        </div>
+                    </div>
+					<form method="post" class="payment-wrap-item js-payment-form">
+						<!-- <div class="payment-form__item">
+							<p class="payment-form__item-title">Гость 1</p>
+							<label class="payment-form__label">
+								<span class="payment-form__label-title">ФИО</span>
+								<input type="text" name="name-1" class="payment-form__input" placeholder="Иванов Иван Иванович" required>
+							</label>
+							<div class="payment-form__double">
+								<span class="payment-form__label-title">Паспортные данные</span>
+								<div class="payment-form__double-wrap">
+									<input type="text" name="name-1" class="payment-form__input" placeholder="Серия паспорта" required>
+									<input type="text" name="name-1" class="payment-form__input" placeholder="Номер паспорта" required>
+								</div>
+							</div>
+							<label class="payment-form__label">
+								<span class="payment-form__label-title">Номер телефона</span>
+								<input type="text" name="name-1" class="payment-form__input input-mask" placeholder="Иванов Иван Иванович" required>
+							</label>
+							<label class="payment-form__label">
+								<span class="payment-form__label-title">Почта</span>
+								<input type="email" name="email" class="payment-form__input" placeholder="Иванов Иван Иванович" required>
+							</label>
+						</div>
+						<div class="payment-form__item">
+							<p class="payment-form__item-title">Гость 2</p>
+							<label class="payment-form__label">
+								<span class="payment-form__label-title">ФИО</span>
+								<input type="text" name="name-1" class="payment-form__input" placeholder="Иванов Иван Иванович" required>
+							</label>
+							<div class="payment-form__double">
+								<span class="payment-form__label-title">Паспортные данные</span>
+								<div class="payment-form__double-wrap">
+									<input type="text" name="name-1" class="payment-form__input" placeholder="Серия паспорта" required>
+									<input type="text" name="name-1" class="payment-form__input" placeholder="Номер паспорта" required>
+								</div>
+							</div>
+						</div> -->
+					</form>
+                    <div class="payment-wrap-item">
+                        <div class="payment-reserve">
+                            <img src="{% static 'images/icon/circle-check.svg' %}" alt="">
+                            <p>Номер зарезервирован, ожидается оплата</p>
+                        </div>
+                        <div class="payment-price">
+                            <p class="payment-price__info">Итого к оплате</p>
+                            <div class="payment-price__value">
+                                <p></p>
+                                <img src="{% static 'images/tether.svg' %}" alt="">
+                            </div>
+                        </div>
+                        <a href="#" class="payment-pay disabled">Перейти к оплате</a>
+                        <p class="payment-time">Бронирование истекает через <span>15:00</span></p>
+                        <a href="#" class="payment-remove">Отменить бронирование</a>
+                    </div>
+                </div>
+                <div class="payment-dop">
+                    <h2>Дополнительная информация</h2>
+                    <p>Если для въезда в страну вам требуется виза, ваш объект размещения в большинстве случаев предоставит вам необходимые документы для её получения. За более подробной информацией обращайтесь в объект размещения, контактная информация указана в подтверждении бронирования. За эти услуги может взиматься дополнительная плата, даже в случае последующей отмены бронирования. Все договоренности осуществляются исключительно между вами и объектом размещения.</p>
+                </div>
+                <a href="/" class="payment-new-search mob-show-flex">
+                    <span>Перейти к новому поиску</span>
+                    <i class="fa-arrow-next"></i>
+                </a>
+            </div>
+        </div>
+        <div class="popup-frame target-frame">
+			<div class="popup popup-qr target-frame" data-popup="QR">
+				<div class="popup-qr__photo"></div>
+				<p class="popup-qr__link js-payment-address"></p>
+			</div>
+		</div>
+	</main>
+	<footer class="footer">
+		<div class="section-frame">
+			<div class="footer-frame">
+				<div class="footer-content">
+					<div class="footer-nav">
+						<a href="#" class="footer-logo">
+							<img src="{% static 'images/footer-logo.svg' %}" alt="">
+						</a>
+						<ul class="footer-nav__list">
+							<li class="active" data-menu="1">Обмен криптовалюты</li>
+							<li data-menu="2">Виртуальные карты</li>
+							<li data-menu="1">Оплата онлайн</li>
+							<li data-menu="2">Безналичные операции</li>
+						</ul>
+					</div>
+					<ul class="footer-menu active" data-menu="1">
+						<li>
+							<a href="#" class="footer-menu__drop">Покупка крипты с карты <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="footer-menu" data-menu="2">
+						<li>
+							<a href="#" class="footer-menu__drop">Вывод крипты на карту <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" class="footer-menu__drop">Возможности <i class="fa-arrow-down"></i></a>
+							<ul class="footer-menu__drop-list">
+								<li><a href="#">Оплата в магазинах (QR)</a></li>
+								<li><a href="#">Оплата мобильной связи кртптой</a></li>
+								<li><a href="#">Бронирование отелей</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="footer-info">
+					<div class="footer-promo">
+						<p class="footer-promo__title">Получайте новые бонусы быстрее всех</p>
+						<a href="#" class="footer-promo__btn" target="_blank">
+							<img src="{% static 'images/icon/footer-tg.svg' %}" alt="">
+							<span>@Aifory_Pro</span>
+						</a>
+					</div>
+					<a href="#" class="footer-wellcrypto mob-hide">
+						<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<div class="footer-wrap">
+				<div class="footer-wrap-content">
+					<div class="footer-contact">
+						<a href="#" class="footer-wellcrypto mob-show">
+							<img src="{% static 'images/wellcrypto-logo.svg' %}" alt="">
+						</a>
+						<a href="mailto:support@aifory.pro" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-email.svg' %}" alt="">
+							<span>support@aifory.pro</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="#" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-tg-white.svg' %}" alt="">
+							<span>@AiforyPro_Management</span>
+						</a>
+						<span class="footer-contact__separator">/</span>
+						<a href="tel:+79187160760" class="footer-contact__item">
+							<img src="{% static 'images/icon/footer-phone.svg' %}" alt="">
+							<span>+7 (918) 716 07 60</span>
+						</a>
+					</div>
+				</div>
+				<div class="footer-social">
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/vk.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/yt.svg' %}" alt="">
+					</a>
+					<a href="#" class="footer-social__item" target="_blank">
+						<img src="{% static 'images/icon/inst.svg' %}" alt="">
+					</a>
+				</div>
+			</div>
+			<ul class="footer-copy">
+				<li><a href="#">Политика конфиденциальности</a></li>
+				<li><a href="#">Cookie</a></li>
+				<li><a href="#">Условия пользования</a></li>
+				<li><a href="#">AML</a></li>
+				<li><a href="#">KYB</a></li>
+			</ul>
+		</div>
+	</footer>
+	
+
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+	<script src="{% static 'js/sweetalert.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="{% static 'js/core.js' %}"></script>
+	<script src="{% static 'js/common.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+	<script src="{% static 'js/payment/payment-core.js' %}"></script>
+	<script src="{% static 'js/payment/api/payment-prebook.js' %}"></script>
+	<script src="{% static 'js/payment/api/payment-check-payment.js' %}"></script>
+	<script src="{% static 'js/payment/api/payment-booking-form.js' %}"></script>
+	<script src="{% static 'js/payment/api/payment-finish.js' %}"></script>
+	<script src="{% static 'js/payment/api/payment-status.js' %}"></script>
+	<script src="{% static 'js/payment/api/payment-cancel.js' %}"></script>
+	<script src="{% static 'js/payment/payment.js' %}"></script>
+</body>
+</html>

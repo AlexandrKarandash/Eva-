@@ -271,6 +271,7 @@ class HotelSearchView(APIView):
 
         return Response({
             "status": search_result.get("status", "success"),
+            "message": search_result.get("message"),
             "total_hotels": total_hotels,
             "total_pages": total_pages,
             "current_page": page,

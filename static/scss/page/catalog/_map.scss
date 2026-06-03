@@ -1,0 +1,141 @@
+.hotel-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    pointer-events: auto;
+    transform: translateY(-6px);
+}
+
+.hotel-marker__title {
+    position: relative;
+    max-width: 160px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    border-radius: 18px;
+    background: #8B5CF6;
+    color: #fff;
+    font-size: 11px;
+    font-family: $title;
+    line-height: 1.2;
+    font-weight: 500;
+    text-align: center;
+    text-overflow: ellipsis;
+    box-shadow: 0 8px 24px rgba(123, 97, 255, 0.25);
+    transition: background .25s ease, transform .25s ease, box-shadow .25s ease;
+    position: relative;
+    span {
+        display: block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 8px;
+        height: 8px;
+        background: $main-color;
+        transform: translateX(-50%) rotate(45deg);
+        border-radius: 2px;
+        transition: background .25s ease;
+    }
+}
+
+.hotel-marker__icon {
+    width: 27px;
+    object-fit: contain;
+    display: block;
+    transition: transform .25s ease;
+}
+
+.hotel-marker:hover .hotel-marker__title,
+.hotel-marker.is-active .hotel-marker__title {
+    background: #5b3df5;
+    transform: scale(1.04);
+    box-shadow: 0 12px 28px rgba(91, 61, 245, 0.35);
+}
+
+.hotel-marker:hover .hotel-marker__title::after,
+.hotel-marker.is-active .hotel-marker__title::after {
+    background: #5b3df5;
+}
+
+.hotel-marker:hover .hotel-marker__icon,
+.hotel-marker.is-active .hotel-marker__icon {
+    transform: scale(1.08);
+}
+
+.hotel-cluster {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: $main-color;
+    border: 3px solid #fff;
+    box-shadow: 0 8px 24px rgba(123, 97, 255, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    font-family: $title;
+    line-height: 1;
+    font-weight: 600;
+}
+.map-window {
+    width: calc(50% - 10px);
+    height: calc(100% + 80px);
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: -80px;
+    @include media('max', 'xl') {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0px;
+        z-index: 20;
+        .catalog-controls {
+            width: calc(100% - 24px);
+            margin: 0 auto;
+            position: absolute;
+            z-index: 2;
+            left: 0;
+            right: 0;
+            top: 12px;
+        }
+    }
+}
+.map {
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+    position: sticky;
+    right: 0;
+    top: 0px;
+    transition: opacity .3s;
+    margin-bottom: 75px;
+    * {
+        pointer-events: none;
+    }
+    &.active {
+        opacity: 1;
+        pointer-events: auto;
+        * {
+            pointer-events: auto;
+        }
+    }
+    &.is-bottom {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+}
+.map-frame {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}

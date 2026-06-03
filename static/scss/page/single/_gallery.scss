@@ -1,0 +1,118 @@
+.gallery {
+    width: 888px;
+    padding: 32px 24px;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 32px;
+    @include media('max', 'xl') {
+        width: 700px;
+        padding: 24px;
+        border-radius: 24px;
+    }
+    @include media('max', 'sm') {
+        width: 340px;
+        border-radius: 18px;
+        padding: 18px;
+    }
+}
+.gallery-wrap-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    grid-gap: 15px;
+}
+.gallery-title {
+    font-size: 20px;
+    line-height: 120%;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    @include media('max', 'sm') {
+        font-size: 16px;
+        letter-spacing: -0.3px;
+    }
+}
+.gallery-close {
+    display: block;
+    color: $main-color;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    @include media('max', 'sm') {
+        margin-top: 5px;
+    }
+}
+.gallery-wrap {
+    width: 535px;
+    position: relative;
+    margin: 40px auto 0;
+    @include media('max', 'sm') {
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+.gallery-full {
+    border-radius: 24px;
+    @include media('max', 'sm') {
+        border-radius: 16px;
+    }
+}
+.gallery-slide {
+    img {
+        width: 100%;
+        height: 356px;
+        display: block;
+        object-fit: cover;
+    }
+    @include media('max', 'sm') {
+        img {
+            height: 235px;
+        }
+    }
+}
+.gallery-dots {
+    width: calc(100% + 48px);
+    margin-left: -24px;
+    margin-top: 40px;
+    @include media('max', 'sm') {
+         width: calc(100% + 36px);
+        margin-top: 15px;
+        margin-left: -18px;
+    }
+}
+.gallery-dots__slide {
+    width: 70px;
+    height: 70px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    cursor: pointer;
+    border-radius: 12px;
+    img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+    &.swiper-slide-thumb-active {
+        border-color: $main-color;
+    }
+    @include media('max', 'sm') {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        img {
+            border-radius: 8px;
+        }
+    }
+}
+.gallery-arrow {
+    display: block;
+    position: absolute;
+    top: calc(50% - 9px);
+}
+.gallery-prev {
+    left: -65px;
+}
+.gallery-next {
+    right: -65px;
+}

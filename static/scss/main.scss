@@ -1,0 +1,272 @@
+@import 'fonts';
+@import 'normaliz';
+
+// Главные цвета сайта
+
+$main-color: #8B5CF6;
+$sub-color: rgba(#8B5CF6, 0.16);
+
+// Цвет текста
+$title-color: #1D1D20;
+$text-color: #1D1D20;
+
+// Цвет кнопок
+
+$button-color: #fff;
+$button-bg: $main-color;
+
+// Размер контентной части
+
+$frame: 888px;
+
+@import 'snippets/main-snippets';
+
+%top {
+	margin-top: 80px;
+	@include media('max', 'xl') {
+		margin-top: 60px;
+	}
+	@include media('max', 'sm') {
+		margin-top: 45px;
+	}
+}
+
+%page-frame {
+	padding: 100px 0;
+	@include media("max", "md") {
+		padding: 70px 0;
+	}
+	@include media("max", "sm") {
+		padding: 50px 0;
+	}
+}
+* {
+	&::selection {
+		color: #fff; /* Цвет текста */
+    	background: $main-color; /* Цвет фона */
+	}
+}
+html, body {
+	position: relative;
+	min-height: 100vh; 
+	@include media('max', 'xl') {
+		overflow-x: hidden;
+	}
+}
+body {
+	width: 100%;
+	min-width: 320px;
+	display: flex;
+	flex-direction: column;
+	color: $text-color;
+	background: #F4F4F5;
+	padding-top: 80px;
+	font: normal 14px/1.3 $main-font;
+	letter-spacing: -0.3px;
+	scroll-behavior: smooth;
+}
+main {
+	position: relative;
+	margin-bottom: auto;
+	&::after {
+		content: '';
+		width: 100%;
+		height: 75px;
+		display: block;
+		background: #F4F4F5;
+		z-index: 3;
+		border-radius: 0 0 44px 44px;
+		margin-top: 40px;
+		position: relative;
+		z-index: 3;
+	}
+	@include media('max', 'xl') {
+		position: static;
+	}
+	@include media('max', 'sm') {
+		&::after {
+			height: 25px;
+			margin-top: 25px;
+		}
+	}
+}
+h1,h2,h3,h4,h5,h6, p, ul, ol, a {
+	text-underline-offset: 2px;
+}
+h1,h2,h3,h4,h5,h6, p {
+	margin: 0;
+	font-size: inherit;
+	line-height: inherit;
+	font-weight: inherit;
+	
+}
+h1,h2,h3,h4,h5,h6 { 
+	color: $title-color;
+	font-family: $title;
+}
+ul, ol { 
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+a {
+	text-decoration: none;
+	outline: none;
+	color: inherit;
+	user-select: none;
+}
+form {
+	box-sizing: border-box;
+}
+input {
+	outline: none;
+	box-sizing: border-box;
+}
+input[type="submit"] {
+	cursor: pointer;
+}
+textarea {
+	box-sizing: border-box;
+	outline: none;
+}
+input, textarea {
+	transition: .4s;
+	&:focus {
+		border-color: $main-color !important;
+	}
+}
+select {
+	transition: .4s;
+	&:hover {
+		border-color: $main-color !important; 
+	}
+}
+select, option {
+	outline: none;
+	cursor: pointer;
+	appearance: none;
+}
+select::-ms-expand { 
+    display: none;
+}
+img {
+	&::selection {
+		color: inherit; /* Цвет текста */
+    	background: transparent; /* Цвет фона */
+	}
+}
+label {
+	cursor: pointer;
+	margin-bottom: 0;
+}
+.slick-slide {
+	outline: none !important;
+}
+.section-frame { 
+	max-width: $frame;
+	width: 100%; 
+	margin: 0 auto;
+	box-sizing: border-box;
+	@include media("max", "xl") {
+		max-width: 700px;
+	}
+	@include media("max", "sm") {
+		max-width: 375px;
+		padding: 0 12px;
+	}
+} 
+.section-frame_relative {
+    position: relative;
+}
+
+.load * {  
+  transition: none !important;
+}
+.open-frame	{
+	overflow: hidden;
+} 
+.js-checkbox {
+	cursor: pointer;
+	input {
+		display: none;
+	}
+} 
+.table-hide {
+	@include media('max', 'xl') {
+		display: none !important;
+	}	
+}
+.table-show {
+	display: none !important;
+	@include media('max', 'xl') {
+		display: block !important;
+	}	
+}
+.table-show-flex {
+	display: none !important;
+	@include media('max', 'xl') {
+		display: flex !important;
+	}	
+}
+.table-show-grid {
+	display: none !important;
+	@include media('max', 'xl') {
+		display: grid !important;
+	}	
+}
+.mob-hide {
+	@include media('max', 'sm') {
+		display: none !important;
+	}	
+}
+.mob-show {
+	display: none !important;
+	@include media('max', 'sm') {
+		display: block !important;
+	}	
+}
+.mob-show-inline {
+	display: none !important;
+	@include media('max', 'sm') {
+		display: inline !important;
+	}
+}
+.mob-show-flex {
+	display: none !important;
+	@include media('max', 'sm') {
+		display: flex !important;
+	}	
+}
+.mob-show-grid {
+	display: none !important;
+	@include media('max', 'sm') {
+		display: grid !important;
+	}	
+}
+
+.page-title {
+	font-size: 32px;
+	font-weight: 500;
+	line-height: 118%;
+	letter-spacing: -0.5px;
+	@include media('max', 'sm') {
+		font-size: 26px;
+		letter-spacing: -0.4px;
+	}
+}
+.center {
+	text-align: center;
+}
+.white {
+	color: #fff;
+}
+
+
+@import 'header';
+@import 'footer';
+@import 'page/main/index';
+@import 'page/catalog/index';
+@import 'page/single/index';
+@import 'page/payment/index';
+@import 'page/politics/index';
+@import 'popup';

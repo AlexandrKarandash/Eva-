@@ -1,0 +1,105 @@
+.similar {
+    margin-top: 32px;
+    @include media('max', 'sm') {
+        margin-top: 24px;
+    }
+}
+.similar-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+.similar-list {
+    @include grid(4, 24px, 24px, 2, 2, 2);
+    margin-top: 24px;
+    @include media('max', 'sm') {
+        grid-gap: 12px;
+        margin-top: 20px;
+    }
+}
+.similar-item {
+    padding: 0 8px 12px;
+    border-radius: 16px;
+    background: #FFF;
+    box-shadow: 0 1px 3px 0 rgba(11, 11, 16, 0.02), 0 8px 16px 0 rgba(11, 11, 16, 0.04);
+    display: flex;
+    flex-direction: column;
+}
+.similar-item__photo {
+    width: calc(100% + 16px);
+    height: 112px;
+    margin-left: -8px;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+    img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: 16px 16px 0 0;
+        transition: .4s;
+    }
+    &:hover {
+        img {
+            transform: scale(1.3);
+        }
+    }
+    @include media('max', 'xl') {
+        height: 150px;
+    }
+    @include media('max', 'sm') {
+        height: 90px;
+    }
+}
+.similar-item__wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    grid-gap: 8px;
+    margin-top: 8px;
+}
+.similar-item__title {
+    width: fit-content;
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    transition: .3s;
+    &:hover {
+        color: $main-color;
+    }
+}
+.similar-item__rate {
+    width: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    img {
+        width: 100%;
+        display: block;
+    }
+    p {
+        color: #fff;
+        font-weight: 700;
+        font-size: 12px;
+        position: absolute;
+    }
+}
+.similar-item__near {
+    color: #7A7A83;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 4px 0 12px;
+    li {
+        margin-bottom: 4px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+.similar-item__price {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-top: auto;
+}

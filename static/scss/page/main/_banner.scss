@@ -1,0 +1,79 @@
+.banner {
+    margin-top: 70px;
+    @include media('max', 'xl') {
+        margin-top: 45px;
+    }
+    @include media('max', 'sm') {
+        margin-top: 15px;
+    }
+}
+.banner-wrap {
+    padding: 24px;
+    position: relative;
+    border-radius: 24px;
+    background: #FFF;
+    box-shadow: 0 1px 3px 0 rgba(11, 11, 16, 0.02), 0 8px 16px 0 rgba(11, 11, 16, 0.04);
+    @include media('max', 'sm') {
+        padding: 18px 18px 320px;
+        border-radius: 18px;
+    }
+}
+.banner-content {
+    position: relative;
+    z-index: 2;
+}
+.banner-title {
+    max-width: 660px;
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 110%;
+    letter-spacing: -0.5px;
+    @include media('max', 'xl') {
+        max-width: 350px;
+        font-size: 30px;
+    }
+    @include media('max', 'sm') {
+        font-size: 26px;
+    }
+}
+.banner-info {
+    max-width: 580px;
+    color: #7A7A83;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 133%;
+    letter-spacing: -0.3px;
+    margin-top: 25px;
+    p {
+        margin-bottom: 10px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    a {
+        color: $main-color;
+    }
+    @include media('max', 'xl') {
+        max-width: 340px;
+    }
+    @include media('max', 'sm') {
+        margin-top: 15px;
+    }
+}
+.banner-photo {
+    width: 260px;
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    right: -22px;
+    @include media('max', 'xl') {
+        width: 330px;
+        bottom: -4px;
+        right: 0px;
+    }
+    @include media('max', 'sm') {
+        width: 350px;
+        bottom: 6px;
+        right: 13px;
+    }
+}

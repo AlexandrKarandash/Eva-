@@ -1,0 +1,107 @@
+.services {
+    margin-top: 32px;
+    @include media('max', 'sm') {
+        margin-top: 24px;
+    }
+}
+.services-wrap {
+    padding: 16px 16px 24px;
+    border-radius: 16px;
+    background: #FFF;
+    box-shadow: 0 1px 3px 0 rgba(11, 11, 16, 0.02), 0 8px 16px 0 rgba(11, 11, 16, 0.04);
+    margin-bottom: 32px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+    @include media('max', 'sm') {
+        margin-bottom: 24px;
+    }
+}
+.services-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.services-list {
+    @include grid(4, 16px, 16px, 4, 4, 1);
+    margin-top: 24px;
+    @include media('max', 'sm') {
+        margin-top: 20px;
+        grid-gap: 8px;
+    }
+}
+.services-list_single {
+    @include grid(4, 16px, 16px, 4, 4, 1);
+}
+.services-group {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 24px;
+    @include media('max', 'sm') {
+        grid-gap: 18px;
+    }
+}
+.services-item__title {
+    display: flex;
+    align-items: flex-start;
+    grid-gap: 8px;
+    margin-bottom: 12px;
+    img {
+        width: 16px;
+        display: block;
+        flex-shrink: 0;
+    }
+    p {
+        font-weight: 700;
+    }
+}
+.services-item__info {
+    font-size: 12px;
+    font-weight: 500;
+    li {
+        margin-bottom: 8px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    span {
+        color: #7A7A83;
+        display: block;
+    }
+}
+.services-from {
+    height: fit-content;
+    padding: 12px;
+    border-radius: 16px;
+    background: #F9FAFB;
+}
+.services-from__title {
+    display: flex;
+    align-items: center;
+    grid-gap: 8px;
+    margin-bottom: 12px;
+    img {
+        width: 16px;
+        display: block;
+        flex-shrink: 0;
+    }
+    p {
+        font-weight: 500;
+    }
+}
+.services-from__item {
+    margin-bottom: 8px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+.services-from__item-title {
+    color: #7A7A83;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+.services-from__item-info {
+    font-size: 12px;
+    font-weight: 500;
+}

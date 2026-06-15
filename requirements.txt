@@ -3,6 +3,7 @@ gunicorn==23.0.0
 whitenoise==6.8.2
 dj-database-url==2.3.0
 django-cors-headers==4.6.0
+weasyprint==63.1
 aiohttp==3.13.5
 aiosignal==1.4.0
 amqp==5.3.1

@@ -250,7 +250,7 @@ def egress_ip_view(request):
             "Accept": "application/json,text/html",
             "Accept-Language": "en-US,en;q=0.9",
         })
-        out["abcex_browser_ua"] = {"status": br.status_code, "body": br.text[:250]}
+        out["abcex_browser_ua"] = {"status": br.status_code, "body": br.text[:1500]}
     except Exception as e:
         out["abcex_signed_call"] = {"error": f"{type(e).__name__}: {e}"}
     return JsonResponse(out)

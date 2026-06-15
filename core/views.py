@@ -213,6 +213,18 @@ def _verify_etg_webhook_signature(request):
     ).hexdigest()
     return hmac.compare_digest(provided_signature, expected_signature)
 
+def egress_ip_view(request):
+    import requests as _rq
+    out = {}
+    for name, url in (("ipify", "https://api.ipify.org?format=json"), ("abcex_probe", "https://api.abcex.io/api/v1/wallet/get-new-crypto-address")):
+        try:
+            r = _rq.get(url, timeout=10)
+            out[name] = {"status": r.status_code, "body": r.text[:200]}
+        except Exception as e:
+            out[name] = {"error": str(e)}
+    return JsonResponse(out)
+
+
 def hotel_demo_view(request):
     return render(request, 'index.html')
 

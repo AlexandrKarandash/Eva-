@@ -215,6 +215,8 @@ if not TELEGRAM_BOT_TOKEN and not DEBUG and not RUNNING_TESTS:
 ABCEX_API_KEY = os.environ.get("ABCEX_API_KEY", "").strip()
 ABCEX_SECRET_KEY = os.environ.get("ABCEX_SECRET_KEY", "").strip()
 ABCEX_WALLET_ID = os.environ.get("ABCEX_WALLET_ID", "").strip()
+# Прокси со статичным "чистым" IP для обхода WAF ABCEX (формат: http://user:pass@host:port)
+ABCEX_PROXY_URL = os.environ.get("ABCEX_PROXY_URL", "").strip()
 
 _REQUIRED_PROD_SECRETS = {
     "ETG_KEY_ID": ETG_KEY_ID,

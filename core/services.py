@@ -1537,28 +1537,32 @@ class AbcexPaymentService:
         self._api_key = str(getattr(settings, 'ABCEX_API_KEY', '')).strip()
         self._secret_key = str(getattr(settings, 'ABCEX_SECRET_KEY', '')).strip()
         self._wallet_id = str(getattr(settings, 'ABCEX_WALLET_ID', '')).strip().replace('"', '').replace("'", "")
+        # Опциональный прокси со статичным "чистым" IP (ABCEX режет дата-центровые IP на WAF).
+        proxy_url = str(getattr(settings, 'ABCEX_PROXY_URL', '')).strip()
+        self._proxies = {'http': proxy_url, 'https': proxy_url} if proxy_url else None
 
     def _call(self, method, path, query_str=None, body=None):
         full_path = f"{path}?{query_str}" if query_str else path
-        
+
         body_str = json.dumps(body, separators=(',', ':')) if body else ''
         timestamp = str(int(time.time() * 1000))
         message = f"{timestamp}\n{method.upper()}\n{full_path}\n{body_str}"
         signature = hmac.new(self._secret_key.encode(), message.encode(), hashlib.sha256).hexdigest()
-        
+
         headers = {
             'Content-Type': 'application/json',
             'X-API-KEY': self._api_key,
             'X-API-TIMESTAMP': timestamp,
             'X-API-SIGNATURE': signature
         }
-        
+
         return requests.request(
             method=method,
             url=self.BASE_URL + full_path,
             data=body_str if body_str else None,
             headers=headers,
-            timeout=15
+            timeout=15,
+            proxies=self._proxies
         )
 
     def generate_new_address(self, network_id="TRX"):

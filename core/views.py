@@ -213,49 +213,6 @@ def _verify_etg_webhook_signature(request):
     ).hexdigest()
     return hmac.compare_digest(provided_signature, expected_signature)
 
-def egress_ip_view(request):
-    import requests as _rq
-    out = {}
-    try:
-        r = _rq.get("https://api.ipify.org?format=json", timeout=10)
-        out["ipify"] = r.text[:100]
-    except Exception as e:
-        out["ipify"] = {"error": str(e)}
-
-    # Реальный подписанный вызов генерации адреса
-    try:
-        svc = abcex_service
-        out["abcex_config"] = {
-            "has_api_key": bool(svc._api_key),
-            "has_secret": bool(svc._secret_key),
-            "wallet_id": svc._wallet_id,
-        }
-        import hmac as _hmac, hashlib as _hl, time as _t, requests as _rq
-        path = "/api/v1/wallet/get-new-crypto-address"
-        query_str = f"networkId=TRX&walletId={svc._wallet_id}"
-        full_path = f"{path}?{query_str}"
-        # default UA call
-        resp = svc._call("GET", path, query_str=query_str)
-        out["abcex_default_ua"] = {"status": resp.status_code, "body": resp.text[:250]}
-        # browser UA call
-        ts = str(int(_t.time() * 1000))
-        msg = f"{ts}\nGET\n{full_path}\n"
-        sig = _hmac.new(svc._secret_key.encode(), msg.encode(), _hl.sha256).hexdigest()
-        br = _rq.get("https://api.abcex.io" + full_path, timeout=15, headers={
-            "Content-Type": "application/json",
-            "X-API-KEY": svc._api_key,
-            "X-API-TIMESTAMP": ts,
-            "X-API-SIGNATURE": sig,
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-            "Accept": "application/json,text/html",
-            "Accept-Language": "en-US,en;q=0.9",
-        })
-        out["abcex_browser_ua"] = {"status": br.status_code, "body": br.text[:1500]}
-    except Exception as e:
-        out["abcex_signed_call"] = {"error": f"{type(e).__name__}: {e}"}
-    return JsonResponse(out)
-
-
 def hotel_demo_view(request):
     return render(request, 'index.html')
 

@@ -16,9 +16,6 @@ urlpatterns = [
     path('payment.html', views.payment_view, name='payment_html'),
 
 
-    # temp debug: outbound egress IP (remove after ABCEX whitelist)
-    path('api/debug/egress-ip/', views.egress_ip_view, name='egress-ip'),
-
     # API hotels
     path('api/hotels/search/', views.HotelSearchView.as_view(), name='hotel-search'),
     path('api/hotels/nearby-places/', views.hotel_nearby_places_view, name='hotel-nearby-places'),

@@ -1818,6 +1818,15 @@ a.header-popup__link-title:hover {
   }
 }
 
+.booking-residency {
+  width: 130px;
+}
+@media only screen and (max-width: 720px) {
+  .booking-residency {
+    width: calc(50% - 6px);
+  }
+}
+
 .booking-search {
   width: 100%;
   position: relative;
@@ -8018,15 +8027,21 @@ a.header-popup__link-title:hover {
   margin-top: 16px;
 }
 @media only screen and (min-width: 720px) {
+  .popup-date__group .booking-residency {
+    width: calc(50% - 6px);
+  }
+  .popup-date__group .booking-date {
+    width: 100%;
+  }
   .popup-date__group .booking-date__item {
-    width: 115px;
+    width: 100%;
     padding-left: 12px;
   }
   .popup-date__group .booking-sub {
     width: 100%;
   }
   .popup-date__group .booking-room {
-    width: 104px;
+    width: calc(50% - 6px);
   }
 }
 @media only screen and (max-width: 720px) {
@@ -8034,10 +8049,17 @@ a.header-popup__link-title:hover {
     grid-gap: 12px 8px;
   }
   .popup-date__group .booking-sub {
+    width: 100%;
+  }
+  .popup-date__group .booking-residency {
     width: calc(50% - 4px);
   }
   .popup-date__group .booking-room {
     width: calc(50% - 4px);
+  }
+  .popup-date__group .place-drop {
+    left: auto;
+    right: -16px;
   }
 }
 

@@ -23,6 +23,12 @@
         grid-gap: 12px;
     }
 }
+.booking-residency {
+    width: 130px;
+    @include media('max', 'sm') {
+        width: calc(50% - 6px);
+    }
+}
 .booking-search {
     width: 100%;
     position: relative;

@@ -211,13 +211,16 @@ TELEGRAM_ADMIN_CHAT_ID = os.environ.get("TELEGRAM_ADMIN_CHAT_ID", "").strip()
 if not TELEGRAM_BOT_TOKEN and not DEBUG and not RUNNING_TESTS:
     raise ImproperlyConfigured("TELEGRAM_BOT_TOKEN must be set when DJANGO_DEBUG=false")
 
-ABCEX_BEARER_TOKEN = os.environ.get("ABCEX_BEARER_TOKEN", "").strip()
+
+ABCEX_API_KEY = os.environ.get("ABCEX_API_KEY", "").strip()
+ABCEX_SECRET_KEY = os.environ.get("ABCEX_SECRET_KEY", "").strip()
 ABCEX_WALLET_ID = os.environ.get("ABCEX_WALLET_ID", "").strip()
 
 _REQUIRED_PROD_SECRETS = {
     "ETG_KEY_ID": ETG_KEY_ID,
     "ETG_KEY": ETG_KEY,
-    "ABCEX_BEARER_TOKEN": ABCEX_BEARER_TOKEN,
+    "ABCEX_API_KEY": ABCEX_API_KEY,
+    "ABCEX_SECRET_KEY": ABCEX_SECRET_KEY,
     "ABCEX_WALLET_ID": ABCEX_WALLET_ID,
 }
 if not DEBUG and not RUNNING_TESTS:
@@ -243,8 +246,16 @@ STORAGES = {
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
-MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.yandex.ru')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '465'))
+EMAIL_USE_SSL = env_bool('EMAIL_USE_SSL', True)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'voucher@aifory.pro')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Aifory Pro <voucher@aifory.pro>')
 
 
 

@@ -76,8 +76,21 @@ $(document).on("mouseleave", ".header-frame", function() {
    $('.header-popup').removeClass('active');
 });
 
+
+$('.js-list-drop').click(function(e) {
+    $(this).siblings('.filter-drop__list').toggleClass('active');
+});
+
 $('.filter-drop__active').click(function(e) {
     $(this).siblings('.filter-drop__list').toggleClass('active');
+});
+
+$('.js-item-drop').click(function(e) {
+    let text = $(this).find('p').text();
+    $(this).siblings('.js-item-drop').removeClass('active');
+    $(this).addClass('active');
+    $('.filter-drop__list').removeClass('active');
+    $(this).closest('.filter-drop').find('.js-drop-title').text(text);
 });
 
 $('.filter-drop__item').click(function(e) {
@@ -453,22 +466,35 @@ $('.booking-room').each(function () {
 	const maxKids = 4;
 
 	const kidsOptions = [
-		'от 0 до 2 лет',
-		'3-5 лет',
-		'5-7 лет',
-		'7-9 лет',
-		'10-12 лет',
-		'13-15 лет',
-		'15-17 лет'
+		{ value: 0, label: 'до 1 года' },
+		{ value: 1, label: '1 год' },
+		{ value: 2, label: '2 года' },
+		{ value: 3, label: '3 года' },
+		{ value: 4, label: '4 года' },
+		{ value: 5, label: '5 лет' },
+		{ value: 6, label: '6 лет' },
+		{ value: 7, label: '7 лет' },
+		{ value: 8, label: '8 лет' },
+		{ value: 9, label: '9 лет' },
+		{ value: 10, label: '10 лет' },
+		{ value: 11, label: '11 лет' },
+		{ value: 12, label: '12 лет' },
+		{ value: 13, label: '13 лет' },
+		{ value: 14, label: '14 лет' },
+		{ value: 15, label: '15 лет' },
+		{ value: 16, label: '16 лет' },
+		{ value: 17, label: '17 лет' }
 	];
 
 	let $currentKidsTarget = null;
 
 	function createGlobalKidsDrop() {
 		let html = '<div class="global-kids-drop">';
+		html += '<div class="global-kids-drop-scroll">';
 		kidsOptions.forEach(function(item) {
-			html += '<p class="global-kids-drop__item">' + item + '</p>';
+			html += '<p class="global-kids-drop__item" data-age="' + item.value + '">' + item.label + '</p>';
 		});
+		html += '</div>';
 		html += '</div>';
 		return $(html);
 	}
@@ -540,10 +566,10 @@ $('.booking-room').each(function () {
 		$btn.toggleClass('disabled', kidsCount >= maxKids);
 	}
 
-	function createKidItem(text) {
+	function createKidItem(age, label) {
 		return $(
-			'<div class="place-kids__item" data-age="' + text + '">' +
-				'<p class="place-kids__item-title">' + text + '</p>' +
+			'<div class="place-kids__item" data-age="' + age + '">' +
+				'<p class="place-kids__item-title">' + label + '</p>' +
 				'<a href="#" class="place-kids__item-remove">' +
 					'<svg xmlns="http://www.w3.org/2000/svg" width="7" height="7" viewBox="0 0 7 7" fill="none">' +
 						'<path d="M6.08332 6.08332L3.41667 3.41667M3.41667 3.41667L0.75 0.75M3.41667 3.41667L6.08335 0.75M3.41667 3.41667L0.75 6.08335" stroke="#1D1D20" stroke-width="1.5"/>' +
@@ -623,10 +649,11 @@ $('.booking-room').each(function () {
 
 		if (!$currentKidsTarget) return;
 
-		const text = $(this).text();
+		const age = parseInt($(this).data('age'), 10);
+		const label = $(this).text();
 		const $placeItem = $currentKidsTarget.closest('.place-item');
 
-		$currentKidsTarget.before(createKidItem(text));
+		$currentKidsTarget.before(createKidItem(age, label));
 
 		updateKidsButton($placeItem);
 		updateSummary();

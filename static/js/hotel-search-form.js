@@ -238,6 +238,14 @@
         return input ? input.value.trim() : '';
     }
 
+    function getResidencyFromForm(form) {
+        const checked = qs('input[name="residency"]:checked', form);
+        const first = qs('input[name="residency"]', form);
+        const value = checked && checked.value ? checked.value : (first && first.value ? first.value : 'ru');
+
+        return String(value || 'ru').trim() || 'ru';
+    }
+
     function parseAge(value) {
         const raw = String(value == null ? '' : value).trim();
         if (!raw) return null;
@@ -351,6 +359,7 @@
             rooms: rooms,
             children: children,
             language: language,
+            residency: getResidencyFromForm(form),
             kind: flatInput && flatInput.checked ? 'apartment' : ''
         };
 
@@ -370,6 +379,7 @@
         params.set('adults', String(state.adults || 2));
         params.set('rooms', String(state.rooms_count || (state.rooms ? state.rooms.length : 1) || 1));
         params.set('language', state.language || 'ru');
+        params.set('residency', state.residency || 'ru');
 
         const children = Array.isArray(state.children) ? state.children : [];
 
@@ -643,6 +653,36 @@
         }
     }
 
+    function restoreResidency(form, state) {
+        const value = String((state && state.residency) || 'ru').trim() || 'ru';
+        let matched = null;
+
+        qsa('input[name="residency"]', form).forEach(function (input) {
+            const item = input.closest('.filter-drop__item');
+            const isActive = String(input.value || '') === value;
+
+            input.checked = isActive;
+            if (item) item.classList.toggle('active', isActive);
+            if (isActive) matched = item || input;
+        });
+
+        if (!matched) {
+            const first = qs('input[name="residency"]', form);
+            if (first) {
+                first.checked = true;
+                matched = first.closest('.filter-drop__item') || first;
+                if (matched.classList) matched.classList.add('active');
+            }
+        }
+
+        const title = matched && matched.querySelector ? matched.querySelector('p') : null;
+        const dropTitle = qs('.booking-residency .js-drop-title', form);
+
+        if (dropTitle && title) {
+            dropTitle.textContent = title.textContent.trim();
+        }
+    }
+
     function restoreFlat(form, state) {
         const flat = qs('input[name="flat"]', form);
         if (!flat) return;
@@ -659,6 +699,7 @@
 
         restoreRegion(form, state);
         restoreRooms(form, state);
+        restoreResidency(form, state);
         restoreFlat(form, state);
         restoreDates(form, state);
         syncFilterHeaderFromState(state);

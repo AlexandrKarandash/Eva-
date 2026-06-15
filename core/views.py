@@ -12,13 +12,14 @@ from django.db import transaction
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
+from core.email_processor import VoucherEmailProcessor
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .models import HotelStatic, Order, Transaction, OrderStatus, NetworkChoices
+from .models import EmailProcessingStatus, HotelStatic, InboundEmail, Order, Transaction, OrderStatus, NetworkChoices
 from .services import EmergingTravelService, etg_service, abcex_service
 from .tasks import schedule_unpaid_order_expiration
 from rest_framework.throttling import ScopedRateThrottle
@@ -95,6 +96,7 @@ def _extract_prebook_offer(prebook_result):
 
     if not hotels or not isinstance(hotels[0], dict):
         raise ValueError("No rates available for this hotel")
+    
 
     hotel_data = hotels[0]
     rates = hotel_data.get('rates', [])
@@ -102,6 +104,11 @@ def _extract_prebook_offer(prebook_result):
         raise ValueError("No rates available for this hotel")
 
     rate = rates[0]
+
+    # фиксируем изменение цены
+    if rate.get('price_changed'):
+        logger.warning("ETG сообщил, что цена изменилась во время prebook!")
+
     payment_options = rate.get('payment_options', {})
     payment_types = payment_options.get('payment_types', [])
     payment = payment_types[0] if payment_types and isinstance(payment_types[0], dict) else {}
@@ -271,7 +278,6 @@ class HotelSearchView(APIView):
 
         return Response({
             "status": search_result.get("status", "success"),
-            "message": search_result.get("message"),
             "total_hotels": total_hotels,
             "total_pages": total_pages,
             "current_page": page,
@@ -393,7 +399,7 @@ class PrebookView(APIView):
                 "access_token": access_token,
                 "payment": {
                     "address": crypto_address,
-                    "amount": final_price,
+                    "amount": client_price,
                     "network": "TRC-20",
                     "currency": "USDT"
                 }
@@ -755,7 +761,7 @@ def initiate_booking_with_crypto(request):
         "payment": {
             "address": crypto_address,
             "network": "TRC-20",
-            "amount": final_price
+            "amount": client_price
         }
     })
 
@@ -877,3 +883,44 @@ class CancelAfterPaymentView(APIView):
             }
         )
         
+
+
+
+# Добавьте этот класс в ваш views.py
+
+@method_decorator(csrf_exempt, name='dispatch')
+class InboundEmailWebhookView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # Структура полей зависит от провайдера webhook'ов.
+        # Обычно это: 'sender' или 'from', 'subject', 'body-plain' или 'text'
+        from_email = request.data.get('sender') or request.data.get('from', 'Unknown')
+        subject = request.data.get('subject', '')
+        body = request.data.get('body-plain') or request.data.get('text', '') or request.data.get('body', '')
+        
+        # Создаем запись в таблице входящих писем
+        inbound_email_obj = InboundEmail.objects.create(
+            from_email=from_email,
+            subject=subject,
+            body=body,
+            processing_status=EmailProcessingStatus.PENDING
+        )
+        
+        # Извлекаем вложенный файл ваучера от партнёра (ищем первый попавшийся PDF или документ)
+        partner_file = None
+        if request.FILES:
+            for file_key in request.FILES:
+                uploaded_file = request.FILES[file_key]
+                if uploaded_file.name.endswith(('.pdf', '.doc', '.docx', '.html', '.eml')):
+                    partner_file = uploaded_file
+                    break
+        
+        # Если файлы передаются ссылками (как в некоторых API), можно скачать их через requests отдельно
+        
+        # Запускаем обработку пайплайна
+        # Рекомендуется выносить в Celery: process_inbound_email.delay(inbound_email_obj.id)
+        # Но для надежности и простоты выполним в синхронном режиме:
+        VoucherEmailProcessor.process_inbound_email(inbound_email_obj, partner_file=partner_file)
+        
+        return Response({"status": "accepted", "email_id": str(inbound_email_obj.id)}, status=200)

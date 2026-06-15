@@ -34,6 +34,19 @@ class HotelCache(models.Model):
         verbose_name = "Кэш отеля"
         verbose_name_plural = "Кэш отелей"
 
+class VoucherStatus(models.TextChoices):
+    NOT_RECEIVED = 'not_received', 'Не получен'
+    RECEIVED = 'voucher_received', 'Получен от партнёра'
+    GENERATED = 'voucher_generated', 'Сгенерирован наш ваучер'
+    SENT = 'voucher_sent', 'Отправлен клиенту'
+    FAILED = 'failed', 'Ошибка обработки'
+
+class EmailProcessingStatus(models.TextChoices):
+    PENDING = 'pending', 'В очереди'
+    PROCESSED = 'processed', 'Успешно обработано'
+    FAILED = 'failed', 'Ошибка обработки'
+    MANUAL = 'manual', 'Требует ручной обработки'
+
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_email = models.EmailField()
@@ -51,6 +64,9 @@ class Order(models.Model):
     amount_rub = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     cost_price_usdt = models.DecimalField(max_digits=12, decimal_places=2)
     
+
+    voucher_status = models.CharField(max_length=30, choices=VoucherStatus.choices, default=VoucherStatus.NOT_RECEIVED)
+
     status = models.CharField(
         max_length=20, 
         choices=OrderStatus.choices, 
@@ -107,6 +123,62 @@ class Order(models.Model):
                 return
                 
         super().save(*args, **kwargs)
+
+class InboundEmail(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    from_email = models.CharField(max_length=255, verbose_name="Отправитель")
+    subject = models.CharField(max_length=512, verbose_name="Тема письма", blank=True)
+    body = models.TextField(verbose_name="Тело письма (текст/html)", blank=True)
+    
+    # Сюда сохраняем оригинальный файл письма (.eml) или метаданные вложений
+    original_file = models.FileField(upload_to='inbound_emails/%Y/%m/%d/', null=True, blank=True, verbose_name="Файл письма/Вложение")
+    
+    parsed_booking_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Распарсенный ID брони")
+    processing_status = models.CharField(
+        max_length=20, 
+        choices=EmailProcessingStatus.choices, 
+        default=EmailProcessingStatus.PENDING,
+        verbose_name="Статус обработки"
+    )
+    order = models.ForeignKey(
+        'Order', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='inbound_emails',
+        verbose_name="Связанный заказ"
+    )
+    error_message = models.TextField(null=True, blank=True, verbose_name="Текст ошибки")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата получения")
+
+    class Meta:
+        verbose_name = "Входящее письмо"
+        verbose_name_plural = "Входящие письма"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Письмо от {self.from_email} - {self.subject[:30]}"
+
+
+class VoucherDocument(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='vouchers', verbose_name="Заказ")
+    
+    original_voucher_file = models.FileField(upload_to='vouchers/partner/%Y/%m/%d/', verbose_name="Оригинальный ваучер партнёра")
+    generated_voucher_file = models.FileField(upload_to='vouchers/client/%Y/%m/%d/', null=True, blank=True, verbose_name="Наш сгенерированный ваучер")
+    
+    sent_to_email = models.EmailField(verbose_name="Email отправки")
+    status = models.CharField(max_length=30, choices=VoucherStatus.choices, default=VoucherStatus.RECEIVED)
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
+    sent_at = models.DateTimeField(null=True, blank=True, verbose_name="Отправлен клиенту")
+
+    class Meta:
+        verbose_name = "Документ ваучера"
+        verbose_name_plural = "Документы ваучеров"
+
+    def __str__(self):
+        return f"Ваучер для заказа {self.order_id} ({self.status})"
 
 class Transaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -172,6 +244,27 @@ class HotelStatic(models.Model):
 class HotelImage(models.Model):
     hotel = models.ForeignKey(HotelStatic, related_name='images', on_delete=models.CASCADE)
     url_template = models.URLField()
+
+    def get_url(self, size='x500'):
+        return self.url_template.replace('{size}', size)
+    
+class HotelRoomStatic(models.Model):
+    hotel = models.ForeignKey(HotelStatic, on_delete=models.CASCADE, related_name='rooms', verbose_name="Отель")
+    room_ext_id = models.CharField(max_length=255, unique=True, db_index=True, verbose_name="Идентификатор сопоставления (ext)")
+    name = models.CharField(max_length=255, verbose_name="Название типа номера")
+    amenities = models.JSONField(default=list, blank=True, verbose_name="Удобства в номере")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Статика номера"
+        verbose_name_plural = "Статика номеров"
+
+    def __str__(self):
+        return f"{self.name} ({self.room_ext_id})"
+
+class RoomImage(models.Model):
+    room = models.ForeignKey(HotelRoomStatic, on_delete=models.CASCADE, related_name='images', verbose_name="Тип номера")
+    url_template = models.URLField(verbose_name="Ссылка на фото номера")
 
     def get_url(self, size='x500'):
         return self.url_template.replace('{size}', size)

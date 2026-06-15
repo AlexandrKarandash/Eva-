@@ -80,11 +80,13 @@
         const url = new URL(HOTEL_SEARCH_API, window.location.origin);
 
         params.forEach(function (value, key) {
-            if (key === 'city' || key === 'rooms' || key === 'page' || key === 'sort') return;
+            if (key === 'city' || key === 'rooms' || key === 'page' || key === 'sort' || key === 'residency') return;
             if (value !== '') url.searchParams.append(key, value);
         });
 
+        url.searchParams.set('residency', params.get('residency') || 'ru');
         url.searchParams.set('page', String(page || 1));
+
         return url.toString();
     }
 
@@ -688,19 +690,35 @@
     }
 
     async function fetchHotelsPage(params, page) {
-        const response = await fetch(buildSearchUrl(params, page), {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' },
-            credentials: 'same-origin'
-        });
-        const data = await response.json().catch(function () { return null; });
-        // console.log('[HOTEL SEARCH RESPONSE]', data);
-        if (!response.ok || !data) {
-            throw new Error((data && (data.detail || data.message || data.error)) || 'Ошибка загрузки отелей');
-        }
+    const url = buildSearchUrl(params, page);
 
-        return data;
+    console.log('[hotel-search request]', url);
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'same-origin'
+    });
+
+    const data = await response.json().catch(function () { return null; });
+
+    console.log('[hotel-search status]', response.status, response.statusText);
+    console.log('[hotel-search response]', data);
+
+    if (!response.ok || !data) {
+        console.error('[hotel-search bad response]', {
+            status: response.status,
+            statusText: response.statusText,
+            data: data,
+            params: params ? params.toString() : null,
+            page: page
+        });
+
+        throw new Error((data && (data.detail || data.message || data.error)) || 'Ошибка загрузки отелей');
     }
+
+    return data;
+}
 
     function applyFirstMeta(data) {
         currentPage = parseInt(data.current_page || 1, 10) || 1;

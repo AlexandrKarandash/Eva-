@@ -193,28 +193,39 @@
 	flex-wrap: wrap;
 	grid-gap: 16px 8px;
 	margin-top: 16px;
-	
-	
 	@include media('min', 'sm') {
+		.booking-residency {
+			width: calc(50% - 6px);
+		}
+		.booking-date {
+			width: 100%;
+		}
 		.booking-date__item {
-			width: 115px;
+			width: 100%;
 			padding-left: 12px;
 		}
 		.booking-sub {
 			width: 100%;
 		}
 		.booking-room {
-			width: 104px;
+			width: calc(50% - 6px);
 		}
 	}
 	
 	@include media('max', 'sm') {
 		grid-gap: 12px 8px;
 		.booking-sub {
+			width: 100%;
+		}
+		.booking-residency {
 			width: calc(50% - 4px);
 		}
 		.booking-room {
 			width: calc(50% - 4px);
+		}
+		.place-drop {
+			left: auto;
+        	right: -16px;
 		}
 	}
 }

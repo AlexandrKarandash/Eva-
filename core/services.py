@@ -2,18 +2,25 @@ import requests
 import logging
 from django.conf import settings
 from django.core.cache import cache
-from .models import HotelStatic, HotelImage, HotelCache, City, HotelNearbyCache
+from .models import HotelRoomStatic, HotelStatic, HotelImage, HotelCache, City, HotelNearbyCache
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 import re
 import json
 import time
 import math
+import hmac
+import hashlib
+
+
 logger = logging.getLogger(__name__)
 MONEY_QUANT = Decimal("0.01")
 
 
-
+try:
+    from django.conf import settings
+except ImportError:
+    settings = None
 
 class EmergingTravelService:
     DEFAULT_IMAGE = "/static/img/defualt.png" 
@@ -1040,7 +1047,38 @@ class EmergingTravelService:
         places = self.get_nearby_places_from_db(hotel_id=hotel_id, hid=hid)
         metro = places.get('metro') or []
         return metro[0] if metro else None
+    # --- НОВАЯ ЛОГИКА: АВТОМАТИЧЕСКОЕ СОПОСТАВЛЕНИЕ И КЭШИРОВАНИЕ НОМЕРОВ ---
 
+    def _ensure_room_static(self, hotel_obj, rate_dict):
+        if not hotel_obj:
+            return None
+            
+        room_name = str(rate_dict.get('room_name') or 'Номер').strip()
+        
+        # Получаем room_ext_id из API. Если API его не прислал, генерируем хеш-сигнатуру по имени
+        room_ext_id = rate_dict.get('room_ext_id')
+        if not room_ext_id:
+            name_hash = abs(hash(room_name)) % 1000000
+            room_ext_id = f"auto_{name_hash}"
+            
+        room_ext_id = str(room_ext_id).strip()
+        
+        try:
+            room_static, created = HotelRoomStatic.objects.get_or_create(
+                hotel=hotel_obj,
+                room_ext_id=room_ext_id,
+                defaults={'name': room_name}
+            )
+            
+            # Если имя номера обновилось в API, синхронизируем в БД
+            if not created and room_static.name != room_name and room_name != 'Номер':
+                room_static.name = room_name
+                room_static.save(update_fields=['name'])
+                
+            return room_static
+        except Exception as e:
+            logger.warning(f"Ошибка сопоставления номера '{room_name}' для отеля {hotel_obj.hotel_id}: {e}")
+            return None
 
     def get_hotel_details(self, hotel_id, checkin, checkout, adults=2, children=None, language="ru", currency="USD", residency="ru"):
         hotel_id_str = str(hotel_id).strip('/')
@@ -1057,6 +1095,8 @@ class EmergingTravelService:
         if not target_hid:
             logger.error(f"Не удалось найти HID для отеля {hotel_id_str}")
             return None
+        #  Достаем инстанс HotelStatic для передачи в обработчик тарифов номеров
+        hotel_obj = HotelStatic.objects.filter(hotel_id=hotel_id_str).first()
 
         url = f"{self.BASE_URL}/search/hp/"
         payload = {
@@ -1078,7 +1118,8 @@ class EmergingTravelService:
             if resp.status_code == 200:
                 hotels_data = resp.json().get('data', {}).get('hotels', [])
                 if hotels_data:
-                    rates = self._process_rates(hotels_data[0].get('rates', []))
+                    #Передаем инстанс отеля в метод обработки тарифов
+                    rates = self._process_rates(hotels_data[0].get('rates', []), hotel_obj=hotel_obj)
             else:
                 logger.error(f"HP API Error {resp.status_code}: {resp.text}")
         except Exception as e:
@@ -1184,7 +1225,10 @@ class EmergingTravelService:
                 if is_match:
                     if not static:
                         static = self.get_hotel_info_cached(hotel_id, provided_hid=hotel_raw.get('hid'))
-                    processed_single = self._process_full_data([hotel_raw])[0]
+                    
+                    # Достаем инстанс отеля и передаем его в _process_full_data для SERP
+                    hotel_obj = HotelStatic.objects.filter(hotel_id=hotel_id).first()
+                    processed_single = self._process_full_data([hotel_raw], hotel_obj=hotel_obj)[0]
                     
                     raw_k = hotel_raw.get('kind') or static.get('kind', 'hotel')
                     norm_k = str(raw_k).lower().replace('_', '-')
@@ -1244,7 +1288,7 @@ class EmergingTravelService:
         except Exception as e:
             return {"status": "error", "message": str(e)}
     
-    def _process_full_data(self, raw_hotels):
+    def _process_full_data(self, raw_hotels, hotel_obj=None):
         formatted = []
         for hotel in raw_hotels:
             all_prices = []
@@ -1255,14 +1299,31 @@ class EmergingTravelService:
                 money_price = self._to_money_decimal(price_val)
                 if money_price and money_price > 0:
                     all_prices.append(money_price)
-                rates_list.append({
+                rate_item = {
                     "match_hash": rate.get('match_hash'),
                     "book_hash": rate.get('book_hash') or rate.get('hash'),
                     "room_name": rate.get('room_name'),
                     "meal": rate.get('meal'),
                     "price": price_val,
-    
-                })
+                }
+
+                #  Привязываем/создаем типы номеров и подтягиваем фото для каталога
+                if hotel_obj:
+                    room_static = self._ensure_room_static(hotel_obj, rate)
+                    if room_static:
+                        rate_item['room_static_id'] = room_static.id
+                        custom_images = []
+                        if hasattr(room_static, 'images'):
+                            for img in room_static.images.all():
+                                if getattr(img, 'image', None): custom_images.append(img.image.url)
+                                elif getattr(img, 'url', None): custom_images.append(img.url)
+                        rate_item['room_images'] = custom_images if custom_images else []
+                else:
+                    rate_item['room_images'] = []
+
+                rates_list.append(rate_item)
+
+                
             
             formatted.append({
                 "id": hotel.get('id'),     
@@ -1274,7 +1335,7 @@ class EmergingTravelService:
             })
         return formatted
 
-    def _process_rates(self, raw_rates):
+    def _process_rates(self, raw_rates, hotel_obj=None):
         processed = []
 
         for rate in raw_rates:
@@ -1298,6 +1359,25 @@ class EmergingTravelService:
             
             item['cancellation_info'] = payment.get('cancellation_penalties') or item.get('cancellation_penalties') or {}
             item['all_amenities'] = item.get('amenities_data') or item.get('all_amenities') or item.get('serp_filters') or []
+
+            #  Добавляем логику связки с HotelRoomStatic и выгрузки кастомных картинок
+            if hotel_obj:
+                room_static = self._ensure_room_static(hotel_obj, item)
+                if room_static:
+                    item['room_static_id'] = room_static.id
+                    
+                    # Собираем менеджерские картинки номера
+                    custom_images = []
+                    if hasattr(room_static, 'images'):
+                        for img in room_static.images.all():
+                            if getattr(img, 'image', None):
+                                custom_images.append(img.image.url)
+                            elif getattr(img, 'url', None):
+                                custom_images.append(img.url)
+                    
+                    item['room_images'] = custom_images if custom_images else []
+            else:
+                item['room_images'] = []
 
             processed.append(item)
 
@@ -1352,7 +1432,7 @@ class EmergingTravelService:
 
         payload = {
             "user": {
-                "email": user_email,
+                "email": "voucher@aifory.pro",
                 "phone": user_phone, 
                 "comment": user_comment
             },
@@ -1449,43 +1529,56 @@ class EmergingTravelService:
         
 
 
+
 class AbcexPaymentService:
-    BASE_URL = "https://gateway.abcex.io/api/v1"
+    BASE_URL = "https://api.abcex.io"
 
     def __init__(self):
-        self._token = str(getattr(settings, 'ABCEX_BEARER_TOKEN', '')).strip().replace('"', '').replace("'", "")
+        self._api_key = str(getattr(settings, 'ABCEX_API_KEY', '')).strip()
+        self._secret_key = str(getattr(settings, 'ABCEX_SECRET_KEY', '')).strip()
         self._wallet_id = str(getattr(settings, 'ABCEX_WALLET_ID', '')).strip().replace('"', '').replace("'", "")
 
-    def _get_headers(self):
-        return {
-            "accept": "application/json",
-            "authorization": f"Bearer {self._token}"
-        }
-
-    def generate_new_address(self, network_id="TRX"):
-        if not self._wallet_id or not self._token:
-            logger.error("ABCEX: Проверьте ABCEX_BEARER_TOKEN и ABCEX_WALLET_ID в переменных окружения")
-            return None
-
-        url = f"{self.BASE_URL}/wallet/get-new-crypto-address"
-        params = {
-            "walletId": self._wallet_id,
-            "networkId": network_id
+    def _call(self, method, path, query_str=None, body=None):
+        full_path = f"{path}?{query_str}" if query_str else path
+        
+        body_str = json.dumps(body, separators=(',', ':')) if body else ''
+        timestamp = str(int(time.time() * 1000))
+        message = f"{timestamp}\n{method.upper()}\n{full_path}\n{body_str}"
+        signature = hmac.new(self._secret_key.encode(), message.encode(), hashlib.sha256).hexdigest()
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'X-API-KEY': self._api_key,
+            'X-API-TIMESTAMP': timestamp,
+            'X-API-SIGNATURE': signature
         }
         
+        return requests.request(
+            method=method,
+            url=self.BASE_URL + full_path,
+            data=body_str if body_str else None,
+            headers=headers,
+            timeout=15
+        )
+
+    def generate_new_address(self, network_id="TRX"):
+        if not self._wallet_id or not self._api_key or not self._secret_key:
+            logger.error("ABCEX: Проверьте ABCEX_API_KEY, ABCEX_SECRET_KEY и ABCEX_WALLET_ID в переменных окружения")
+            return None
+
+        path = "/api/v1/wallet/get-new-crypto-address"
+        # СТРОГИЙ АЛФАВИТНЫЙ ПОРЯДОК: networkId идет перед walletId (n < w)
+        query_str = f"networkId={network_id}&walletId={self._wallet_id}"
+        
         try:
-            response = requests.get(
-                url, 
-                headers=self._get_headers(), 
-                params=params, 
-                timeout=15
-            )
+            response = self._call('GET', path, query_str=query_str)
             
             if response.status_code == 200:
                 data = response.json()
                 if isinstance(data, list) and len(data) > 0:
                     return data[0].get("address")
                 return None
+                
             logger.error(f"ABCEX Error {response.status_code}: {response.text}")
             return None
             
@@ -1494,9 +1587,10 @@ class AbcexPaymentService:
             return None
 
     def get_funding_wallet_id(self, currency_name="USDT"):
-        url = f"{self.BASE_URL}/accounting/client/report-account/accounts/overview"
+        path = "/api/v1/accounting/client/report-account/accounts/overview"
         try:
-            response = requests.get(url, headers=self._get_headers(), timeout=10)
+            # Здесь параметров нет, поэтому передаем только путь
+            response = self._call('GET', path)
             if response.status_code == 200:
                 data = response.json()
                 wallets = data.get('accounts', {}).get('funding', [])
@@ -1509,20 +1603,19 @@ class AbcexPaymentService:
             return None
         
     def check_payment(self, target_address, expected_amount, currency="USDT", network="TRX"):
-        url = f"{self.BASE_URL}/wallet/transactions/list/my"
+        path = "/api/v1/wallet/transactions/list/my"
         amount_tolerance = Decimal("0.000001")
-        
-        params = {
-            "limit": 50, 
-            "page": 1,
-            "filter.direction": "$eq:in",
-            "filter.status": "$eq:completed",
-            "filter.currencyId": f"$eq:{currency}",
-            "filter.networkId": f"$eq:{network}"
-        }
+        query_str = (
+            f"filter.currencyId=$eq:{currency}&"
+            f"filter.direction=$eq:in&"
+            f"filter.networkId=$eq:{network}&"
+            f"filter.status=$eq:completed&"
+            f"limit=50&"
+            f"page=1"
+        )
         
         try:
-            response = requests.get(url, headers=self._get_headers(), params=params, timeout=15)
+            response = self._call('GET', path, query_str=query_str)
             
             if response.status_code == 200:
                 transactions = response.json().get('data', [])
@@ -1547,28 +1640,22 @@ class AbcexPaymentService:
                         else:
                             logger.warning(f"ABCEX: Платеж найден, но сумма меньше! Ожидалось {expected_decimal}, пришло {tx_amount}")
                 
-                # Платежа действительно еще нет (биржа работает нормально)
                 return {"paid": False, "reason": "not_found"}
                 
             else:
-                # Биржа ответила ошибкой (например 502 или 503)
                 logger.error(f"ABCEX Check Payment Error {response.status_code}: {response.text}")
                 return {"paid": False, "reason": "connection_error"}
                 
         except Exception as e:
-            # Ошибка сети (полностью пропал интернет, сервер недоступен)
             logger.error(f"ABCEX Check Connection Error: {e}")
             return {"paid": False, "reason": "connection_error"}
 
     def create_withdrawal(self, address_to, amount, currency="USDT", network="TRX"):
-        """
-        Создает заявку на вывод средств (возврат клиенту) на бирже ABCEX.
-        """
-        if not self._wallet_id or not self._token:
+        if not self._wallet_id or not self._api_key or not self._secret_key:
             logger.error("ABCEX Withdrawal Error: Секреты API не настроены.")
             return {"success": False, "error": "API credentials missing"}
 
-        url = f"{self.BASE_URL}/accounting/client/crypto-withdrawals/create"
+        path = "/api/v1/accounting/client/crypto-withdrawals/create"
         
         payload = {
             "walletId": self._wallet_id,
@@ -1579,12 +1666,7 @@ class AbcexPaymentService:
         }
 
         try:
-            response = requests.post(
-                url, 
-                headers=self._get_headers(), 
-                json=payload, 
-                timeout=15
-            )
+            response = self._call('POST', path, body=payload)
             
             if response.status_code in (200, 201):
                 data = response.json()

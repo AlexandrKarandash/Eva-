@@ -8,258 +8,19 @@
     const qsa = Core.qsa;
     const escapeHtml = Core.escapeHtml;
 
-    const CITIZENSHIP_OPTIONS = [
-        'Австралия',
-        'Австрия',
-        'Азербайджан',
-        'Аландские острова',
-        'Албания',
-        'Алжир',
-        'Американские Самоа',
-        'Ангилья',
-        'Ангола',
-        'Андорра',
-        'Антарктида',
-        'Антигуа и Барбуда',
-        'Аргентина',
-        'Армения',
-        'Аруба',
-        'Афганистан',
-        'Багамы',
-        'Бангладеш',
-        'Барбадос',
-        'Бахрейн',
-        'Беларусь',
-        'Белиз',
-        'Бельгия',
-        'Бенин',
-        'Бермуды',
-        'Болгария',
-        'Боливия',
-        'Бонайре, Синт-Эстатиус и Саба',
-        'Босния и Герцеговина',
-        'Ботсвана',
-        'Бразилия',
-        'Британская территория в Индийском океане',
-        'Британские Виргинские острова',
-        'Бруней',
-        'Буркина-Фасо',
-        'Бурунди',
-        'Бутан',
-        'Вануату',
-        'Ватикан',
-        'Великобритания',
-        'Венгрия',
-        'Венесуэла',
-        'Виргинские острова США',
-        'Внешние малые острова США',
-        'Восточный Тимор',
-        'Вьетнам',
-        'Габон',
-        'Гаити',
-        'Гайана',
-        'Гамбия',
-        'Гана',
-        'Гваделупа',
-        'Гватемала',
-        'Гвинея',
-        'Гвинея-Бисау',
-        'Германия',
-        'Гернси',
-        'Гибралтар',
-        'Гондурас',
-        'Гонконг',
-        'Гренада',
-        'Гренландия',
-        'Греция',
-        'Грузия',
-        'Гуам',
-        'Дания',
-        'Джерси',
-        'Джибути',
-        'Доминика',
-        'Доминиканская Республика',
-        'Египет',
-        'Замбия',
-        'Западная Сахара',
-        'Зимбабве',
-        'Израиль',
-        'Индия',
-        'Индонезия',
-        'Иордания',
-        'Ирак',
-        'Иран',
-        'Ирландия',
-        'Исландия',
-        'Испания',
-        'Италия',
-        'Йемен',
-        'Кабо-Верде',
-        'Казахстан',
-        'Камбоджа',
-        'Камерун',
-        'Канада',
-        'Катар',
-        'Кения',
-        'Кипр',
-        'Киргизия',
-        'Кирибати',
-        'Китай',
-        'Кокосовые острова',
-        'Колумбия',
-        'Коморы',
-        'Конго',
-        'Демократическая Республика Конго',
-        'Коста-Рика',
-        'Кот-д’Ивуар',
-        'Куба',
-        'Кувейт',
-        'Кюрасао',
-        'Лаос',
-        'Латвия',
-        'Лесото',
-        'Либерия',
-        'Ливан',
-        'Ливия',
-        'Литва',
-        'Лихтенштейн',
-        'Люксембург',
-        'Маврикий',
-        'Мавритания',
-        'Мадагаскар',
-        'Майотта',
-        'Макао',
-        'Малави',
-        'Малайзия',
-        'Мали',
-        'Мальдивы',
-        'Мальта',
-        'Марокко',
-        'Мартиника',
-        'Маршалловы Острова',
-        'Мексика',
-        'Микронезия',
-        'Мозамбик',
-        'Молдова',
-        'Монако',
-        'Монголия',
-        'Монтсеррат',
-        'Мьянма',
-        'Намибия',
-        'Науру',
-        'Непал',
-        'Нигер',
-        'Нигерия',
-        'Нидерланды',
-        'Никарагуа',
-        'Ниуэ',
-        'Новая Зеландия',
-        'Новая Каледония',
-        'Норвегия',
-        'ОАЭ',
-        'Оман',
-        'Остров Буве',
-        'Остров Мэн',
-        'Остров Норфолк',
-        'Остров Рождества',
-        'Острова Кайман',
-        'Острова Кука',
-        'Острова Питкэрн',
-        'Острова Теркс и Кайкос',
-        'Пакистан',
-        'Палау',
-        'Палестина',
-        'Панама',
-        'Папуа — Новая Гвинея',
-        'Парагвай',
-        'Перу',
-        'Польша',
-        'Португалия',
-        'Пуэрто-Рико',
-        'Реюньон',
-        'Россия',
-        'Руанда',
-        'Румыния',
-        'Сальвадор',
-        'Самоа',
-        'Сан-Марино',
-        'Сан-Томе и Принсипи',
-        'Саудовская Аравия',
-        'Северная Македония',
-        'Северные Марианские острова',
-        'Сейшелы',
-        'Сен-Бартелеми',
-        'Сен-Мартен (Франция)',
-        'Сен-Пьер и Микелон',
-        'Сенегал',
-        'Сент-Винсент и Гренадины',
-        'Сент-Китс и Невис',
-        'Сент-Люсия',
-        'Сербия',
-        'Сингапур',
-        'Синт-Мартен',
-        'Сирия',
-        'Словакия',
-        'Словения',
-        'Соломоновы Острова',
-        'Сомали',
-        'Судан',
-        'Суринам',
-        'США',
-        'Сьерра-Леоне',
-        'Таджикистан',
-        'Таиланд',
-        'Тайвань',
-        'Танзания',
-        'Того',
-        'Токелау',
-        'Тонга',
-        'Тринидад и Тобаго',
-        'Тувалу',
-        'Тунис',
-        'Туркменистан',
-        'Турция',
-        'Уганда',
-        'Узбекистан',
-        'Украина',
-        'Уоллис и Футуна',
-        'Уругвай',
-        'Фарерские острова',
-        'Фиджи',
-        'Филиппины',
-        'Финляндия',
-        'Фолклендские острова',
-        'Франция',
-        'Французская Гвиана',
-        'Французская Полинезия',
-        'Французские южные территории',
-        'Хорватия',
-        'ЦАР',
-        'Чад',
-        'Черногория',
-        'Чехия',
-        'Чили',
-        'Швейцария',
-        'Швеция',
-        'Шпицберген и Ян-Майен',
-        'Шри-Ланка',
-        'Эквадор',
-        'Экваториальная Гвинея',
-        'Эритрея',
-        'Эстония',
-        'Эсватини',
-        'Эфиопия',
-        'ЮАР',
-        'Южная Георгия и Южные Сандвичевы острова',
-        'Южная Корея',
-        'Южный Судан',
-        'Ямайка',
-        'Япония'
-    ];
+    const PAYMENT_POLL_INTERVAL_MS = 15000;
+    const PAYMENT_POLL_MAX_ATTEMPTS = 59;
+    const BOOKING_STATUS_POLL_INTERVAL_MS = 15000;
+    const BOOKING_STATUS_POLL_MAX_ATTEMPTS = 60;
+
+    const BOOKING_ERROR_TEXT = 'Произошла ошибка при бронировании. Пожалуйста, попробуйте ещё раз или обратитесь в поддержку.';
+    const BOOKING_PROCESSING_TEXT = 'Бронирование обрабатывается. Пожалуйста, подождите, мы проверяем финальный статус бронирования.';
+    const BOOKING_SUCCESS_TEXT = 'Бронирование подтверждено. Ваучер будет отправлен на email.';
 
     let pollingTimer = null;
     let expireTimer = null;
     let pollingStarted = false;
+    let pollingAttempts = 0;
     let currentBooking = null;
     let currentPaymentState = null;
     let isPaid = false;
@@ -303,175 +64,6 @@
         document.head.appendChild(style);
     }
 
-    function ensureCitizenshipStyles() {
-        if (document.getElementById('payment-citizenship-styles')) return;
-
-        const style = document.createElement('style');
-        style.id = 'payment-citizenship-styles';
-        style.textContent = '' +
-            '.payment-citizenship{position:relative;z-index:6;}' +
-            '.payment-citizenship.is-open{z-index:30;}' +
-            '.payment-citizenship__field{position:relative;display:block;}' +
-            '.payment-citizenship__field .payment-form__input{padding-right:48px;}' +
-            '.payment-citizenship__toggle{position:absolute;top:50%;right:13px;width:28px;height:28px;margin-top:-14px;border:0;background:transparent;cursor:pointer;}' +
-            '.payment-citizenship__toggle:before{content:"";display:block;width:11px;height:11px;margin:8px auto 0;border-top:3px solid #2F66E8;border-left:3px solid #2F66E8;transform:rotate(45deg);transition:.2s;}' +
-            '.payment-citizenship:not(.is-open) .payment-citizenship__toggle:before{margin-top:4px;transform:rotate(225deg);}' +
-            '.payment-citizenship__dropdown{position:absolute;left:0;right:0;top:calc(100% + 6px);max-height:285px;overflow:auto;border-radius:14px;background:#fff;box-shadow:0 8px 28px rgba(15,23,42,.12);border:1px solid rgba(221,214,254,.7);padding:8px 0;}' +
-            '.payment-citizenship__option{display:block;width:100%;padding:12px 15px;border:0;background:#fff;text-align:left;font:inherit;font-weight:500;color:#18181B;cursor:pointer;transition:.15s;}' +
-            '.payment-citizenship__option:hover,.payment-citizenship__option.is-active{background:#F4F7FF;color:#2F66E8;}' +
-            '.payment-citizenship__empty{padding:12px 15px;color:#7A7A83;font-weight:500;}' +
-            '@media(max-width:575px){.payment-citizenship__dropdown{max-height:240px}.payment-citizenship__option{padding:11px 12px}}';
-
-        document.head.appendChild(style);
-    }
-
-    function normalizeCitizenshipValue(value) {
-        return String(value || '')
-            .toLowerCase()
-            .replace(/ё/g, 'е')
-            .trim();
-    }
-
-    function getCitizenshipMatches(value) {
-        const query = normalizeCitizenshipValue(value);
-
-        if (!query) return CITIZENSHIP_OPTIONS;
-
-        return CITIZENSHIP_OPTIONS.filter(function (option) {
-            return normalizeCitizenshipValue(option).indexOf(query) !== -1;
-        });
-    }
-
-    function renderCitizenshipOptions(widget) {
-        const input = qs('.js-payment-citizenship-input', widget);
-        const dropdown = qs('.payment-citizenship__dropdown', widget);
-        if (!input || !dropdown) return;
-
-        const matches = getCitizenshipMatches(input.value);
-
-        if (!matches.length) {
-            dropdown.innerHTML = '<div class="payment-citizenship__empty">Ничего не найдено</div>';
-            return;
-        }
-
-        dropdown.innerHTML = matches.map(function (option) {
-            return '<button type="button" class="payment-citizenship__option">' + escapeHtml(option) + '</button>';
-        }).join('');
-    }
-
-    function openCitizenshipDropdown(widget) {
-        const dropdown = qs('.payment-citizenship__dropdown', widget);
-        const toggle = qs('.payment-citizenship__toggle', widget);
-        if (!dropdown) return;
-
-        renderCitizenshipOptions(widget);
-        widget.classList.add('is-open');
-        dropdown.hidden = false;
-        if (toggle) toggle.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeCitizenshipDropdown(widget) {
-        const dropdown = qs('.payment-citizenship__dropdown', widget);
-        const toggle = qs('.payment-citizenship__toggle', widget);
-        if (!dropdown) return;
-
-        widget.classList.remove('is-open');
-        dropdown.hidden = true;
-        if (toggle) toggle.setAttribute('aria-expanded', 'false');
-    }
-
-    function selectCitizenshipOption(widget, optionNode) {
-        const input = qs('.js-payment-citizenship-input', widget);
-        if (!input || !optionNode) return;
-
-        input.value = optionNode.textContent.trim();
-        closeCitizenshipDropdown(widget);
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
-    function setActiveCitizenshipOption(widget, nextIndex) {
-        const options = qsa('.payment-citizenship__option', widget);
-        if (!options.length) return;
-
-        const safeIndex = (nextIndex + options.length) % options.length;
-
-        options.forEach(function (option, index) {
-            option.classList.toggle('is-active', index === safeIndex);
-        });
-
-        options[safeIndex].scrollIntoView({ block: 'nearest' });
-    }
-
-    function initCitizenshipAutocomplete(form) {
-        ensureCitizenshipStyles();
-
-        qsa('.js-payment-citizenship', form).forEach(function (widget) {
-            if (widget.__citizenshipAutocompleteBound) return;
-            widget.__citizenshipAutocompleteBound = true;
-
-            const input = qs('.js-payment-citizenship-input', widget);
-            const dropdown = qs('.payment-citizenship__dropdown', widget);
-            const toggle = qs('.payment-citizenship__toggle', widget);
-
-            if (!input || !dropdown) return;
-
-            input.addEventListener('focus', function () {
-                openCitizenshipDropdown(widget);
-            });
-
-            input.addEventListener('input', function () {
-                openCitizenshipDropdown(widget);
-            });
-
-            input.addEventListener('keydown', function (event) {
-                const options = qsa('.payment-citizenship__option', widget);
-                const activeIndex = options.findIndex(function (option) {
-                    return option.classList.contains('is-active');
-                });
-
-                if (event.key === 'ArrowDown') {
-                    event.preventDefault();
-                    if (dropdown.hidden) openCitizenshipDropdown(widget);
-                    setActiveCitizenshipOption(widget, activeIndex + 1);
-                } else if (event.key === 'ArrowUp') {
-                    event.preventDefault();
-                    if (dropdown.hidden) openCitizenshipDropdown(widget);
-                    setActiveCitizenshipOption(widget, activeIndex - 1);
-                } else if (event.key === 'Enter' && activeIndex > -1) {
-                    event.preventDefault();
-                    selectCitizenshipOption(widget, options[activeIndex]);
-                } else if (event.key === 'Escape') {
-                    closeCitizenshipDropdown(widget);
-                }
-            });
-
-            dropdown.addEventListener('mousedown', function (event) {
-                event.preventDefault();
-            });
-
-            dropdown.addEventListener('click', function (event) {
-                const option = event.target.closest('.payment-citizenship__option');
-                if (option) selectCitizenshipOption(widget, option);
-            });
-
-            if (toggle) {
-                toggle.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    if (dropdown.hidden) {
-                        input.focus();
-                        openCitizenshipDropdown(widget);
-                    } else {
-                        closeCitizenshipDropdown(widget);
-                    }
-                });
-            }
-
-            document.addEventListener('click', function (event) {
-                if (!widget.contains(event.target)) closeCitizenshipDropdown(widget);
-            });
-        });
-    }
-
     function hideSkeleton() {
         const payment = qs('.payment');
         const skeleton = qs('.payment-skeleton');
@@ -492,9 +84,14 @@
         }
 
         pollingStarted = false;
+        pollingAttempts = 0;
     }
 
     function showError(message) {
+        if (message) {
+            console.error('[payment user-hidden error]', message);
+        }
+
         hideSkeleton();
         stopTimers();
 
@@ -504,8 +101,53 @@
         wrap.innerHTML = '' +
             '<div class="payment-wrap-item">' +
                 '<p class="payment-info-title">Ошибка</p>' +
-                '<p class="payment-item__info">' + escapeHtml(message || 'Не удалось инициализировать оплату.') + '</p>' +
+                '<p class="payment-item__info">' + escapeHtml(BOOKING_ERROR_TEXT) + '</p>' +
             '</div>';
+    }
+
+    function setBookingMessage(text) {
+        const reserveText = qs('.payment-reserve p');
+        if (reserveText) reserveText.textContent = text;
+    }
+
+    function normalizeBookingStatus(response) {
+        if (!response) return '';
+
+        return String(
+            response.status ||
+            response.booking_status ||
+            response.order_status ||
+            response.voucher_status ||
+            response.etg_status ||
+            response.state ||
+            ''
+        ).toLowerCase();
+    }
+
+    function isFinalBookingSuccess(status) {
+        return [
+            'completed',
+            'complete',
+            'confirmed',
+            'success',
+            'succeeded',
+            'vouchered',
+            'voucher_ready',
+            'done'
+        ].indexOf(status) !== -1;
+    }
+
+    function isFinalBookingFailed(status) {
+        return [
+            'failed',
+            'fail',
+            'error',
+            'rejected',
+            'cancelled',
+            'canceled',
+            'expired',
+            'declined'
+        ].indexOf(status) !== -1;
     }
 
     function showCancelledState(reason) {
@@ -583,15 +225,7 @@
                 '<label class="payment-form__label">' +
                     '<span class="payment-form__label-title">Почта</span>' +
                     '<input type="email" name="email" class="payment-form__input js-payment-required" placeholder="mail@example.com" required>' +
-                '</label>' +
-                '<div class="payment-form__label payment-citizenship js-payment-citizenship">' +
-                    '<span class="payment-form__label-title">Гражданство</span>' +
-                    '<span class="payment-citizenship__field">' +
-                        '<input type="text" name="residency" class="payment-form__input js-payment-required js-payment-citizenship-input" placeholder="Гражданство" autocomplete="off" required>' +
-                        '<button type="button" class="payment-citizenship__toggle" aria-label="Показать варианты гражданства" aria-expanded="false"></button>' +
-                    '</span>' +
-                    '<span class="payment-citizenship__dropdown" hidden></span>' +
-                '</div>';
+                '</label>';
         }
 
         html += '</div>';
@@ -616,7 +250,6 @@
             window.jQuery('.input-mask', form).mask('+7 (999) 999-99-99');
         }
 
-        initCitizenshipAutocomplete(form);
         bindPaymentFormValidation();
     }
 
@@ -667,17 +300,11 @@
         return items.map(function (item) {
             const firstName = qs('input[name^="guest_first_name_"]', item);
             const lastName = qs('input[name^="guest_last_name_"]', item);
-            const residency = qs('input[name="residency"]', item);
-            const guest = {
+
+            return {
                 first_name: cleanName(firstName ? firstName.value : ''),
                 last_name: cleanName(lastName ? lastName.value : '')
             };
-
-            if (residency && residency.value.trim()) {
-                guest.residency = residency.value.trim();
-            }
-
-            return guest;
         }).filter(function (guest) {
             return guest.first_name || guest.last_name;
         });
@@ -699,16 +326,56 @@
         const paymentRemove = qs('.payment-remove');
         const paymentPay = qs('.payment-pay');
 
-        if (reserveText) reserveText.textContent = 'Заказ оплачен и отправлен на бронирование';
+        if (reserveText) reserveText.textContent = BOOKING_PROCESSING_TEXT;
         if (paymentTime) paymentTime.style.display = 'none';
         if (paymentRemove) paymentRemove.style.display = 'none';
         if (paymentPay) paymentPay.style.display = 'none';
     }
 
-async function submitFinishAfterPaid(paymentState) {
-    // console.log('=== PAYMENT STATE FOR FINISH ===');
-    // console.log(paymentState);
+async function waitFinalBookingStatus(orderId, accessToken) {
+    if (!Api.checkBookingStatus || !orderId) {
+        setBookingMessage(BOOKING_PROCESSING_TEXT);
+        return null;
+    }
 
+    for (let attempt = 0; attempt < BOOKING_STATUS_POLL_MAX_ATTEMPTS; attempt += 1) {
+        try {
+            const statusResponse = await Api.checkBookingStatus(orderId, accessToken);
+            const status = normalizeBookingStatus(statusResponse);
+
+            Core.saveStorage(Core.FINISH_STORAGE_KEY, {
+                status_response: statusResponse,
+                checked_at: new Date().toISOString()
+            });
+
+            if (isFinalBookingSuccess(status)) {
+                setBookingMessage(BOOKING_SUCCESS_TEXT);
+                return statusResponse;
+            }
+
+            if (isFinalBookingFailed(status)) {
+                console.error('[booking final status failed]', statusResponse);
+                setBookingMessage(BOOKING_ERROR_TEXT);
+                return statusResponse;
+            }
+
+            setBookingMessage(BOOKING_PROCESSING_TEXT);
+        } catch (error) {
+            console.error('[booking final status]', error);
+            setBookingMessage(BOOKING_ERROR_TEXT);
+            return null;
+        }
+
+        await new Promise(function (resolve) {
+            setTimeout(resolve, BOOKING_STATUS_POLL_INTERVAL_MS);
+        });
+    }
+
+    setBookingMessage(BOOKING_PROCESSING_TEXT);
+    return null;
+}
+
+async function submitFinishAfterPaid(paymentState) {
     const source = paymentState && paymentState.finish_payload
         ? paymentState.finish_payload
         : paymentState;
@@ -718,16 +385,10 @@ async function submitFinishAfterPaid(paymentState) {
         access_token: getOrderAccessToken(source || paymentState),
         guests: Array.isArray(source && source.guests)
             ? source.guests.map(function (guest) {
-                const guestPayload = {
+                return {
                     first_name: guest.first_name || '',
                     last_name: guest.last_name || ''
                 };
-
-                if (guest.residency) {
-                    guestPayload.residency = guest.residency;
-                }
-
-                return guestPayload;
             })
             : [],
         contact_data: {
@@ -741,9 +402,6 @@ async function submitFinishAfterPaid(paymentState) {
         }
     };
 
-    // console.log('=== FINAL FINISH PAYLOAD ===');
-    // console.log(finalPayload);
-
     if (
         !finalPayload.internal_order_id ||
         !finalPayload.access_token ||
@@ -752,39 +410,27 @@ async function submitFinishAfterPaid(paymentState) {
         !finalPayload.contact_data.phone
     ) {
         console.error('FINISH payload invalid:', finalPayload);
-
-        const reserveText = qs('.payment-reserve p');
-        if (reserveText) {
-            reserveText.textContent = 'Оплата принята, но данные для бронирования не собраны.';
-        }
-
+        setBookingMessage(BOOKING_ERROR_TEXT);
         return;
     }
 
     try {
+        setBookingMessage(BOOKING_PROCESSING_TEXT);
+
         const result = await Api.finishBooking(finalPayload);
+        Core.saveStorage(Core.FINISH_STORAGE_KEY, {
+            finish_response: result,
+            finished_at: new Date().toISOString()
+        });
 
-        // console.log('=== FINISH RESULT ===');
-        // console.log(result);
-
-        // ВСТАВИТЬ STATUS REQUEST СЮДА
-
-        Core.saveStorage(Core.FINISH_STORAGE_KEY, result);
-
-        const reserveText = qs('.payment-reserve p');
-        if (reserveText) {
-            reserveText.textContent = 'Успех, номер забронирован!';
-        }
+        await waitFinalBookingStatus(finalPayload.internal_order_id, finalPayload.access_token);
     } catch (error) {
         console.error('[finish booking]', error);
         console.error('ERROR STATUS:', error.status);
         console.error('ERROR RESPONSE:', error.response);
         console.error('FAILED FINISH PAYLOAD:', finalPayload);
 
-        const reserveText = qs('.payment-reserve p');
-        if (reserveText) {
-            reserveText.textContent = 'Оплата принята, но бронирование не завершилось. Ошибка finish.';
-        }
+        setBookingMessage(BOOKING_ERROR_TEXT);
     }
 }
 
@@ -801,7 +447,7 @@ async function submitFinishAfterPaid(paymentState) {
         const paymentPay = qs('.payment-pay');
 
         if (info) info.classList.remove('hide');
-        if (reserveText) reserveText.textContent = 'Заказ оплачен, отправляем данные...';
+        if (reserveText) reserveText.textContent = BOOKING_PROCESSING_TEXT;
         if (paymentTime) paymentTime.style.display = 'none';
         if (paymentRemove) paymentRemove.style.display = 'none';
         if (paymentPay) paymentPay.style.display = 'none';
@@ -817,8 +463,20 @@ async function submitFinishAfterPaid(paymentState) {
         if (pollingStarted || !paymentState.internal_order_id || paymentState.cancelled || paymentState.paid) return;
 
         pollingStarted = true;
+        pollingAttempts = 0;
 
         pollingTimer = setInterval(async function () {
+            if (pollingAttempts >= PAYMENT_POLL_MAX_ATTEMPTS) {
+                if (pollingTimer) {
+                    clearInterval(pollingTimer);
+                    pollingTimer = null;
+                }
+                pollingStarted = false;
+                return;
+            }
+
+            pollingAttempts += 1;
+
             try {
                 const status = await Api.checkPayment(
                     paymentState.internal_order_id,
@@ -838,7 +496,7 @@ async function submitFinishAfterPaid(paymentState) {
             } catch (error) {
                 console.error('[payment polling]', error);
             }
-        }, 5000);
+        }, PAYMENT_POLL_INTERVAL_MS);
     }
 
     function startExpireTimer(paymentState) {
@@ -958,7 +616,27 @@ function renderPaymentInfo(booking) {
         renderPaymentInfo(booking);
     }
 
-    async function startPrebookAfterFormFilled(payBtn) {
+    function attachGuestDataToPaymentState(paymentState, guests, contactData) {
+        paymentState = paymentState || {};
+
+        paymentState.form_submitted = true;
+        paymentState.payment_visible = true;
+        paymentState.guests_saved_at = new Date().toISOString();
+        paymentState.finish_payload = {
+            internal_order_id: paymentState.internal_order_id,
+            access_token: paymentState.access_token,
+            guests: guests,
+            contact_data: {
+                email: contactData.email,
+                phone: contactData.phone,
+                language: 'ru'
+            }
+        };
+
+        return paymentState;
+    }
+
+    async function startPaymentAfterFormFilled(payBtn) {
         if (!currentBooking) return;
 
         const form = qs('.js-payment-form');
@@ -979,34 +657,30 @@ function renderPaymentInfo(booking) {
         Core.saveStorage(Core.BOOKING_STORAGE_KEY, currentBooking);
 
         payBtn.classList.add('disabled');
-        payBtn.textContent = 'Создаём оплату...';
+        payBtn.textContent = 'Открываем оплату...';
 
         try {
-            const prebookData = await Api.prebook(currentBooking);
+            if (!currentPaymentState || !currentPaymentState.internal_order_id) {
+                const prebookData = await Api.prebook(currentBooking);
 
-            currentPaymentState = Object.assign({}, prebookData, {
-                book_hash: prebookData.book_hash || currentBooking.book_hash,
-                booking: {
+                currentPaymentState = Object.assign({}, prebookData, {
                     book_hash: prebookData.book_hash || currentBooking.book_hash,
-                    hotel_id: currentBooking.hotel_id,
-                    checkin: currentBooking.checkin,
-                    checkout: currentBooking.checkout
-                },
-                started_at: Date.now(),
-                created_at: new Date().toISOString(),
-                cancelled: false,
-                paid: false,
-                finish_payload: {
-                    internal_order_id: prebookData.internal_order_id,
-                    access_token: prebookData.access_token,
-                    guests: guests,
-                    contact_data: {
-                        email: contactData.email,
-                        phone: contactData.phone,
-                        language: 'ru'
-                    }
-                }
-            });
+                    booking: {
+                        book_hash: prebookData.book_hash || currentBooking.book_hash,
+                        hotel_id: currentBooking.hotel_id,
+                        checkin: currentBooking.checkin,
+                        checkout: currentBooking.checkout
+                    },
+                    started_at: Date.now(),
+                    created_at: new Date().toISOString(),
+                    cancelled: false,
+                    paid: false,
+                    payment_visible: false,
+                    form_submitted: false
+                });
+            }
+
+            currentPaymentState = attachGuestDataToPaymentState(currentPaymentState, guests, contactData);
 
             Core.saveStorage(Core.PAYMENT_STORAGE_KEY, currentPaymentState);
             bindPaymentActions(currentBooking, currentPaymentState);
@@ -1015,10 +689,10 @@ function renderPaymentInfo(booking) {
             startExpireTimer(currentPaymentState);
             startPolling(currentBooking, currentPaymentState);
         } catch (error) {
-            payBtn.textContent = 'Оплатить';
+            payBtn.textContent = 'Перейти к оплате';
             payBtn.classList.remove('disabled');
-            alert(error.message || 'Не удалось создать оплату.');
-            console.error('[prebook after form]', error);
+            alert(BOOKING_ERROR_TEXT);
+            console.error('[payment after form]', error);
         }
     }
 
@@ -1041,7 +715,7 @@ function renderPaymentInfo(booking) {
                 return;
             }
 
-            await startPrebookAfterFormFilled(payBtn);
+            await startPaymentAfterFormFilled(payBtn);
         });
     }
 
@@ -1075,7 +749,7 @@ function renderPaymentInfo(booking) {
                 window.location.href = '/';
             } catch (error) {
                 console.error('[payment cancel]', error);
-                alert(error.message || 'Не удалось отменить бронирование.');
+                alert(BOOKING_ERROR_TEXT);
             }
         });
     }
@@ -1154,16 +828,18 @@ function renderPaymentStartInfo(booking) {
                 return;
             }
 
-            renderPaymentAfterPrebook(booking, currentPaymentState);
-            startExpireTimer(currentPaymentState);
-            startPolling(booking, currentPaymentState);
-            return;
+            if (currentPaymentState.payment_visible || currentPaymentState.form_submitted) {
+                renderPaymentAfterPrebook(booking, currentPaymentState);
+                startExpireTimer(currentPaymentState);
+                startPolling(booking, currentPaymentState);
+                return;
+            }
         }
 
         const payBtn = qs('.payment-pay');
         if (payBtn) {
-            payBtn.classList.add('disabled');
-            payBtn.textContent = 'Оплатить';
+            payBtn.classList.toggle('disabled', !isPaymentFormFilled());
+            payBtn.textContent = 'Перейти к оплате';
             payBtn.dataset.paymentReady = 'false';
         }
     }

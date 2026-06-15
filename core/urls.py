@@ -21,6 +21,9 @@ urlpatterns = [
     path('api/hotels/nearby-places/', views.hotel_nearby_places_view, name='hotel-nearby-places'),
     path('api/hotels/<path:hotel_id>/', views.hotel_detail_view, name='hotel_detail'),
 
+    #webhook emails
+    path('api/v1/vouchers/inbound-webhook/', views.InboundEmailWebhookView.as_view(), name='inbound_email_webhook'),
+
     # API booking
     path('api/booking/prebook/', views.PrebookView.as_view(), name='prebook'),
     path('api/booking/form/', views.BookingFormView.as_view(), name='booking-form'),

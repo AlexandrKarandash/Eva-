@@ -1,12 +1,20 @@
 from django.contrib import admin, messages
 from django.utils.html import format_html
 from django.urls import reverse
-from .models import City, OrderStatus, NetworkChoices, HotelCache, Order, Transaction, HotelStatic, HotelImage, HotelNearbyCache
-from .services import etg_service
-from .views import _safe_voucher_url, notify_status_change
-from .services import abcex_service
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
-# --- Inlines ---
+# Импортируем старые и новые модели
+from .models import (
+    City, OrderStatus, NetworkChoices, HotelCache, Order, Transaction, 
+    HotelStatic, HotelImage, HotelNearbyCache, InboundEmail, VoucherDocument,
+    HotelRoomStatic, RoomImage, OrderStatusHistory  # <-- Добавили новые модели сюда
+)
+from .services import etg_service, abcex_service
+from .views import _safe_voucher_url, notify_status_change
+from .email_processor import VoucherEmailProcessor
+
+# --- Inlines (Встроенные блоки) ---
 
 class TransactionInline(admin.TabularInline):
     model = Transaction
@@ -21,27 +29,71 @@ class TransactionInline(admin.TabularInline):
             return format_html('<a href="{}" target="_blank">🔗 Посмотреть</a>', url)
         return "—"
 
+
+class OrderStatusHistoryInline(admin.TabularInline):
+    """Отображение истории изменения статусов прямо в карточке заказа"""
+    model = OrderStatusHistory
+    extra = 0
+    readonly_fields = ('old_status', 'new_status', 'changed_at', 'changed_by', 'reason')
+    can_delete = False
+    ordering = ('-changed_at',)
+    
+    verbose_name = "Изменение статуса"
+    verbose_name_plural = "История изменений статусов"
+
+
 class HotelImageInline(admin.StackedInline):
     model = HotelImage
     extra = 1
     classes = ('collapse',)
 
+
+class RoomImageInline(admin.TabularInline):
+    """Отображение картинок внутри карточки конкретного типа номера"""
+    model = RoomImage
+    extra = 1
+    verbose_name = "Фотография номера"
+    verbose_name_plural = "Фотографии номеров"
+
+
+class HotelRoomStaticInline(admin.TabularInline):
+    """Отображение списка номеров прямо внутри карточки отеля"""
+    model = HotelRoomStatic
+    extra = 0
+    fields = ('name', 'room_ext_id', 'edit_link')
+    readonly_fields = ('edit_link',)
+    can_delete = False
+    
+    verbose_name = "Тип номера"
+    verbose_name_plural = "Сопоставленные типы номеров (Статика)"
+
+    @admin.display(description="Действие")
+    def edit_link(self, obj):
+        if obj.pk:
+            # Ссылка для перехода к детальному редактированию номера (и его картинок)
+            url = reverse("admin:core_hotelroomstatic_change", args=[obj.pk])
+            return format_html('<a href="{}" target="_blank">📝 Управление номером и фото</a>', url)
+        return "—"
+
+
 # --- Model Admins ---
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    # Добавили voucher_status в список отображения
     list_display = (
-        'id_short', 'status_colored', 'user_email', 
+        'id_short', 'status_colored', 'voucher_status', 'user_email', 
         'hotel_name_short', 'amount_display', 'created_at'
     )
-    list_filter = ('status', 'created_at', 'check_in')
+    list_filter = ('status', 'voucher_status', 'created_at', 'check_in')
     search_fields = ('id', 'user_email', 'hotel_name', 'emerging_booking_id')
     
     actions = ['update_etg_status', 'mark_refunded']
 
     fieldsets = (
         ('Основная информация', {
-            'fields': ('status', 'user_email', 'guest_name')
+            # Добавили поле voucher_status в карточку
+            'fields': (('status', 'voucher_status'), 'user_email', 'guest_name')
         }),
         ('Детали бронирования', {
             'fields': ('hotel_name', ('check_in', 'check_out'))
@@ -54,7 +106,8 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('rate_key', 'emerging_booking_id', ('hotel_latitude', 'hotel_longitude'))
         }),
     )
-    inlines = [TransactionInline]
+    # ИСПРАВЛЕНО: Добавили историю статусов OrderStatusHistoryInline к транзакциям
+    inlines = [TransactionInline, OrderStatusHistoryInline]
     readonly_fields = ('created_at', 'id', 'paid_at')
 
     @admin.display(description="Сумма USDT")
@@ -107,9 +160,8 @@ class OrderAdmin(admin.ModelAdmin):
         refunded_count = 0
         skipped_count = 0
         invalid_status_count = 0 
-        abcex_error_count = 0  # Добавили счетчик для ошибок самой биржи
+        abcex_error_count = 0
 
-        # Список статусов, из которых РАЗРЕШЕНО делать возврат
         ALLOWED_STATUSES = [
             OrderStatus.PAID, 
             OrderStatus.BOOKING, 
@@ -117,12 +169,10 @@ class OrderAdmin(admin.ModelAdmin):
         ]
 
         for order in queryset:
-            #  Если заказ уже возвращен, пропускаем
             if order.status == OrderStatus.REFUNDED:
                 skipped_count += 1
                 continue
 
-            #  Если заказ НЕ был оплачен/забронирован, запрещаем возврат
             if order.status not in ALLOWED_STATUSES:
                 invalid_status_count += 1
                 self.message_user(
@@ -132,7 +182,6 @@ class OrderAdmin(admin.ModelAdmin):
                 )
                 continue
 
-            #  ИСПРАВЛЕНО: Получаем запись транзакции, чтобы узнать исходный адрес кошелька клиента
             tx_record = Transaction.objects.filter(order=order).first()
             if not tx_record or not tx_record.from_address:
                 invalid_status_count += 1
@@ -143,7 +192,6 @@ class OrderAdmin(admin.ModelAdmin):
                 )
                 continue
                 
-            #  ИСПРАВЛЕНО: Вызываем реальный вывод средств через API ABCEX
             refund_result = abcex_service.create_withdrawal(
                 address_to=tx_record.from_address,
                 amount=order.amount_usdt
@@ -156,9 +204,8 @@ class OrderAdmin(admin.ModelAdmin):
                     f"Ошибка API ABCEX при возврате заказа #{order.id}: {refund_result.get('error')}", 
                     level=messages.ERROR
                 )
-                continue  # Если биржа вернула ошибку, статус заказа НЕ меняем!
+                continue
 
-            #  ИСПРАВЛЕНО: Если транзакция успешна, пишем метаданные для истории и меняем статус
             previous_status = order.get_status_display()
             
             # Передаем автора изменений и причину в переопределенный метод save() модели Order
@@ -206,6 +253,7 @@ class OrderAdmin(admin.ModelAdmin):
             color, obj.get_status_display()
         )
 
+
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('tx_hash_short', 'order_link', 'network', 'amount_usdt', 'confirmed_status')
@@ -233,17 +281,16 @@ class TransactionAdmin(admin.ModelAdmin):
     def confirmed_status(self, obj):
         return obj.confirmed
 
-# --- Обновленный HotelStaticAdmin ---
 
 @admin.register(HotelStatic)
 class HotelStaticAdmin(admin.ModelAdmin):
-    # Что видим в общем списке
     list_display = ('name', 'city', 'star_rating', 'kind', 'hotel_chain')
     list_filter = ('star_rating', 'kind', 'country_code')
     search_fields = ('name', 'hotel_id', 'city', 'address')
-    inlines = [HotelImageInline]
     
-    # Красивая группировка полей внутри карточки отеля
+    # ИСПРАВЛЕНО: Добавили HotelRoomStaticInline, теперь типы номеров видны прямо в отеле
+    inlines = [HotelImageInline, HotelRoomStaticInline]
+    
     fieldsets = (
         ('Главное', {
             'fields': (('name', 'star_rating'), ('hotel_id', 'hid'), 'hotel_chain', 'kind')
@@ -255,14 +302,57 @@ class HotelStaticAdmin(admin.ModelAdmin):
             'fields': (('check_in_time', 'check_out_time'), 'important_info')
         }),
         ('Контент и удобства', {
-            'classes': ('collapse',), # Этот блок можно свернуть
+            'classes': ('collapse',),
             'fields': ('description', 'amenities_list')
         }),
     )
 
-    @admin.display(description="Координаты")
-    def location_view(self, obj):
-        return f"{obj.latitude}, {obj.longitude}" if obj.latitude else "—"
+
+# --- НОВЫЕ MODEL ADMINS ДЛЯ ДОБАВЛЕННЫХ МОДЕЛЕЙ ---
+
+@admin.register(HotelRoomStatic)
+class HotelRoomStaticAdmin(admin.ModelAdmin):
+    """Панель управления статическими типами номеров и сопоставлениями (Matching)"""
+    list_display = ('name', 'hotel_link', 'room_ext_id', 'created_at', 'images_count')
+    list_filter = ('created_at',)
+    search_fields = ('name', 'room_ext_id', 'hotel__name')
+    inlines = [RoomImageInline]
+    
+    readonly_fields = ('created_at',)
+    
+    @admin.display(description="Отель")
+    def hotel_link(self, obj):
+        if obj.hotel:
+            url = reverse("admin:core_hotelstatic_change", args=[obj.hotel.id])
+            return format_html('<a href="{}">{}</a>', url, obj.hotel.name)
+        return "—"
+
+    @admin.display(description="Кол-во фото")
+    def images_count(self, obj):
+        return obj.images.count()
+
+
+@admin.register(OrderStatusHistory)
+class OrderStatusHistoryAdmin(admin.ModelAdmin):
+    """Глобальный аудит-лог изменения статусов (только для чтения)"""
+    list_display = ('changed_at', 'order_link', 'old_status', 'new_status', 'changed_by')
+    list_filter = ('new_status', 'changed_at')
+    search_fields = ('order__id', 'reason', 'changed_by__username')
+    
+    readonly_fields = ('order', 'old_status', 'new_status', 'changed_at', 'changed_by', 'reason')
+
+    # Запрещаем изменять системный лог руками
+    def has_add_permission(self, request): return False
+    def has_change_permission(self, request, obj=None): return False
+    def has_delete_permission(self, request, obj=None): return False
+
+    @admin.display(description="Заказ")
+    def order_link(self, obj):
+        url = reverse("admin:core_order_change", args=[obj.order.id])
+        return format_html('<a href="{}">📁 Заказ #{}</a>', url, str(obj.order.id)[:8])
+
+
+# --- Остальные регистрации ---
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
@@ -272,7 +362,6 @@ class CityAdmin(admin.ModelAdmin):
     def hotels_count(self, obj):
         return obj.hotels.count()
     hotels_count.short_description = "Кол-во отелей в базе"
-
 
 
 @admin.register(HotelNearbyCache)
@@ -299,5 +388,44 @@ class HotelNearbyCacheAdmin(admin.ModelAdmin):
         return len(obj.airports or [])
 
 
+@admin.register(InboundEmail)
+class InboundEmailAdmin(admin.ModelAdmin):
+    list_display = ('created_at', 'from_email', 'subject', 'parsed_booking_id', 'order', 'processing_status')
+    list_filter = ('processing_status', 'created_at')
+    search_fields = ('from_email', 'subject', 'parsed_booking_id', 'body')
+    raw_id_fields = ('order',) 
+    actions = ['reprocess_emails']
+
+    @admin.action(description="Запустить повторную обработку выделенных писем")
+    def reprocess_emails(self, request, queryset):
+        success_count = 0
+        failed_count = 0
+        manual_count = 0
+        
+        for email in queryset:
+            partner_file = email.original_file if email.original_file else None
+            VoucherEmailProcessor.process_inbound_email(email, partner_file=partner_file)
+            
+            email.refresh_from_db()
+            if email.processing_status == 'processed':
+                success_count += 1
+            elif email.processing_status == 'manual':
+                manual_count += 1
+            else:
+                failed_count += 1
+                
+        self.message_user(
+            request, 
+            f"Обработка завершена. Успешно: {success_count}, Требует ручного вмешательства: {manual_count}, Ошибки: {failed_count}",
+            messages.SUCCESS
+        )
+
+
+@admin.register(VoucherDocument)
+class VoucherDocumentAdmin(admin.ModelAdmin):
+    list_display = ('order', 'sent_to_email', 'status', 'created_at', 'sent_at')
+    search_fields = ('sent_to_email', 'order__id')
+    readonly_fields = ('created_at',)
+
+
 admin.site.register(HotelCache)
-admin.site.register(HotelImage)

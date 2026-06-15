@@ -371,6 +371,7 @@
 		<div class="booking">
 			<div class="section-frame">
 				<form action="#" method="post" class="booking-form">
+					<input type="hidden" name="residency" value="ru">
 					<div class="booking-group">
 						<div class="booking-search">
 							<label class="booking-search__label">
@@ -387,7 +388,7 @@
 									</div>
 									<div class="region-drop__item">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-										<p class="region-drop__item-title">Лос Анджелес</p>
+										<p class="region-drop__item-title">Los Angeles</p>
 										<input type="radio" name="region" value="2011">
 									</div>
 									<div class="region-drop__item">
@@ -397,7 +398,7 @@
 									</div>
 									<div class="region-drop__item">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.00004 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33333 8.00004 1.33333C4.31814 1.33333 1.33337 4.3181 1.33337 8C1.33337 11.6819 4.31814 14.6667 8.00004 14.6667Z" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33336 2H6.00002C4.70002 5.89333 4.70002 10.1067 6.00002 14H5.33336" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2C11.3 5.89333 11.3 10.1067 10 14" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.6667V10C5.89333 11.3 10.1067 11.3 14 10V10.6667" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 5.99999C5.89333 4.69999 10.1067 4.69999 14 5.99999" stroke="#1D1D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-										<p class="region-drop__item-title">Дубай</p>
+										<p class="region-drop__item-title">Dubai</p>
 										<input type="radio" name="region" value="6053839">
 									</div>
 									<div class="region-drop__empty">
@@ -498,6 +499,29 @@
 						</label>
 					</div>
 					<div class="booking-toggle">
+						<div class="booking-residency">
+							<div class="filter-drop">
+								<div class="booking-room__active js-list-drop">
+									<p class="search-label-title">Гражданство</p>
+									<div class="booking-room__title">
+										<p class="js-drop-title">Россия</p>
+										<i class="fa-arrow-down"></i>
+									</div>
+								</div>
+								<div class="filter-drop__list">
+									<div class="filter-drop__item js-item-drop active js-checkbox">
+										<p>Россия</p>
+										<i class="fa-check"></i>
+										<input type="radio" name="residency" value="ru">
+									</div>
+									<div class="filter-drop__item js-item-drop js-checkbox">
+										<p>США</p>
+										<i class="fa-check"></i>
+										<input type="radio" name="residency" value="us">
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="booking-check js-toggle-checkbox js-checkbox">
 							<input type="checkbox" name="flat" value="true">
 							<div class="booking-check__icon">

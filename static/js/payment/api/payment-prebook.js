@@ -9,7 +9,8 @@
             hotel_id: booking.hotel_id,
             email: booking.email || 'test@example.com',
             checkin: booking.checkin,
-            checkout: booking.checkout
+            checkout: booking.checkout,
+            residency: booking.residency || 'ru'
         };
 
         // console.log('=== PREBOOK REQUEST ===');

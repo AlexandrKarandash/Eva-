@@ -26,10 +26,10 @@ def send_telegram_notification(message):
         logger.error(f"Telegram notification error: {e}")
 
 
-def notify_status_change(order, title="", extra_info=""):
+def notify_status_change(order, title="Обновление статуса заказа!", extra_info=""):
     order_id = getattr(order, "id", order)
     status = getattr(order, "status", "")
-    parts = [title or "Статус заказа изменён", f"Заказ #{order_id}", f"Статус: {status}"]
+    parts = [title, f"Заказ #{order_id}", f"Статус: {status}"]
     if extra_info:
         parts.append(extra_info)
     return send_telegram_notification("\n".join(parts))

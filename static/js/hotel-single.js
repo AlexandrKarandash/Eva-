@@ -1,10 +1,15 @@
 (function () {
 	'use strict';
 
+	const ROOM_PRICE_TAX_INFO_TEXT = 'Налоги и сборы не включены в стоимость и оплачиваются при заселении в валюте отеля.';
+
 	const HOTEL_DETAIL_API = window.HOTEL_DETAIL_API || '/api/hotels/';
 	const STATIC_URL = window.STATIC_URL || '/static/';
 	const SEARCH_STORAGE_KEY = 'aifory_hotel_search_state';
 	const BOOKING_STORAGE_KEY = 'aifory_hotel_booking_state';
+	const PAYMENT_STORAGE_KEY = 'aifory_hotel_payment_state';
+	const PREBOOK_API = '/api/booking/prebook/';
+	const BOOKING_ERROR_MESSAGE = 'Произошла ошибка при бронировании. Пожалуйста, попробуйте ещё раз или обратитесь в поддержку.';
 
 	function qs(selector, root) {
 		return (root || document).querySelector(selector);
@@ -53,6 +58,7 @@
 		if (urlParams.get('checkout')) state.checkout = urlParams.get('checkout');
 		if (urlParams.get('adults')) state.adults = parseInt(urlParams.get('adults'), 10) || state.adults || 2;
 		if (urlParams.get('rooms')) state.rooms_count = parseInt(urlParams.get('rooms'), 10) || state.rooms_count || 1;
+		if (urlParams.get('residency')) state.residency = urlParams.get('residency');
 
 		if (urlChildren.length) {
 			state.children = urlChildren.map(function (age) {
@@ -71,6 +77,98 @@
 			localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(state || {}));
 		} catch (e) {
 			console.error('[single save search state]', e);
+		}
+	}
+
+
+	function saveLocalState(key, value) {
+		try {
+			localStorage.setItem(key, JSON.stringify(value || {}));
+		} catch (e) {
+			console.error('[single save local state]', e);
+		}
+	}
+
+	function getCookie(name) {
+		const value = '; ' + document.cookie;
+		const parts = value.split('; ' + name + '=');
+		if (parts.length === 2) return parts.pop().split(';').shift();
+		return '';
+	}
+
+	async function requestJson(url, options) {
+		options = options || {};
+		options.headers = options.headers || {};
+
+		if (!options.headers['Content-Type'] && options.body) {
+			options.headers['Content-Type'] = 'application/json';
+		}
+
+		options.headers.Accept = 'application/json';
+
+		const csrf = getCookie('csrftoken');
+		if (csrf) options.headers['X-CSRFToken'] = csrf;
+
+		options.credentials = 'same-origin';
+
+		const response = await fetch(url, options);
+		const data = await response.json().catch(function () {
+			return null;
+		});
+
+		if (!response.ok) {
+			const error = new Error((data && (data.detail || data.message || data.error)) || 'Ошибка запроса');
+			error.response = data;
+			error.status = response.status;
+			throw error;
+		}
+
+		return data;
+	}
+
+	function prebookRoomFromSingle(booking) {
+		const payload = {
+			book_hash: booking.book_hash,
+			hotel_id: booking.hotel_id,
+			email: booking.email || 'test@example.com',
+			checkin: booking.checkin,
+			checkout: booking.checkout
+		};
+
+		return requestJson(PREBOOK_API, {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		});
+	}
+
+	function buildPaymentStateFromPrebook(booking, prebookData) {
+		return Object.assign({}, prebookData || {}, {
+			book_hash: (prebookData && prebookData.book_hash) || booking.book_hash,
+			booking: {
+				book_hash: (prebookData && prebookData.book_hash) || booking.book_hash,
+				hotel_id: booking.hotel_id,
+				checkin: booking.checkin,
+				checkout: booking.checkout
+			},
+			started_at: Date.now(),
+			created_at: new Date().toISOString(),
+			cancelled: false,
+			paid: false,
+			payment_visible: false,
+			form_submitted: false
+		});
+	}
+
+	function setBookingButtonLoading(btn, isLoading) {
+		if (!btn) return;
+
+		if (isLoading) {
+			if (!btn.dataset.defaultText) btn.dataset.defaultText = btn.textContent || 'Забронировать';
+			btn.classList.add('disabled');
+			btn.textContent = 'Проверяем цену...';
+		} else {
+			btn.classList.remove('disabled');
+			btn.textContent = btn.dataset.defaultText || 'Забронировать';
 		}
 	}
 
@@ -440,6 +538,12 @@
 			params.set('adults', state.adults);
 		}
 
+		if (urlParams.get('residency')) {
+			params.set('residency', urlParams.get('residency'));
+		} else {
+			params.set('residency', state.residency || 'ru');
+		}
+
 		const urlChildren = urlParams.getAll('children');
 		const localChildren = Array.isArray(state.children) ? state.children : [];
 
@@ -484,10 +588,12 @@
 		const checkin = params.get('checkin');
 		const checkout = params.get('checkout');
 		const adults = params.get('adults');
+		const residency = params.get('residency') || 'ru';
 
 		if (checkin) url.searchParams.set('checkin', checkin);
 		if (checkout) url.searchParams.set('checkout', checkout);
 		if (adults) url.searchParams.set('adults', adults);
+		url.searchParams.set('residency', residency);
 
 		params.getAll('children').forEach(function (age) {
 			url.searchParams.append('children', age);
@@ -1180,6 +1286,7 @@
 							'<p class="room-price__title">' + escapeHtml(formatMoney(price, currency)) + '</p>' +
 							'<p class="room-price__person">за ' + nights + ' ' + plural(nights, ['ночь', 'ночи', 'ночей']) + ', для ' + escapeHtml(guests) + '</p>' +
 							'<p class="room-price__nalog">' + escapeHtml(getTaxText(rate)) + '</p>' +
+								'<p class="room-price__nalog-info">' + escapeHtml(ROOM_PRICE_TAX_INFO_TEXT) + '</p>' +
 							'<a href="#" class="room-price__add" data-hotel-id="' + escapeHtml(hotel.hid || hotel.id || getHotelId()) + '" data-hotel-name="' + escapeHtml(hotel.name || '') + '" data-book-hash="' + escapeHtml(getRateHash(rate)) + '" data-rate-index="' + rateIndex + '" data-room-name="' + escapeHtml(rate.room_name || '') + '" data-price="' + escapeHtml(String(price || '')) + '">Забронировать</a>' +
 						'</div>' +
 					'</div>';
@@ -1219,18 +1326,28 @@
 		return number.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ' + (currency || 'USDT');
 	}
 
-	function formatDateShortRu(value) {
+	function formatCancellationDateUtc(value) {
 		if (!value) return '';
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return '';
-		return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+
+		const pad = function (num) {
+			return String(num).padStart(2, '0');
+		};
+
+		return pad(date.getUTCDate()) + '.' +
+			pad(date.getUTCMonth() + 1) + '.' +
+			date.getUTCFullYear() + ' ' +
+			pad(date.getUTCHours()) + ':' +
+			pad(date.getUTCMinutes()) + ' UTC+0';
 	}
 
 	function getCancellationText(rate) {
 		const payment = getRatePaymentType(rate || {});
 		const penalties = payment.cancellation_penalties || rate.cancellation_penalties || {};
 		if (penalties.free_cancellation_before) {
-			return 'Бесплатная отмена до ' + formatDateShortRu(penalties.free_cancellation_before);
+			const cancellationDate = formatCancellationDateUtc(penalties.free_cancellation_before);
+			return cancellationDate ? 'Бесплатная отмена до: ' + cancellationDate : 'Бесплатная отмена доступна';
 		}
 		if (Array.isArray(penalties.policies) && penalties.policies.length) return 'Условия отмены указаны в тарифе';
 		return 'Условия отмены уточняются';
@@ -1361,6 +1478,19 @@
 
 			if (taxNode) {
 				taxNode.textContent = getTaxText(rate);
+			}
+
+			let taxInfoNode = qs('.room-price__nalog-info', item);
+			if (!taxInfoNode && roomPrice) {
+				const addBtn = qs('.room-price__add', roomPrice);
+				const html = '<p class="room-price__nalog-info"></p>';
+				if (addBtn) addBtn.insertAdjacentHTML('beforebegin', html);
+				else roomPrice.insertAdjacentHTML('beforeend', html);
+				taxInfoNode = qs('.room-price__nalog-info', roomPrice);
+			}
+
+			if (taxInfoNode) {
+				taxInfoNode.textContent = ROOM_PRICE_TAX_INFO_TEXT;
 			}
 
 			const preview = qs('.room-main__preview', item.closest('.room-item'));
@@ -2573,6 +2703,7 @@
 
 			checkin: searchParams.get('checkin') || searchState.checkin || '',
 			checkout: searchParams.get('checkout') || searchState.checkout || '',
+			residency: searchParams.get('residency') || searchState.residency || 'ru',
 
 			adults: adults,
 			children: children,
@@ -2585,7 +2716,7 @@
 		};
 	}
 
-	document.addEventListener('click', function (event) {
+	document.addEventListener('click', async function (event) {
 		const galleryTarget = event.target.closest('.single-gallery__full, .single-gallery__item, .single-gallery__all');
 
 		if (galleryTarget) {
@@ -2654,11 +2785,32 @@
 
 		event.preventDefault();
 
+		if (btn.dataset.prebookLoading === 'true') return;
+
 		const bookingState = collectBookingStateFromButton(btn);
 
-		localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(bookingState));
+		if (!bookingState.book_hash || !bookingState.hotel_id || !bookingState.checkin || !bookingState.checkout) {
+			alert('Не хватает данных для бронирования. Попробуйте заново выбрать даты и номер.');
+			return;
+		}
 
-		window.location.href = '/payment.html';
+		btn.dataset.prebookLoading = 'true';
+		setBookingButtonLoading(btn, true);
+
+		try {
+			const prebookData = await prebookRoomFromSingle(bookingState);
+			const paymentState = buildPaymentStateFromPrebook(bookingState, prebookData);
+
+			saveLocalState(BOOKING_STORAGE_KEY, bookingState);
+			saveLocalState(PAYMENT_STORAGE_KEY, paymentState);
+
+			window.location.href = '/payment.html';
+		} catch (error) {
+			console.error('[single prebook]', error);
+			alert(BOOKING_ERROR_MESSAGE);
+			btn.dataset.prebookLoading = 'false';
+			setBookingButtonLoading(btn, false);
+		}
 	});
 
 	document.addEventListener('DOMContentLoaded', function () {

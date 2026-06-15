@@ -1,22 +1,28 @@
 {
   "$schema": "https://schema.railpack.com",
-  "buildAptPackages": [
-    "libpango-1.0-0",
-    "libpangoft2-1.0-0",
-    "libcairo2",
-    "libgdk-pixbuf-2.0-0",
-    "libglib2.0-0",
-    "libffi-dev",
-    "shared-mime-info",
-    "fonts-liberation"
-  ],
-  "deployAptPackages": [
-    "libpango-1.0-0",
-    "libpangoft2-1.0-0",
-    "libcairo2",
-    "libgdk-pixbuf-2.0-0",
-    "libglib2.0-0",
-    "shared-mime-info",
-    "fonts-liberation"
-  ]
+  "deploy": {
+    "aptPackages": [
+      "libpango-1.0-0",
+      "libpangoft2-1.0-0",
+      "libcairo2",
+      "libgdk-pixbuf-2.0-0",
+      "libglib2.0-0",
+      "shared-mime-info",
+      "fonts-liberation"
+    ]
+  },
+  "steps": {
+    "packages": {
+      "aptPackages": [
+        "libpango-1.0-0",
+        "libpangoft2-1.0-0",
+        "libcairo2",
+        "libgdk-pixbuf-2.0-0",
+        "libglib2.0-0",
+        "libffi-dev",
+        "shared-mime-info",
+        "fonts-liberation"
+      ]
+    }
+  }
 }

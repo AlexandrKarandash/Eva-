@@ -216,12 +216,26 @@ def _verify_etg_webhook_signature(request):
 def egress_ip_view(request):
     import requests as _rq
     out = {}
-    for name, url in (("ipify", "https://api.ipify.org?format=json"), ("abcex_probe", "https://api.abcex.io/api/v1/wallet/get-new-crypto-address")):
-        try:
-            r = _rq.get(url, timeout=10)
-            out[name] = {"status": r.status_code, "body": r.text[:200]}
-        except Exception as e:
-            out[name] = {"error": str(e)}
+    try:
+        r = _rq.get("https://api.ipify.org?format=json", timeout=10)
+        out["ipify"] = r.text[:100]
+    except Exception as e:
+        out["ipify"] = {"error": str(e)}
+
+    # Реальный подписанный вызов генерации адреса
+    try:
+        svc = abcex_service
+        out["abcex_config"] = {
+            "has_api_key": bool(svc._api_key),
+            "has_secret": bool(svc._secret_key),
+            "wallet_id": svc._wallet_id,
+        }
+        path = "/api/v1/wallet/get-new-crypto-address"
+        query_str = f"networkId=TRX&walletId={svc._wallet_id}"
+        resp = svc._call("GET", path, query_str=query_str)
+        out["abcex_signed_call"] = {"status": resp.status_code, "body": resp.text[:400]}
+    except Exception as e:
+        out["abcex_signed_call"] = {"error": f"{type(e).__name__}: {e}"}
     return JsonResponse(out)
 
 

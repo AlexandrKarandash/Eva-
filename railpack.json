@@ -1,15 +1,22 @@
 {
   "$schema": "https://schema.railpack.com",
-  "provider": "python",
-  "packages": {
-    "python": "3.12"
-  },
-  "aptPackages": [
+  "buildAptPackages": [
     "libpango-1.0-0",
     "libpangoft2-1.0-0",
     "libcairo2",
     "libgdk-pixbuf-2.0-0",
+    "libglib2.0-0",
     "libffi-dev",
-    "shared-mime-info"
+    "shared-mime-info",
+    "fonts-liberation"
+  ],
+  "deployAptPackages": [
+    "libpango-1.0-0",
+    "libpangoft2-1.0-0",
+    "libcairo2",
+    "libgdk-pixbuf-2.0-0",
+    "libglib2.0-0",
+    "shared-mime-info",
+    "fonts-liberation"
   ]
 }

@@ -240,8 +240,9 @@ class HotelSearchView(APIView):
         checkin = request.query_params.get('checkin', '2026-05-22')
         checkout = request.query_params.get('checkout', '2026-05-25')
         language = request.query_params.get('language', 'ru')
-        residency = request.query_params.get('residency')
-        
+        # residency обязателен для ETG: если фронт не прислал — дефолт ru (никогда не None)
+        residency = request.query_params.get('residency') or 'ru'
+
         try:
             adults = int(request.query_params.get('adults', 2))
         except (ValueError, TypeError):

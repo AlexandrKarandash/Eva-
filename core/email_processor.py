@@ -13,8 +13,34 @@ from .models import Order, InboundEmail, VoucherDocument, VoucherStatus, EmailPr
 
 logger = logging.getLogger(__name__)
 
+def issue_aifory_voucher(order):
+    """
+    Генерирует ваучер Aifory (с клиентской ценой = наценка включена) и отправляет
+    его клиенту на order.user_email. Вызывается сразу после подтверждения брони,
+    без ожидания входящего письма от ETG. Идемпотентно: повторно не отправляет.
+    Не бросает исключение наружу — сбой почты не должен ронять бронирование.
+    """
+    try:
+        if order.vouchers.filter(status=VoucherStatus.SENT).exists():
+            logger.info("Aifory voucher for order %s already sent — skip", order.id)
+            return False
+
+        voucher_doc = VoucherDocument.objects.create(
+            order=order,
+            sent_to_email=order.user_email,
+            status=VoucherStatus.GENERATED,
+        )
+        VoucherEmailProcessor.generate_our_voucher(order, voucher_doc)
+        VoucherEmailProcessor.send_voucher_to_client(order, voucher_doc)
+        logger.info("Aifory voucher for order %s generated and sent to %s", order.id, order.user_email)
+        return True
+    except Exception as exc:
+        logger.error("Failed to issue Aifory voucher for order %s: %s", getattr(order, 'id', '?'), exc)
+        return False
+
+
 class VoucherEmailProcessor:
-    
+
     @staticmethod
     def extract_booking_id(subject, body):
         """

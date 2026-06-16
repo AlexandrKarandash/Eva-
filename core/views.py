@@ -12,7 +12,7 @@ from django.db import transaction
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
-from core.email_processor import VoucherEmailProcessor
+from core.email_processor import VoucherEmailProcessor, issue_aifory_voucher
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -549,6 +549,10 @@ class BookingFinishView(APIView):
             order.save()
             notify_status_change(order, title="Бронирование завершено!" if booking_confirmed else "Бронирование обрабатывается...")
 
+            # Генерируем и шлём клиенту ваучер Aifory (с ценой с наценкой)
+            if booking_confirmed:
+                issue_aifory_voucher(order)
+
             return Response({
                 "status": "success" if booking_confirmed else "processing",
                 "order_id": order_id_from_etg,
@@ -595,6 +599,9 @@ class BookingStatusCheckView(APIView):
                 order.voucher_url = safe_url
             notify_status_change(order, title="Ваучер отправлен от провайдера!")
             order.save()
+
+            # Генерируем и шлём клиенту ваучер Aifory (с ценой с наценкой)
+            issue_aifory_voucher(order)
 
             return Response({"status": "completed", "order_id": etg_id, "data": data})
 

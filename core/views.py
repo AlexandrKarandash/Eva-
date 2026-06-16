@@ -553,12 +553,14 @@ class BookingFinishView(APIView):
                 continue
             last_status = status_res
             etg_status = status_res.get('status')
+            # ETG: при ошибке top-level status = "error", а код в поле error (soldout и т.п.)
+            etg_error = status_res.get('error')
             if etg_status == 'ok':
                 sdata = status_res.get('data') or {}
                 order_id_from_etg = sdata.get('order_id') or order_id_from_etg
                 booking_confirmed = True
                 break
-            if etg_status in FINAL_STATUS_ERRORS:
+            if etg_error in FINAL_STATUS_ERRORS:
                 booking_failed = True
                 break
 
@@ -593,6 +595,8 @@ class BookingStatusCheckView(APIView):
             
         result = etg_service.check_booking_status(order.partner_ref)
         etg_status = result.get('status') if result else None
+        # ETG: при ошибке top-level status = "error", код в поле error (soldout и т.п.)
+        etg_error = result.get('error') if result else None
 
         # ETG: финальный успех = status:ok (order_id в этом ответе может отсутствовать,
         # он уже сохранён на этапе /booking/form).
@@ -620,9 +624,9 @@ class BookingStatusCheckView(APIView):
 
             return Response({"status": "completed", "order_id": etg_id, "data": data})
 
-        # Финальные ошибки ETG — бронь не удалась
-        if etg_status in ('block', 'charge', '3ds', 'soldout', 'provider',
-                          'book_limit', 'not_allowed', 'booking_finish_did_not_succeed'):
+        # Финальные ошибки ETG — бронь не удалась (код в поле error при status=error)
+        if etg_error in ('block', 'charge', '3ds', 'soldout', 'provider',
+                         'book_limit', 'not_allowed', 'booking_finish_did_not_succeed'):
             if order.status in (OrderStatus.PAID, OrderStatus.BOOKING, OrderStatus.PENDING):
                 order.status = OrderStatus.FAILED
                 order.save(update_fields=['status'])

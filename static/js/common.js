@@ -384,9 +384,11 @@ $('.booking-search').each(function () {
 
 		$items.each(function () {
 			const $item = $(this);
-			const title = normalize($item.find('.region-drop__item-title').text());
+			const $title = $item.find('.region-drop__item-title');
+			const title = normalize($title.text());
+			const aliases = normalize($title.attr('data-aliases') || '');
 
-			if (title.indexOf(value) !== -1) {
+			if (title.indexOf(value) !== -1 || (aliases && aliases.indexOf(value) !== -1)) {
 				$item.css("display", "flex");
 				hasMatches = true;
 			} else {

@@ -364,8 +364,14 @@
 
         if (reserveText) reserveText.textContent = BOOKING_PROCESSING_TEXT;
         if (paymentTime) paymentTime.style.display = 'none';
-        if (paymentRemove) paymentRemove.style.display = 'none';
         if (paymentPay) paymentPay.style.display = 'none';
+        // Бронь оформлена — оставляем кнопку отмены, но переводим в режим отмены
+        // подтверждённого бронирования (ETG /order/cancel через /refund/).
+        if (paymentRemove) {
+            paymentRemove.style.display = '';
+            paymentRemove.textContent = 'Отменить бронирование';
+            paymentRemove.dataset.cancelMode = 'refund';
+        }
     }
 
 async function waitFinalBookingStatus(orderId, accessToken) {
@@ -787,16 +793,30 @@ function renderPaymentInfo(booking) {
                 return;
             }
 
+            const isRefund = cancelBtn.dataset.cancelMode === 'refund';
+            if (isRefund && !window.confirm('Отменить подтверждённое бронирование? Действие необратимо.')) {
+                return;
+            }
+
             try {
-                await Api.cancelBooking(state.internal_order_id, getOrderAccessToken(state));
+                // Подтверждённую бронь отменяем через /refund/ (ETG /order/cancel),
+                // неоплаченную — через /cancel/.
+                if (isRefund) {
+                    await Api.refundBooking(state.internal_order_id, getOrderAccessToken(state));
+                } else {
+                    await Api.cancelBooking(state.internal_order_id, getOrderAccessToken(state));
+                }
 
                 state.cancelled = true;
-                state.cancelled_reason = 'manual';
+                state.cancelled_reason = isRefund ? 'refund' : 'manual';
                 state.cancelled_at = new Date().toISOString();
 
                 currentPaymentState = null;
                 localStorage.removeItem(Core.PAYMENT_STORAGE_KEY);
 
+                if (isRefund) {
+                    alert('Бронирование отменено.');
+                }
                 window.location.href = '/';
             } catch (error) {
                 console.error('[payment cancel]', error);

@@ -13,6 +13,7 @@
         FINISH_API: '/api/booking/finish/',
         STATUS_API: '/api/booking/status/',
         CANCEL_API: '/api/booking/cancel/',
+        REFUND_API: '/api/booking/refund/',
 
         qs: function (selector, root) {
             return (root || document).querySelector(selector);

@@ -493,13 +493,16 @@ class BookingFinishView(APIView):
 
         notify_status_change(order, title="Бронирование в процессе...")
 
-        price = order.amount_usdt 
+        # ETG net-модель: в payment_type должна уходить НЕТТО-цена ETG (cost_price_usdt),
+        # а не клиентская цена с наценкой (amount_usdt). Иначе ETG отклонит бронь
+        # с ошибкой incorrect_chosen_payment_type.
+        price = order.cost_price_usdt or order.amount_usdt
         currency = getattr(order, 'currency', 'USD')
-        
+
         result = etg_service.finish_booking(
-            guest_data=guests, 
-            contact_data=contact_data, 
-            internal_order_id=internal_order_id, 
+            guest_data=guests,
+            contact_data=contact_data,
+            internal_order_id=internal_order_id,
             price=price,
             currency=currency
         )

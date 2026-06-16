@@ -1107,9 +1107,9 @@ class EmergingTravelService:
 
         rates = []
         try:
-            resp = self.session.post(url, json={"data": payload}, timeout=30)
-            if resp.status_code != 200:
-                resp = self.session.post(url, json=payload, timeout=30)
+            # ETG /search/hp ожидает payload напрямую (без обёртки {"data": ...}).
+            # Один запрос — чтобы при открытии страницы отеля был РОВНО ОДИН /search/hp.
+            resp = self.session.post(url, json=payload, timeout=30)
 
             if resp.status_code == 200:
                 hotels_data = resp.json().get('data', {}).get('hotels', [])
@@ -1173,9 +1173,9 @@ class EmergingTravelService:
         }
 
         try:
-            response = self.session.post(url, json={"data": payload}, timeout=30)
-            if response.status_code != 200:
-                response = self.session.post(url, json=payload, timeout=30)
+            # ETG /search/serp/region/ ожидает payload напрямую (без {"data": ...}).
+            # Один запрос — serp/region лимитируется (10 RPM), двойной вызов недопустим.
+            response = self.session.post(url, json=payload, timeout=30)
 
             response_data = response.json()
             data = response_data.get('data', {})

@@ -8,6 +8,7 @@ import uuid
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlparse
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -375,6 +376,15 @@ class PrebookView(APIView):
                     status=OrderStatus.PENDING_PAYMENT,
                     rate_key=final_booking_hash
                 )
+                # partner_order_id для ETG = id заказа (+ опциональный тест-суффикс).
+                # Сертификация ETG: сценарии ошибок через суффиксы partner_order_id.
+                _allowed_suffix = {"unknown_success", "unknown_soldout", "unknown_book_limit"}
+                scenario = str(request.data.get("test_scenario", "")).strip().lower()
+                if scenario in _allowed_suffix:
+                    order.partner_order_id = f"{order.id}_{scenario}"
+                else:
+                    order.partner_order_id = str(order.id)
+                order.save(update_fields=["partner_order_id"])
                 access_token = order.issue_access_token()
                 crypto_address = abcex_service.generate_new_address(network_id="TRX")
                 
@@ -430,9 +440,9 @@ class BookingFormView(APIView):
         user_ip = get_client_ip(request)
         
         result = etg_service.create_booking_process(
-            book_hash=order.rate_key, 
-            user_ip=user_ip, 
-            internal_order_id=order.id,
+            book_hash=order.rate_key,
+            user_ip=user_ip,
+            internal_order_id=order.partner_ref,
             language=language
         )
 
@@ -509,7 +519,7 @@ class BookingFinishView(APIView):
         result = etg_service.finish_booking(
             guest_data=guests,
             contact_data=contact_data,
-            internal_order_id=internal_order_id,
+            internal_order_id=order.partner_ref,
             price=price,
             currency=currency
         )
@@ -521,10 +531,10 @@ class BookingFinishView(APIView):
             # order_id там не возвращается (он уже получен на /booking/form).
             booking_confirmed = False
 
-            logger.info(f"Polling /booking/finish/status/ for {internal_order_id}...")
+            logger.info(f"Polling /booking/finish/status/ for {order.partner_ref}...")
             for _ in range(3):
                 time.sleep(2)
-                status_res = etg_service.check_booking_status(order.id)
+                status_res = etg_service.check_booking_status(order.partner_ref)
                 if not status_res:
                     continue
                 etg_status = status_res.get('status')
@@ -576,7 +586,7 @@ class BookingStatusCheckView(APIView):
         if error_response:
             return error_response
             
-        result = etg_service.check_booking_status(order.id)
+        result = etg_service.check_booking_status(order.partner_ref)
         etg_status = result.get('status') if result else None
 
         # ETG: финальный успех = status:ok (order_id в этом ответе может отсутствовать,
@@ -636,12 +646,18 @@ class ETGWebhookView(APIView):
         new_voucher_added = False
         
         # Открываем транзакцию и ставим замок на заказ
+        # partner_order_id может содержать тест-суффикс (_unknown_success и т.п.);
+        # реальный UUID заказа — это часть до первого "_".
+        base_order_id = str(internal_order_id or "").split("_")[0]
+
         with transaction.atomic():
             try:
                 # ЗАЩИТА: Блокируем заказ от параллельных изменений
-                order = Order.objects.select_for_update().get(id=internal_order_id)
+                order = Order.objects.select_for_update().get(id=base_order_id)
             except Order.DoesNotExist:
                 return Response({"error": "Order not found"}, status=404)
+            except (ValueError, ValidationError):
+                return Response({"error": "Invalid order id"}, status=400)
 
             old_status = order.status
 
@@ -895,7 +911,7 @@ class CancelAfterPaymentView(APIView):
                 status=400,
             )
 
-        result = etg_service.cancel_booking(order.id)
+        result = etg_service.cancel_booking(order.partner_ref)
         if not result or result.get("status") != "ok":
             notify_status_change(
                 order,

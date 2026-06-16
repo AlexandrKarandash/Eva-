@@ -705,15 +705,11 @@ class EmergingTravelService:
             if not images:
                 images = [self.DEFAULT_IMAGE]
 
-            min_price = self.get_hotel_min_price_for_dates(
-                hotel.hid,
-                checkin,
-                checkout,
-                adults=adults,
-                children=children,
-                language=language,
-                currency=currency
-            )
+            # ETG: при открытии страницы отеля должен быть РОВНО ОДИН /search/hp.
+            # Поэтому для блока «похожие отели» НЕ запрашиваем live-цену по каждому
+            # (это создавало +N запросов /search/hp). Цена подтянется при открытии
+            # карточки похожего отеля.
+            min_price = None
 
             # Для фронта похожие отели отдаём в той же логике, что каталог:
             # id = numeric HID для открытия single, slug/hotel_id = строковый ETG id.

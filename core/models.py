@@ -77,6 +77,13 @@ class Order(models.Model):
     emerging_booking_id = models.CharField(max_length=255, null=True, blank=True)
     voucher_url = models.TextField(null=True, blank=True)
     access_token_hash = models.CharField(max_length=64, blank=True, default="")
+    # Партнёрский order_id для ETG (может содержать тест-суффикс _unknown_success и т.п.).
+    # Должен быть одинаков во всех вызовах form/finish/status. По умолчанию = str(id).
+    partner_order_id = models.CharField(max_length=300, null=True, blank=True)
+
+    @property
+    def partner_ref(self):
+        return self.partner_order_id or str(self.id)
     
     created_at = models.DateTimeField(auto_now_add=True)
     paid_at = models.DateTimeField(null=True, blank=True)

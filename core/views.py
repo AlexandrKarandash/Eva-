@@ -788,7 +788,7 @@ class CheckPaymentStatusView(APIView):
         # Тестовый режим (сертификация ETG): подтверждаем оплату без реальной крипты.
         if getattr(settings, "ALLOW_TEST_PAYMENT", False):
             logger.info("ALLOW_TEST_PAYMENT on — auto-confirming order %s without ABCEX", order.id)
-            payment_info = {"paid": True, "txId": "TEST-PAYMENT"}
+            payment_info = {"paid": True, "txId": f"TEST-PAYMENT-{order.id}"}
         else:
             payment_info = abcex_service.check_payment(
                 target_address=tx_record.to_address,

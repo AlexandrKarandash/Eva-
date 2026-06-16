@@ -1328,7 +1328,14 @@
 
 	function formatCancellationDateUtc(value) {
 		if (!value) return '';
-		const date = new Date(value);
+		// ETG отдаёт время отмены в UTC+0, но строка без таймзоны (напр. "2026-12-19T00:00:00").
+		// Без явного маркера JS парсит её как ЛОКАЛЬНОЕ время → сдвиг на часовой пояс браузера.
+		// Добавляем "Z", чтобы трактовать как UTC и показать ровно то, что прислал ETG.
+		let str = String(value).trim();
+		if (!/([zZ]|[+-]\d{2}:?\d{2})$/.test(str)) {
+			str += 'Z';
+		}
+		const date = new Date(str);
 		if (Number.isNaN(date.getTime())) return '';
 
 		const pad = function (num) {

@@ -776,6 +776,33 @@ function renderPaymentInfo(booking) {
         });
     }
 
+    function showSupportCancelModal(orderId) {
+        let overlay = qs('.support-cancel-overlay');
+        if (overlay) { overlay.style.display = 'flex'; return; }
+
+        overlay = document.createElement('div');
+        overlay.className = 'support-cancel-overlay';
+        overlay.setAttribute('style', 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(11,11,16,.45);padding:16px;');
+        overlay.innerHTML = '' +
+            '<div style="max-width:440px;width:100%;background:#fff;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.2);font-family:inherit;">' +
+                '<h2 style="margin:0 0 12px;font-size:22px;">Отмена бронирования</h2>' +
+                '<p style="margin:0 0 16px;color:#4a4a55;line-height:1.5;">После оплаты бронирование отменяется через службу поддержки — она оформит возврат средств. Свяжитесь с нами' +
+                (orderId ? ', указав номер заказа <b>' + String(orderId) + '</b>' : '') + ':</p>' +
+                '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">' +
+                    '<a href="mailto:support@aifory.pro?subject=Отмена бронирования ' + encodeURIComponent(orderId || '') + '" style="color:#6c5ce7;text-decoration:none;font-weight:500;">📧 support@aifory.pro</a>' +
+                    '<a href="https://t.me/AiforyPro_Management" target="_blank" rel="noopener" style="color:#6c5ce7;text-decoration:none;font-weight:500;">✈️ Telegram: @AiforyPro_Management</a>' +
+                    '<a href="tel:+79187160760" style="color:#6c5ce7;text-decoration:none;font-weight:500;">☎️ +7 (918) 716 07 60</a>' +
+                '</div>' +
+                '<button type="button" class="support-cancel-close" style="width:100%;padding:14px;border:0;border-radius:14px;background:#6c5ce7;color:#fff;font-size:16px;cursor:pointer;">Понятно</button>' +
+            '</div>';
+        document.body.appendChild(overlay);
+
+        function close() { overlay.style.display = 'none'; }
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+        const closeBtn = qs('.support-cancel-close', overlay);
+        if (closeBtn) closeBtn.addEventListener('click', close);
+    }
+
     function bindPaymentActions(booking, paymentState) {
     const cancelBtn = qs('.payment-remove');
     const newSearch = qsa('.payment-new-search');
@@ -794,29 +821,25 @@ function renderPaymentInfo(booking) {
             }
 
             const isRefund = cancelBtn.dataset.cancelMode === 'refund';
-            if (isRefund && !window.confirm('Отменить подтверждённое бронирование? Действие необратимо.')) {
+
+            // После оплаты бронь нельзя отменить автоматически: возврат средств
+            // оформляет служба поддержки. Кнопка ведёт на форму связи с поддержкой.
+            if (isRefund) {
+                showSupportCancelModal(state.internal_order_id);
                 return;
             }
 
             try {
-                // Подтверждённую бронь отменяем через /refund/ (ETG /order/cancel),
-                // неоплаченную — через /cancel/.
-                if (isRefund) {
-                    await Api.refundBooking(state.internal_order_id, getOrderAccessToken(state));
-                } else {
-                    await Api.cancelBooking(state.internal_order_id, getOrderAccessToken(state));
-                }
+                // Неоплаченную бронь отменяем сразу (средства ещё не списаны).
+                await Api.cancelBooking(state.internal_order_id, getOrderAccessToken(state));
 
                 state.cancelled = true;
-                state.cancelled_reason = isRefund ? 'refund' : 'manual';
+                state.cancelled_reason = 'manual';
                 state.cancelled_at = new Date().toISOString();
 
                 currentPaymentState = null;
                 localStorage.removeItem(Core.PAYMENT_STORAGE_KEY);
 
-                if (isRefund) {
-                    alert('Бронирование отменено.');
-                }
                 window.location.href = '/';
             } catch (error) {
                 console.error('[payment cancel]', error);

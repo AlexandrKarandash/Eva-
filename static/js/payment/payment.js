@@ -8,9 +8,10 @@
     const qsa = Core.qsa;
     const escapeHtml = Core.escapeHtml;
 
-    const PAYMENT_POLL_INTERVAL_MS = 15000;
+    const TEST_PAYMENT = !!window.AIFORY_TEST_PAYMENT;
+    const PAYMENT_POLL_INTERVAL_MS = TEST_PAYMENT ? 2500 : 15000;
     const PAYMENT_POLL_MAX_ATTEMPTS = 59;
-    const BOOKING_STATUS_POLL_INTERVAL_MS = 15000;
+    const BOOKING_STATUS_POLL_INTERVAL_MS = TEST_PAYMENT ? 4000 : 15000;
     const BOOKING_STATUS_POLL_MAX_ATTEMPTS = 60;
 
     const BOOKING_ERROR_TEXT = 'Произошла ошибка при бронировании. Пожалуйста, попробуйте ещё раз или обратитесь в поддержку.';
@@ -603,15 +604,25 @@ function renderPaymentInfo(booking) {
         if (info) info.classList.remove('hide');
         if (titleSpan) titleSpan.textContent = orderId || '—';
         if (copyBtn) copyBtn.setAttribute('data-copy', orderId);
-        if (addressNode) addressNode.textContent = address || 'Адрес оплаты не получен';
-        renderPaymentQr(address);
         if (priceValue) priceValue.textContent = formatPrice(payment.amount);
 
-        if (payBtn) {
-            payBtn.classList.remove('disabled');
-            payBtn.dataset.paymentReady = 'true';
-            payBtn.textContent = 'Оплата через ' + (payment.currency || 'USDT') + ' ' + (payment.network || 'TRC-20');
-            payBtn.setAttribute('data-address', address);
+        if (TEST_PAYMENT) {
+            // Тестовый режим: крипто-оплата не нужна, не рисуем QR и блокируем кнопку.
+            if (addressNode) addressNode.textContent = 'Тестовый режим — оплата подтверждается автоматически…';
+            if (payBtn) {
+                payBtn.classList.add('disabled');
+                payBtn.dataset.paymentReady = 'false';
+                payBtn.textContent = 'Подтверждаем оплату…';
+            }
+        } else {
+            if (addressNode) addressNode.textContent = address || 'Адрес оплаты не получен';
+            renderPaymentQr(address);
+            if (payBtn) {
+                payBtn.classList.remove('disabled');
+                payBtn.dataset.paymentReady = 'true';
+                payBtn.textContent = 'Оплата через ' + (payment.currency || 'USDT') + ' ' + (payment.network || 'TRC-20');
+                payBtn.setAttribute('data-address', address);
+            }
         }
         renderPaymentInfo(booking);
     }

@@ -1432,8 +1432,9 @@ class EmergingTravelService:
 
         payload = {
             "user": {
-                "email": "voucher@aifory.pro",
-                "phone": user_phone, 
+                # Корпоративный email для ETG-ваучера (net price). Настраивается через env.
+                "email": getattr(settings, "ETG_VOUCHER_EMAIL", "voucher@aifory.pro"),
+                "phone": user_phone,
                 "comment": user_comment
             },
             "partner": {

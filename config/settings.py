@@ -220,6 +220,8 @@ ABCEX_PROXY_URL = os.environ.get("ABCEX_PROXY_URL", "").strip()
 # Тестовый режим оплаты: подтверждает оплату без реальной крипты (для сертификации ETG).
 # ВКЛЮЧАТЬ ТОЛЬКО на тестовой/сертификационной среде. На проде должно быть false.
 ALLOW_TEST_PAYMENT = env_bool("ALLOW_TEST_PAYMENT", False)
+# Корпоративный email, на который ETG присылает ваучер с net-ценой.
+ETG_VOUCHER_EMAIL = os.environ.get("ETG_VOUCHER_EMAIL", "voucher@aifory.pro").strip()
 
 _REQUIRED_PROD_SECRETS = {
     "ETG_KEY_ID": ETG_KEY_ID,

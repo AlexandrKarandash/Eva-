@@ -204,10 +204,14 @@
         node.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
     }
 
-    function renderGuestItem(number, isFirst) {
+    function renderGuestItem(number, isFirst, isChild, age) {
+        const childAttr = isChild ? ' data-is-child="true" data-age="' + age + '"' : '';
+        const title = isChild
+            ? ('Ребёнок ' + number + ' (возраст: ' + age + ')')
+            : ('Гость ' + number);
         let html = '' +
-            '<div class="payment-form__item">' +
-                '<p class="payment-form__item-title">Гость ' + number + '</p>' +
+            '<div class="payment-form__item"' + childAttr + '>' +
+                '<p class="payment-form__item-title">' + title + '</p>' +
                 '<label class="payment-form__label">' +
                     '<span class="payment-form__label-title">Имя</span>' +
                     '<input type="text" name="guest_first_name_' + number + '" class="payment-form__input js-payment-required" placeholder="Иван" required>' +
@@ -233,15 +237,40 @@
         return html;
     }
 
+    function getOccupancy(booking) {
+        const adults = parseInt(booking && booking.adults, 10) || 0;
+        let children = [];
+        const raw = (booking && booking.children) || [];
+        if (Array.isArray(raw)) {
+            children = raw.map(function (c) {
+                if (typeof c === 'number') return c;
+                if (c && typeof c === 'object') return parseInt(c.age, 10);
+                return parseInt(c, 10);
+            }).filter(function (a) { return !Number.isNaN(a); });
+        }
+        return { adults: adults, children: children };
+    }
+
     function renderGuestForm(booking) {
         const form = qs('.js-payment-form');
         if (!form) return;
 
-        const guestCount = getGuestCount(booking);
+        const occ = getOccupancy(booking);
         let html = '';
+        let n = 0;
 
-        for (let i = 1; i <= guestCount; i += 1) {
-            html += renderGuestItem(i, i === 1);
+        // Сначала взрослые, затем дети (с указанием возраста) — порядок и состав
+        // должны совпадать с тем, что отправлено в поиске/тарифе.
+        for (let a = 0; a < occ.adults; a += 1) {
+            n += 1;
+            html += renderGuestItem(n, n === 1, false, null);
+        }
+        occ.children.forEach(function (age) {
+            n += 1;
+            html += renderGuestItem(n, n === 1, true, age);
+        });
+        if (n === 0) {
+            html = renderGuestItem(1, true, false, null);
         }
 
         form.innerHTML = html;
@@ -302,10 +331,16 @@
             const firstName = qs('input[name^="guest_first_name_"]', item);
             const lastName = qs('input[name^="guest_last_name_"]', item);
 
-            return {
+            const guest = {
                 first_name: cleanName(firstName ? firstName.value : ''),
                 last_name: cleanName(lastName ? lastName.value : '')
             };
+            // ETG требует для детей is_child:true и age (возраст из поиска)
+            if (item.getAttribute('data-is-child') === 'true') {
+                guest.is_child = true;
+                guest.age = parseInt(item.getAttribute('data-age'), 10);
+            }
+            return guest;
         }).filter(function (guest) {
             return guest.first_name || guest.last_name;
         });
@@ -386,10 +421,15 @@ async function submitFinishAfterPaid(paymentState) {
         access_token: getOrderAccessToken(source || paymentState),
         guests: Array.isArray(source && source.guests)
             ? source.guests.map(function (guest) {
-                return {
+                const g = {
                     first_name: guest.first_name || '',
                     last_name: guest.last_name || ''
                 };
+                if (guest.is_child) {
+                    g.is_child = true;
+                    g.age = guest.age;
+                }
+                return g;
             })
             : [],
         contact_data: {

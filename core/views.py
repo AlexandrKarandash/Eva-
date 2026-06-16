@@ -437,8 +437,15 @@ class BookingFormView(APIView):
         )
 
         if result and result.get('status') == 'ok':
+            # ETG возвращает числовой order_id уже на этапе формы — сохраняем его,
+            # т.к. /booking/finish/status/ его НЕ содержит (там только status+percent).
+            form_data = result.get('data') or {}
+            etg_order_id = form_data.get('order_id') or form_data.get('item_id')
+            if etg_order_id and not order.emerging_booking_id:
+                order.emerging_booking_id = str(etg_order_id)
+                order.save(update_fields=['emerging_booking_id'])
             return Response(result)
-        
+
         logger.error(f"Form Creation failed: {result}")
         return Response({
             "error": "ETG Form Error",
@@ -509,31 +516,41 @@ class BookingFinishView(APIView):
 
         if result and result.get('status') == 'ok':
             data = result.get('data') or {}
-            order_id_from_etg = data.get('order_id')
-            
-            # Обработка асинхронного режима с time.sleep() (теперь это не вешает базу!)
-            if not order_id_from_etg:
-                logger.info(f"Async mode detected for {internal_order_id}. Polling status...")
-                for _ in range(3):
-                    time.sleep(2) 
-                    status_res = etg_service.check_booking_status(order.id)
-                    if status_res and status_res.get('status') == 'ok':
-                        data = status_res.get('data') or {}
-                        order_id_from_etg = data.get('order_id')
-                        if order_id_from_etg:
-                            break
-            
-            if order_id_from_etg:
+            order_id_from_etg = data.get('order_id') or order.emerging_booking_id
+            # ETG: финальный успех определяется ТОЛЬКО по status:ok от /booking/finish/status/.
+            # order_id там не возвращается (он уже получен на /booking/form).
+            booking_confirmed = False
+
+            logger.info(f"Polling /booking/finish/status/ for {internal_order_id}...")
+            for _ in range(3):
+                time.sleep(2)
+                status_res = etg_service.check_booking_status(order.id)
+                if not status_res:
+                    continue
+                etg_status = status_res.get('status')
+                if etg_status == 'ok':
+                    sdata = status_res.get('data') or {}
+                    order_id_from_etg = sdata.get('order_id') or order_id_from_etg
+                    booking_confirmed = True
+                    break
+                # финальные ошибки ETG — дальше ждать смысла нет
+                if etg_status in ('block', 'charge', '3ds', 'soldout', 'provider',
+                                  'book_limit', 'not_allowed', 'booking_finish_did_not_succeed'):
+                    break
+
+            if booking_confirmed:
                 order.status = OrderStatus.VOUCHER_ISSUED
-                order.emerging_booking_id = str(order_id_from_etg)
+                if order_id_from_etg:
+                    order.emerging_booking_id = str(order_id_from_etg)
             else:
+                # unknown / timeout / ещё в процессе — не финал, остаёмся в ожидании
                 order.status = OrderStatus.PENDING
-            
+
             order.save()
-            notify_status_change(order, title="Бронирование завершено!")
-            
+            notify_status_change(order, title="Бронирование завершено!" if booking_confirmed else "Бронирование обрабатывается...")
+
             return Response({
-                "status": "success",
+                "status": "success" if booking_confirmed else "processing",
                 "order_id": order_id_from_etg,
                 "data": data
             })
@@ -556,39 +573,41 @@ class BookingStatusCheckView(APIView):
             return error_response
             
         result = etg_service.check_booking_status(order.id)
-        
-        if result and result.get('status') == 'ok':
+        etg_status = result.get('status') if result else None
+
+        # ETG: финальный успех = status:ok (order_id в этом ответе может отсутствовать,
+        # он уже сохранён на этапе /booking/form).
+        if etg_status == 'ok':
             data = result.get('data') or {}
-            etg_id = data.get('order_id')
-            
+            etg_id = data.get('order_id') or order.emerging_booking_id
+
+            if order.status in (OrderStatus.VOUCHER_ISSUED,):
+                return Response({"status": "completed", "order_id": etg_id, "data": data})
+
+            if order.status not in (OrderStatus.PAID, OrderStatus.BOOKING, OrderStatus.PENDING):
+                return Response({"status": order.status, "error": "Invalid status transition"}, status=409)
+
             if etg_id:
-                if order.status not in (OrderStatus.PAID, OrderStatus.BOOKING, OrderStatus.PENDING):
-                    return Response(
-                        {
-                            "status": order.status,
-                            "error": "Invalid status transition",
-                        },
-                        status=409,
-                    )
                 order.emerging_booking_id = str(etg_id)
-                order.status = OrderStatus.VOUCHER_ISSUED
-                safe_url = _safe_voucher_url(data.get('pdf_url'))
-                if safe_url:
-                    order.voucher_url = safe_url
-                notify_status_change(order, title="Ваучер отправлен от провайдера!")
-                order.save()
-                
-                
-                
-                return Response({
-                    "status": "completed",
-                    "order_id": etg_id,
-                    "data": data
-                })
-            
-            return Response({"status": "processing", "message": "Бронирование еще в очереди"})
-            
-        return Response({"error": "Не удалось получить статус от провайдера"}, status=400)
+            order.status = OrderStatus.VOUCHER_ISSUED
+            safe_url = _safe_voucher_url(data.get('pdf_url'))
+            if safe_url:
+                order.voucher_url = safe_url
+            notify_status_change(order, title="Ваучер отправлен от провайдера!")
+            order.save()
+
+            return Response({"status": "completed", "order_id": etg_id, "data": data})
+
+        # Финальные ошибки ETG — бронь не удалась
+        if etg_status in ('block', 'charge', '3ds', 'soldout', 'provider',
+                          'book_limit', 'not_allowed', 'booking_finish_did_not_succeed'):
+            if order.status in (OrderStatus.PAID, OrderStatus.BOOKING, OrderStatus.PENDING):
+                order.status = OrderStatus.FAILED
+                order.save(update_fields=['status'])
+            return Response({"status": "failed"})
+
+        # processing / unknown / timeout / нет ответа — ещё в обработке, продолжаем polling
+        return Response({"status": "processing", "message": "Бронирование обрабатывается"})
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ETGWebhookView(APIView):

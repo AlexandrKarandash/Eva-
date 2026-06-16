@@ -223,7 +223,9 @@ def single_view(request):
     return render(request, 'single.html')
 
 def payment_view(request):
-    return render(request, 'payment.html')
+    return render(request, 'payment.html', {
+        "test_payment_enabled": getattr(settings, "ALLOW_TEST_PAYMENT", False),
+    })
 
 def index_view(request):
     return render(request, 'index.html')
@@ -780,10 +782,15 @@ class CheckPaymentStatusView(APIView):
         if not tx_record:
             return Response({"error": "Данные платежа не найдены"}, status=404)
 
-        payment_info = abcex_service.check_payment(
-            target_address=tx_record.to_address,
-            expected_amount=order.amount_usdt
-        )
+        # Тестовый режим (сертификация ETG): подтверждаем оплату без реальной крипты.
+        if getattr(settings, "ALLOW_TEST_PAYMENT", False):
+            logger.info("ALLOW_TEST_PAYMENT on — auto-confirming order %s without ABCEX", order.id)
+            payment_info = {"paid": True, "txId": "TEST-PAYMENT"}
+        else:
+            payment_info = abcex_service.check_payment(
+                target_address=tx_record.to_address,
+                expected_amount=order.amount_usdt
+            )
 
         if payment_info.get("paid"):
             updated_to_paid = False

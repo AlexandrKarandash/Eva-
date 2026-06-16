@@ -309,3 +309,10 @@
   background: #d7d7e0;
   border-radius: 8px;
 }
+
+/* Single-room only (ETG сертификация): бронирование одного номера за тариф.
+   Скрываем добавление нескольких номеров — бэкенд всё равно шлёт 1 комнату. */
+.place-drop__add,
+.place-drop__more {
+  display: none !important;
+}

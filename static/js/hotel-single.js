@@ -1359,40 +1359,49 @@
 		const vat = payment.vat_data || rate.vat_data || null;
 		const tax = payment.tax_data || rate.tax_data || null;
 		const currency = getRateCurrency(rate || {});
-		const parts = [];
+		// ETG: налог разделяется по included_by_supplier — включён в цену vs оплата при заселении.
+		const included = [];   // включено в стоимость
+		const atProperty = []; // оплачивается при заселении
 
 		if (vat && typeof vat === 'object') {
 			const vatAmount = parseFloat(vat.amount || 0);
 			if (vat.included === true) {
-				parts.push('НДС включён');
+				included.push('НДС');
 			} else if (vat.applied === true || vatAmount > 0) {
-				parts.push('НДС: ' + formatMoney(vatAmount, vat.currency_code || currency));
+				atProperty.push('НДС: ' + formatMoney(vatAmount, vat.currency_code || currency));
 			}
 		}
 
-		if (tax && typeof tax === 'object') {
-			if (Array.isArray(tax.taxes)) {
-				tax.taxes.forEach(function (item) {
-					const amount = parseFloat(item.amount || item.price || 0);
-					const title = translateValue(item.name || item.type || item.title || 'Сбор');
-					if (amount > 0) parts.push(title + ': ' + formatMoney(amount, item.currency_code || currency));
-				});
-			} else {
-				Object.keys(tax).forEach(function (key) {
-					const value = tax[key];
-					if (value == null || value === '' || (typeof value === 'object' && !Object.keys(value).length)) return;
-					if (typeof value === 'number' || /^\d+(\.\d+)?$/.test(String(value))) {
-						const amount = parseFloat(value);
-						if (amount > 0) parts.push(translateValue(key) + ': ' + formatMoney(amount, currency));
-					} else if (typeof value === 'string') {
-						parts.push(translateValue(key) + ': ' + translateValue(value));
-					}
-				});
-			}
+		if (tax && typeof tax === 'object' && Array.isArray(tax.taxes)) {
+			tax.taxes.forEach(function (item) {
+				const amount = parseFloat(item.amount || item.price || 0);
+				if (!(amount > 0)) return;
+				const title = translateValue(item.name || item.type || item.title || 'Сбор');
+				const money = formatMoney(amount, item.currency_code || currency);
+				if (item.included_by_supplier === true) {
+					included.push(title + ' (' + money + ')');
+				} else {
+					atProperty.push(title + ': ' + money);
+				}
+			});
+		} else if (tax && typeof tax === 'object') {
+			Object.keys(tax).forEach(function (key) {
+				const value = tax[key];
+				if (value == null || value === '' || (typeof value === 'object' && !Object.keys(value).length)) return;
+				if (typeof value === 'number' || /^\d+(\.\d+)?$/.test(String(value))) {
+					const amount = parseFloat(value);
+					if (amount > 0) atProperty.push(translateValue(key) + ': ' + formatMoney(amount, currency));
+				} else if (typeof value === 'string') {
+					atProperty.push(translateValue(key) + ': ' + translateValue(value));
+				}
+			});
 		}
 
-		if (parts.length) return parts.join('. ');
-		return 'Налоги и сборы включены или не применяются';
+		const lines = [];
+		if (included.length) lines.push('Включено в стоимость: ' + included.join(', ') + '.');
+		if (atProperty.length) lines.push('Оплачивается при заселении (в валюте отеля): ' + atProperty.join(', ') + '.');
+		if (lines.length) return lines.join(' ');
+		return 'Налоги и сборы включены в стоимость или не применяются.';
 	}
 
 	function updateRenderedRoomExtraInfo(hotel) {

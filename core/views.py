@@ -524,59 +524,64 @@ class BookingFinishView(APIView):
             currency=currency
         )
 
-        if result and result.get('status') == 'ok':
-            data = result.get('data') or {}
-            order_id_from_etg = data.get('order_id') or order.emerging_booking_id
-            # ETG: финальный успех определяется ТОЛЬКО по status:ok от /booking/finish/status/.
-            # order_id там не возвращается (он уже получен на /booking/form).
-            booking_confirmed = False
+        fin_error = (result or {}).get('error')
+        # ETG: финальные ошибки на /booking/finish — бронь точно не состоялась.
+        # Всё остальное (ok / unknown / timeout / 5xx) — НЕ финал: ETG может ещё
+        # подтвердить бронь, поэтому идём в поллинг /booking/finish/status/.
+        FINAL_FINISH_ERRORS = ('booking_form_expired', 'rate_not_found',
+                               'incorrect_chosen_payment_type', 'no_available_rate')
+        FINAL_STATUS_ERRORS = ('block', 'charge', '3ds', 'soldout', 'provider',
+                               'book_limit', 'not_allowed', 'booking_finish_did_not_succeed')
 
-            logger.info(f"Polling /booking/finish/status/ for {order.partner_ref}...")
-            for _ in range(3):
-                time.sleep(2)
-                status_res = etg_service.check_booking_status(order.partner_ref)
-                if not status_res:
-                    continue
-                etg_status = status_res.get('status')
-                if etg_status == 'ok':
-                    sdata = status_res.get('data') or {}
-                    order_id_from_etg = sdata.get('order_id') or order_id_from_etg
-                    booking_confirmed = True
-                    break
-                # финальные ошибки ETG — дальше ждать смысла нет
-                if etg_status in ('block', 'charge', '3ds', 'soldout', 'provider',
-                                  'book_limit', 'not_allowed', 'booking_finish_did_not_succeed'):
-                    break
-
-            if booking_confirmed:
-                order.status = OrderStatus.VOUCHER_ISSUED
-                if order_id_from_etg:
-                    order.emerging_booking_id = str(order_id_from_etg)
-            else:
-                # unknown / timeout / ещё в процессе — не финал, остаёмся в ожидании
-                order.status = OrderStatus.PENDING
-
+        if fin_error in FINAL_FINISH_ERRORS:
+            order.status = OrderStatus.FAILED
             order.save()
-            notify_status_change(order, title="Бронирование завершено!" if booking_confirmed else "Бронирование обрабатывается...")
+            notify_status_change(order, title="Ошибка бронирования", extra_info=f"Ответ провайдера: {html_escape(result)}")
+            return Response({"error": "Provider rejected the booking", "details": result}, status=400)
 
-            # Генерируем и шлём клиенту ваучер Aifory (с ценой с наценкой)
-            if booking_confirmed:
-                issue_aifory_voucher(order)
+        data = (result or {}).get('data') or {}
+        order_id_from_etg = data.get('order_id') or order.emerging_booking_id
+        booking_confirmed = False
+        booking_failed = False
+        last_status = None
 
-            return Response({
-                "status": "success" if booking_confirmed else "processing",
-                "order_id": order_id_from_etg,
-                "data": data
-            })
-    
-        order.status = OrderStatus.FAILED
+        logger.info(f"Polling /booking/finish/status/ for {order.partner_ref}...")
+        for _ in range(3):
+            time.sleep(2)
+            status_res = etg_service.check_booking_status(order.partner_ref)
+            if not status_res:
+                continue
+            last_status = status_res
+            etg_status = status_res.get('status')
+            if etg_status == 'ok':
+                sdata = status_res.get('data') or {}
+                order_id_from_etg = sdata.get('order_id') or order_id_from_etg
+                booking_confirmed = True
+                break
+            if etg_status in FINAL_STATUS_ERRORS:
+                booking_failed = True
+                break
+
+        if booking_confirmed:
+            order.status = OrderStatus.VOUCHER_ISSUED
+            if order_id_from_etg:
+                order.emerging_booking_id = str(order_id_from_etg)
+            order.save()
+            notify_status_change(order, title="Бронирование завершено!")
+            issue_aifory_voucher(order)
+            return Response({"status": "success", "order_id": order_id_from_etg, "data": data})
+
+        if booking_failed:
+            order.status = OrderStatus.FAILED
+            order.save()
+            notify_status_change(order, title="Ошибка бронирования", extra_info=f"Ответ провайдера: {html_escape(last_status)}")
+            return Response({"error": "Provider rejected the booking", "details": last_status}, status=400)
+
+        # unknown / timeout / ещё в обработке — фронт продолжит поллинг /booking/status/
+        order.status = OrderStatus.PENDING
         order.save()
-        notify_status_change(order, title="Ошибка бронирования", extra_info=f"Ответ провайдера: {html_escape(result)}")
-        
-        return Response({
-            "error": "Provider rejected the booking", 
-            "details": result
-        }, status=400)
+        notify_status_change(order, title="Бронирование обрабатывается...")
+        return Response({"status": "processing", "order_id": order_id_from_etg, "data": data})
     
 class BookingStatusCheckView(APIView):
     permission_classes = [AllowAny]

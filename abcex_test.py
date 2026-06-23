@@ -1,11 +1,13 @@
+import os
 import hmac
 import hashlib
 import time
 import requests
 import json
 
-API_KEY = "REMOVED_ABCEX_API_KEY"
-SECRET_KEY = "REMOVED_ABCEX_SECRET_KEY"  
+# Ключи берём из переменных окружения — НИКОГДА не хардкодим секреты в коде.
+API_KEY = os.environ.get("ABCEX_API_KEY", "")
+SECRET_KEY = os.environ.get("ABCEX_SECRET_KEY", "")
 GATEWAY_URL = 'https://api.abcex.io'
 
 def call_abcex(method, path, query_str=None, body=None):
@@ -46,8 +48,8 @@ def generate_hotel_payment_address(wallet_id, network="TRX"):
         return None
 
 if __name__ == "__main__":
-    TRX_WALLET_ID = "REMOVED_ABCEX_WALLET_ID"
-    
+    TRX_WALLET_ID = os.environ.get("ABCEX_WALLET_ID", "")
+
     print("Генерируем адрес для нового заказа в отеле...")
     crypto_address = generate_hotel_payment_address(wallet_id=TRX_WALLET_ID, network="TRX")
     

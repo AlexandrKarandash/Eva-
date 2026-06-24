@@ -7,7 +7,8 @@
       Оплаченных/подтверждённых: <b>{{ finance_summary.count_paid }}</b> из {{ finance_summary.count_all }}
       &nbsp;·&nbsp; Выручка: <b>{{ finance_summary.revenue }} ₮</b>
       &nbsp;·&nbsp; Себестоимость ETG: {{ finance_summary.cost }} ₮
-      &nbsp;·&nbsp; Прибыль: <b style="color:#1a7f37">{{ finance_summary.profit }} ₮</b>
+      &nbsp;·&nbsp; Комиссия ABCEX: {{ finance_summary.abcex_fee }} ₮
+      &nbsp;·&nbsp; Прибыль (чистая): <b style="color:#1a7f37">{{ finance_summary.profit }} ₮</b>
       &nbsp;·&nbsp; Средняя маржа: <b>{{ finance_summary.margin }}%</b>
     </div>
     {% if finance_summary.count_refunded %}

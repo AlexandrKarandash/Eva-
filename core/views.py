@@ -39,13 +39,22 @@ ETG_WEBHOOK_SIGNATURE_HEADERS = (
 def html_escape(value):
     return html.escape(str(value or ""), quote=True)
 
+def get_markup_percent() -> Decimal:
+    """Текущая наценка (%) из настройки админки. Фоллбэк 10% при сбое."""
+    try:
+        from .models import MarkupSettings
+        return MarkupSettings.get_percent()
+    except Exception:
+        return Decimal("10")
+
+
 def calculate_client_price(cost_price: Decimal) -> Decimal:
     """
-    Рассчитывает конечную стоимость для клиента с учетом наценки.
-    Например, +10% к стоимости партнера.
+    Конечная стоимость для клиента = себестоимость + наценка.
+    Процент наценки берётся из настройки в админке (MarkupSettings).
     """
-    markup_percent = Decimal("0.10")  # 10% наценка
-    client_price = cost_price * (Decimal("1.00") + markup_percent)
+    percent = get_markup_percent()  # напр. 10 (%)
+    client_price = cost_price * (Decimal("1.00") + percent / Decimal("100"))
     return client_price.quantize(MONEY_QUANT)
 
 def get_client_ip(request):
@@ -374,6 +383,7 @@ class PrebookView(APIView):
                     check_out=checkout,
                     amount_usdt=client_price,       # Клиент платит сумму с наценкой
                     cost_price_usdt=final_price,    # Сохраняем себестоимость партнера
+                    markup_percent=get_markup_percent(),  # фиксируем применённую наценку
                     status=OrderStatus.PENDING_PAYMENT,
                     rate_key=final_booking_hash
                 )

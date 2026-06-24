@@ -8,9 +8,9 @@ from django.http import HttpResponseRedirect
 
 # Импортируем старые и новые модели
 from .models import (
-    City, OrderStatus, NetworkChoices, HotelCache, Order, Transaction, 
+    City, OrderStatus, NetworkChoices, HotelCache, Order, Transaction,
     HotelStatic, HotelImage, HotelNearbyCache, InboundEmail, VoucherDocument,
-    HotelRoomStatic, RoomImage, OrderStatusHistory  # <-- Добавили новые модели сюда
+    HotelRoomStatic, RoomImage, OrderStatusHistory, MarkupSettings  # <-- Добавили новые модели сюда
 )
 from .services import etg_service, abcex_service
 from .views import _safe_voucher_url, notify_status_change
@@ -93,10 +93,17 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_display = (
         'id_short', 'status_colored', 'voucher_status', 'user_email',
-        'hotel_name_short', 'revenue_col', 'cost_col', 'profit_col', 'margin_col', 'created_at'
+        'hotel_name_short', 'revenue_col', 'cost_col', 'abcex_fee_col',
+        'profit_col', 'margin_col', 'created_at'
     )
     list_filter = ('status', 'voucher_status', 'created_at', 'check_in')
     search_fields = ('id', 'user_email', 'hotel_name', 'emerging_booking_id')
+
+    @staticmethod
+    def _order_profit(obj):
+        return ((obj.amount_usdt or Decimal('0'))
+                - (obj.cost_price_usdt or Decimal('0'))
+                - (obj.abcex_fee_usdt or Decimal('0')))
 
     @admin.display(description="Клиент заплатил", ordering='amount_usdt')
     def revenue_col(self, obj):
@@ -106,16 +113,20 @@ class OrderAdmin(admin.ModelAdmin):
     def cost_col(self, obj):
         return format_html('{} ₮', obj.cost_price_usdt)
 
-    @admin.display(description="Прибыль")
+    @admin.display(description="Комиссия ABCEX", ordering='abcex_fee_usdt')
+    def abcex_fee_col(self, obj):
+        return format_html('{} ₮', obj.abcex_fee_usdt or Decimal('0'))
+
+    @admin.display(description="Прибыль (чистая)")
     def profit_col(self, obj):
-        profit = (obj.amount_usdt or Decimal('0')) - (obj.cost_price_usdt or Decimal('0'))
+        profit = self._order_profit(obj)
         color = '#1a7f37' if profit >= 0 else '#cf222e'
         return format_html('<b style="color:{}">{} ₮</b>', color, profit)
 
     @admin.display(description="Маржа")
     def margin_col(self, obj):
         if obj.amount_usdt:
-            margin = ((obj.amount_usdt - (obj.cost_price_usdt or Decimal('0'))) / obj.amount_usdt) * 100
+            margin = (self._order_profit(obj) / obj.amount_usdt) * 100
             return f"{margin:.1f}%"
         return "—"
 
@@ -127,10 +138,11 @@ class OrderAdmin(admin.ModelAdmin):
             return response
 
         paid = qs.filter(status__in=self.REVENUE_STATUSES)
-        agg = paid.aggregate(rev=Sum('amount_usdt'), cost=Sum('cost_price_usdt'))
+        agg = paid.aggregate(rev=Sum('amount_usdt'), cost=Sum('cost_price_usdt'), fee=Sum('abcex_fee_usdt'))
         rev = agg['rev'] or Decimal('0')
         cost = agg['cost'] or Decimal('0')
-        profit = rev - cost
+        fee = agg['fee'] or Decimal('0')
+        profit = rev - cost - fee
         margin = (profit / rev * 100) if rev else Decimal('0')
         refunded = qs.filter(status=OrderStatus.REFUNDED)
         refunded_sum = refunded.aggregate(s=Sum('amount_usdt'))['s'] or Decimal('0')
@@ -140,6 +152,7 @@ class OrderAdmin(admin.ModelAdmin):
             'count_paid': paid.count(),
             'revenue': rev.quantize(Decimal('0.01')),
             'cost': cost.quantize(Decimal('0.01')),
+            'abcex_fee': fee.quantize(Decimal('0.01')),
             'profit': profit.quantize(Decimal('0.01')),
             'margin': round(margin, 1),
             'count_refunded': refunded.count(),
@@ -158,7 +171,11 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('hotel_name', ('check_in', 'check_out'))
         }),
         ('Финансы', {
-            'fields': (('amount_usdt', 'cost_price_usdt'), 'paid_at')
+            'fields': (
+                ('amount_usdt', 'cost_price_usdt'),
+                ('markup_percent', 'abcex_fee_usdt'),
+                'paid_at',
+            )
         }),
         ('Служебная информация ETG', {
             'classes': ('collapse',),
@@ -488,3 +505,16 @@ class VoucherDocumentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(HotelCache)
+
+
+@admin.register(MarkupSettings)
+class MarkupSettingsAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'markup_percent', 'updated_at')
+    readonly_fields = ('updated_at',)
+
+    def has_add_permission(self, request):
+        # Синглтон: запрещаем создавать второй объект, если уже есть
+        return not MarkupSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

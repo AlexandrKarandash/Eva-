@@ -63,7 +63,11 @@ class Order(models.Model):
     amount_usdt = models.DecimalField(max_digits=12, decimal_places=2)
     amount_rub = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     cost_price_usdt = models.DecimalField(max_digits=12, decimal_places=2)
-    
+    # Комиссия платёжного шлюза ABCEX по этому заказу (наш расход), USDT
+    abcex_fee_usdt = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Комиссия ABCEX, USDT")
+    # Процент наценки, применённый при создании заказа (для истории/прозрачности)
+    markup_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name="Наценка, %")
+
 
     voucher_status = models.CharField(max_length=30, choices=VoucherStatus.choices, default=VoucherStatus.NOT_RECEIVED)
 
@@ -372,3 +376,28 @@ class OrderStatusHistory(models.Model):
 
     def __str__(self):
         return f"Заказ #{self.order_id}: {self.old_status} -> {self.new_status}"
+
+class MarkupSettings(models.Model):
+    """Глобальная настройка наценки (синглтон, pk=1). Редактируется в админке."""
+    markup_percent = models.DecimalField(
+        max_digits=5, decimal_places=2, default=10,
+        verbose_name="Наценка по умолчанию, %"
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Настройка наценки"
+        verbose_name_plural = "Настройки наценки"
+
+    def __str__(self):
+        return f"Наценка по умолчанию: {self.markup_percent}%"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1  # синглтон
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_percent(cls):
+        from decimal import Decimal
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj.markup_percent or Decimal("0")

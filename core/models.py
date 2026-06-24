@@ -459,3 +459,25 @@ class MarkupSettings(models.Model):
             "total_commission": q(total),
             "total_percent": q(total / net * 100) if net else D("0.00"),
         }
+
+
+# --- Прокси-модели для финансовых разделов в админке (кастомные страницы) ---
+class FinanceDashboard(Order):
+    class Meta:
+        proxy = True
+        verbose_name = "Финансы · Дашборд"
+        verbose_name_plural = "💰 Финансы · Дашборд"
+
+
+class Treasury(Order):
+    class Meta:
+        proxy = True
+        verbose_name = "Финансы · Казна"
+        verbose_name_plural = "🏦 Финансы · Казна"
+
+
+class FinanceReport(Order):
+    class Meta:
+        proxy = True
+        verbose_name = "Финансы · Отчётность"
+        verbose_name_plural = "📊 Финансы · Отчётность"

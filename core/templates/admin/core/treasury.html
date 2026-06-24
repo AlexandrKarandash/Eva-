@@ -1,0 +1,44 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<style>
+  .fin-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px}
+  .fin-card{background:#fff;border:1px solid #e3e3e3;border-radius:14px;padding:18px}
+  .fin-card .lbl{color:#777;font-size:13px;margin-bottom:6px}
+  .fin-card .val{font-size:26px;font-weight:700}
+  .fin-card .sub{color:#888;font-size:12px;margin-top:4px}
+  .fin-green{color:#1a7f37}.fin-red{color:#cf222e}
+  .fin-sec{color:#888;font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 10px;font-weight:600}
+  table.fin{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e3e3e3;border-radius:12px;overflow:hidden}
+  table.fin th,table.fin td{padding:12px 16px;text-align:left;border-bottom:1px solid #eee}
+  table.fin th{background:#fafafa;color:#666;font-size:12px;text-transform:uppercase}
+</style>
+
+<h1>🏦 Финансы · Казна</h1>
+<p style="color:#888">Баланс USDT в ABCEX (факт + расчёт) и сверка с операциями.</p>
+
+<div class="fin-sec">Баланс USDT (ABCEX)</div>
+<div class="fin-cards">
+  <div class="fin-card"><div class="lbl">Факт по API</div><div class="val">{% if abcex_balance is not None %}{{ abcex_balance }} ₮{% else %}—{% endif %}</div><div class="sub">реальный баланс счёта</div></div>
+  <div class="fin-card"><div class="lbl">Расчётный</div><div class="val">{{ computed }} ₮</div><div class="sub">получено − возвраты − комиссия ABCEX</div></div>
+  <div class="fin-card"><div class="lbl">Расхождение (сбивка)</div>
+    <div class="val {% if discrepancy and discrepancy < 0 %}fin-red{% endif %}">{% if discrepancy is not None %}{{ discrepancy }} ₮{% else %}—{% endif %}</div>
+    <div class="sub">факт − расчётный</div></div>
+</div>
+
+<div class="fin-sec">Движение средств (всё время)</div>
+<div class="fin-cards">
+  <div class="fin-card"><div class="lbl">Получено от клиентов</div><div class="val fin-green">{{ s.revenue }} ₮</div><div class="sub">{{ s.count_paid }} оплат</div></div>
+  <div class="fin-card"><div class="lbl">Израсходовано (ETG)</div><div class="val">{{ s.cost }} ₮</div><div class="sub">себестоимость броней</div></div>
+  <div class="fin-card"><div class="lbl">Комиссии ABCEX</div><div class="val">{{ s.abcex_fee }} ₮</div></div>
+  <div class="fin-card"><div class="lbl">Возвраты</div><div class="val fin-red">{{ s.refunded_sum }} ₮</div><div class="sub">{{ s.count_refunded }} шт</div></div>
+</div>
+
+<div class="fin-sec">Расчёты с поставщиками</div>
+<table class="fin">
+  <tr><th>Поставщик</th><th>База</th><th>Комиссия / расход</th></tr>
+  <tr><td>ETG (Островок)</td><td>себестоимость броней</td><td>{{ s.cost }} ₮</td></tr>
+  <tr><td>Цепочка пополнения (Миша/XBO/AL MASHRAB/ABCex)</td><td>{{ s.chain_percent }}% на пополнение</td><td>≈ {{ s.chain_cost }} ₮</td></tr>
+  <tr><td>ABCEX (комиссия за платёж)</td><td>транзакции клиентов</td><td>{{ s.abcex_fee }} ₮</td></tr>
+  <tr style="background:#fffbe6"><td><b>Чистая прибыль</b></td><td></td><td><b class="fin-green">{{ s.net_profit }} ₮</b></td></tr>
+</table>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<style>
+  .fin-tabs{display:flex;gap:8px;margin:0 0 18px}
+  .fin-tabs a{padding:8px 16px;border-radius:20px;background:#eee;color:#333;text-decoration:none;font-size:14px}
+  .fin-tabs a.active{background:#c79a3a;color:#fff}
+  .fin-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+  .fin-card{background:#fff;border:1px solid #e3e3e3;border-radius:14px;padding:18px}
+  .fin-card .lbl{color:#777;font-size:13px;margin-bottom:6px}
+  .fin-card .val{font-size:26px;font-weight:700}
+  .fin-card .sub{color:#888;font-size:12px;margin-top:4px}
+  .fin-green{color:#1a7f37}
+  .fin-sec{color:#888;font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 10px;font-weight:600}
+</style>
+
+<h1>💰 Финансы · Дашборд <span style="font-size:14px;color:#888">({{ summary.label }})</span></h1>
+
+<div class="fin-tabs">
+  <a href="?period=day"   class="{% if period == 'day' %}active{% endif %}">День</a>
+  <a href="?period=week"  class="{% if period == 'week' %}active{% endif %}">Неделя</a>
+  <a href="?period=month" class="{% if period == 'month' %}active{% endif %}">Месяц</a>
+  <a href="?period=all"   class="{% if period == 'all' %}active{% endif %}">Всё время</a>
+</div>
+
+<div class="fin-sec">Оборот и прибыль</div>
+<div class="fin-cards">
+  <div class="fin-card"><div class="lbl">Оборот (выручка)</div><div class="val">{{ summary.revenue }} ₮</div><div class="sub">{{ summary.count_paid }} оплаченных броней</div></div>
+  <div class="fin-card"><div class="lbl">Себестоимость ETG</div><div class="val">{{ summary.cost }} ₮</div></div>
+  <div class="fin-card"><div class="lbl">Комиссия ABCEX</div><div class="val">{{ summary.abcex_fee }} ₮</div></div>
+  <div class="fin-card"><div class="lbl">Валовая прибыль</div><div class="val fin-green">{{ summary.gross_profit }} ₮</div><div class="sub">выручка − ETG − ABCEX</div></div>
+</div>
+
+<div class="fin-sec">Чистая прибыль (с учётом цепочки Островка)</div>
+<div class="fin-cards">
+  <div class="fin-card"><div class="lbl">Комиссии цепочки (оценка)</div><div class="val">{{ summary.chain_cost }} ₮</div><div class="sub">≈ {{ summary.chain_percent }}% на пополнение</div></div>
+  <div class="fin-card"><div class="lbl">Чистая прибыль</div><div class="val fin-green">{{ summary.net_profit }} ₮</div><div class="sub">после всех комиссий</div></div>
+  <div class="fin-card"><div class="lbl">Средняя маржа</div><div class="val">{{ summary.margin }}%</div></div>
+  <div class="fin-card"><div class="lbl">Средний чек</div><div class="val">{{ summary.avg_check }} ₮</div></div>
+</div>
+
+<div class="fin-sec">Настройки и баланс</div>
+<div class="fin-cards">
+  <div class="fin-card"><div class="lbl">Наценка (текущая)</div><div class="val">{{ summary.markup_percent }}%</div><div class="sub">меняется в «Финмодель»</div></div>
+  <div class="fin-card"><div class="lbl">Баланс USDT в ABCEX</div><div class="val">{% if abcex_balance is not None %}{{ abcex_balance }} ₮{% else %}—{% endif %}</div><div class="sub">по API</div></div>
+  {% if summary.count_refunded %}
+  <div class="fin-card"><div class="lbl">Возвраты</div><div class="val" style="color:#cf222e">{{ summary.refunded_sum }} ₮</div><div class="sub">{{ summary.count_refunded }} шт</div></div>
+  {% endif %}
+</div>
+{% endblock %}

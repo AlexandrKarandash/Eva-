@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<style>
+  .fin-tabs{display:flex;gap:8px;margin:0 0 18px}
+  .fin-tabs a{padding:8px 16px;border-radius:20px;background:#eee;color:#333;text-decoration:none;font-size:14px}
+  .fin-tabs a.active{background:#c79a3a;color:#fff}
+  table.fin{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e3e3e3;border-radius:12px;overflow:hidden}
+  table.fin th,table.fin td{padding:13px 18px;text-align:left;border-bottom:1px solid #eee}
+  table.fin th{background:#fafafa;color:#666;font-size:12px;text-transform:uppercase}
+  table.fin td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .fin-green{color:#1a7f37}
+</style>
+
+<h1>📊 Финансы · Отчётность <span style="font-size:14px;color:#888">({{ summary.label }})</span></h1>
+<p style="color:#888">Сводка за период с разбивкой расходов по поставщикам. Суммы в USDT.</p>
+
+<div class="fin-tabs">
+  <a href="?period=day"   class="{% if period == 'day' %}active{% endif %}">День</a>
+  <a href="?period=week"  class="{% if period == 'week' %}active{% endif %}">Неделя</a>
+  <a href="?period=month" class="{% if period == 'month' %}active{% endif %}">Месяц</a>
+  <a href="?period=all"   class="{% if period == 'all' %}active{% endif %}">Всё время</a>
+</div>
+
+<table class="fin">
+  <tr><th>Показатель</th><th style="text-align:right">USDT</th></tr>
+  <tr><td>Выручка ({{ summary.count_paid }} броней)</td><td class="num">{{ summary.revenue }}</td></tr>
+  <tr><td>Себестоимость ETG (Островок)</td><td class="num">− {{ summary.cost }}</td></tr>
+  <tr><td>Комиссия ABCEX (за платёж)</td><td class="num">− {{ summary.abcex_fee }}</td></tr>
+  <tr><td>Комиссии цепочки пополнения (оценка, {{ summary.chain_percent }}%)</td><td class="num">− {{ summary.chain_cost }}</td></tr>
+  <tr style="background:#fffbe6"><td><b>Чистая маржа</b></td><td class="num"><b class="fin-green">{{ summary.net_profit }}</b></td></tr>
+  {% if summary.count_refunded %}
+  <tr><td style="color:#cf222e">Возвраты ({{ summary.count_refunded }} шт)</td><td class="num" style="color:#cf222e">{{ summary.refunded_sum }}</td></tr>
+  {% endif %}
+</table>
+
+<p style="color:#888;margin-top:14px;font-size:13px">
+  Наценка на клиента: <b>{{ summary.markup_percent }}%</b>. Средний чек: <b>{{ summary.avg_check }} ₮</b>.
+  Комиссии цепочки пополнения — оценка по текущим параметрам «Финмодели».
+</p>
+{% endblock %}

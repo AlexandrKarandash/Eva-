@@ -1602,6 +1602,24 @@ class AbcexPaymentService:
         except Exception as e:
             logger.error(f"ABCEX Wallet List Error: {e}")
             return None
+
+    def get_usdt_balance(self, currency_name="USDT"):
+        """Текущий баланс USDT в ABCEX (serviceBalance funding-счёта). None при ошибке."""
+        from decimal import Decimal as D
+        path = "/api/v1/accounting/client/report-account/accounts/overview"
+        try:
+            response = self._call('GET', path)
+            if response.status_code != 200:
+                logger.warning("ABCEX balance HTTP %s: %s", response.status_code, response.text[:200])
+                return None
+            wallets = response.json().get('accounts', {}).get('funding', [])
+            for w in wallets:
+                if w.get('name') == currency_name:
+                    return D(str(w.get('serviceBalance', '0')))
+            return None
+        except Exception as e:
+            logger.error(f"ABCEX Balance Error: {e}")
+            return None
         
     def check_payment(self, target_address, expected_amount, currency="USDT", network="TRX"):
         path = "/api/v1/wallet/transactions/list/my"

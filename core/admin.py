@@ -562,3 +562,80 @@ class MarkupSettingsAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+# ============================================================================
+#  ФИНАНСОВЫЕ РАЗДЕЛЫ (Дашборд / Казна / Отчётность) — кастомные страницы
+# ============================================================================
+from django.template.response import TemplateResponse
+from . import finance
+from .models import FinanceDashboard, Treasury, FinanceReport
+
+
+class _FinanceAdminBase(admin.ModelAdmin):
+    """База для финансовых разделов: только просмотр, кастомная страница."""
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_staff
+
+    def _period(self, request):
+        p = request.GET.get('period', 'all')
+        return p if p in ('day', 'week', 'month', 'all') else 'all'
+
+
+@admin.register(FinanceDashboard)
+class FinanceDashboardAdmin(_FinanceAdminBase):
+    def changelist_view(self, request, extra_context=None):
+        period = self._period(request)
+        try:
+            balance = abcex_service.get_usdt_balance()
+        except Exception:
+            balance = None
+        ctx = dict(
+            self.admin_site.each_context(request),
+            title="Финансы · Дашборд",
+            summary=finance.summarize(period),
+            period=period,
+            abcex_balance=balance,
+        )
+        return TemplateResponse(request, "admin/core/finance_dashboard.html", ctx)
+
+
+@admin.register(Treasury)
+class TreasuryAdmin(_FinanceAdminBase):
+    def changelist_view(self, request, extra_context=None):
+        all_summary = finance.summarize('all')
+        try:
+            balance = abcex_service.get_usdt_balance()
+        except Exception:
+            balance = None
+        # Сбивка: фактический баланс ABCEX vs расчётный (получено - возвраты - комиссии ABCEX)
+        computed = all_summary['revenue'] - all_summary['refunded_sum'] - all_summary['abcex_fee']
+        discrepancy = (balance - computed) if balance is not None else None
+        ctx = dict(
+            self.admin_site.each_context(request),
+            title="Финансы · Казна",
+            s=all_summary,
+            abcex_balance=balance,
+            computed=computed,
+            discrepancy=discrepancy,
+        )
+        return TemplateResponse(request, "admin/core/treasury.html", ctx)
+
+
+@admin.register(FinanceReport)
+class FinanceReportAdmin(_FinanceAdminBase):
+    def changelist_view(self, request, extra_context=None):
+        period = self._period(request)
+        ctx = dict(
+            self.admin_site.each_context(request),
+            title="Финансы · Отчётность",
+            summary=finance.summarize(period),
+            period=period,
+        )
+        return TemplateResponse(request, "admin/core/finance_report.html", ctx)

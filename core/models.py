@@ -1,6 +1,7 @@
 import hashlib
 import secrets
 import uuid
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -378,26 +379,83 @@ class OrderStatusHistory(models.Model):
         return f"Заказ #{self.order_id}: {self.old_status} -> {self.new_status}"
 
 class MarkupSettings(models.Model):
-    """Глобальная настройка наценки (синглтон, pk=1). Редактируется в админке."""
+    """Финмодель (синглтон, pk=1): наценка + цепочка комиссий пополнения депозита Островка."""
     markup_percent = models.DecimalField(
         max_digits=5, decimal_places=2, default=10,
-        verbose_name="Наценка по умолчанию, %"
+        verbose_name="Наценка на клиента, %"
+    )
+    # --- Цепочка пополнения депозита Островка (USDT -> USD на счёт отеля) ---
+    misha_percent = models.DecimalField(
+        max_digits=6, decimal_places=3, default=Decimal("1.000"),
+        verbose_name="Комиссия Миши, %"
+    )
+    xbo_rate = models.DecimalField(
+        max_digits=10, decimal_places=5, default=Decimal("0.98423"),
+        verbose_name="Курс XBO (1 USDT = USD)"
+    )
+    extra_exchange_percent = models.DecimalField(
+        max_digits=6, decimal_places=3, default=Decimal("0.150"),
+        verbose_name="Доп. комиссия к курсу биржи, %"
+    )
+    almashrab_fixed_usd = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal("130.00"),
+        verbose_name="AL MASHRAB → Островок, фикс USD"
+    )
+    abcex_fixed_usd = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal("5.00"),
+        verbose_name="Комиссия ABCex/Aifory, фикс USD"
+    )
+    preview_amount_usd = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("5000.00"),
+        verbose_name="Сумма для предпросмотра расчёта, USD"
     )
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Настройка наценки"
-        verbose_name_plural = "Настройки наценки"
+        verbose_name = "Финмодель"
+        verbose_name_plural = "Финмодель"
 
     def __str__(self):
-        return f"Наценка по умолчанию: {self.markup_percent}%"
+        return f"Финмодель (наценка {self.markup_percent}%)"
 
     def save(self, *args, **kwargs):
         self.pk = 1  # синглтон
         super().save(*args, **kwargs)
 
     @classmethod
-    def get_percent(cls):
-        from decimal import Decimal
+    def load(cls):
         obj, _ = cls.objects.get_or_create(pk=1)
-        return obj.markup_percent or Decimal("0")
+        return obj
+
+    @classmethod
+    def get_percent(cls):
+        return cls.load().markup_percent or Decimal("0")
+
+    def compute_ostrovok_topup(self, net_usd):
+        """
+        Расчёт пополнения: сколько USDT нужно отправить, чтобы Островок получил net_usd,
+        с разбивкой комиссий цепочки. Воспроизводит ручную таблицу.
+        """
+        from decimal import Decimal as D, ROUND_HALF_UP
+        net = D(str(net_usd or 0))
+        rate = self.xbo_rate or D("1")
+        target_usd = net + self.almashrab_fixed_usd + self.abcex_fixed_usd
+        usdt_after_fees = target_usd / rate                      # потеря на курсе XBO
+        fee_frac = (self.misha_percent + self.extra_exchange_percent) / D("100")
+        usdt_to_send = usdt_after_fees / (D("1") - fee_frac) if fee_frac < 1 else usdt_after_fees
+        misha = usdt_to_send * self.misha_percent / D("100")
+        extra = usdt_to_send * self.extra_exchange_percent / D("100")
+        xbo_loss = usdt_after_fees - target_usd
+        total = misha + extra + xbo_loss + self.almashrab_fixed_usd + self.abcex_fixed_usd
+        q = lambda x: x.quantize(D("0.01"), ROUND_HALF_UP)
+        return {
+            "net_usd": q(net),
+            "usdt_to_send": q(usdt_to_send),
+            "misha": q(misha),
+            "xbo_loss": q(xbo_loss),
+            "extra": q(extra),
+            "almashrab": q(self.almashrab_fixed_usd),
+            "abcex": q(self.abcex_fixed_usd),
+            "total_commission": q(total),
+            "total_percent": q(total / net * 100) if net else D("0.00"),
+        }

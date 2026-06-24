@@ -510,7 +510,51 @@ admin.site.register(HotelCache)
 @admin.register(MarkupSettings)
 class MarkupSettingsAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'markup_percent', 'updated_at')
-    readonly_fields = ('updated_at',)
+    readonly_fields = ('updated_at', 'topup_preview')
+    fieldsets = (
+        ('Наценка на клиента', {
+            'fields': ('markup_percent',),
+            'description': 'Применяется ко всем новым броням автоматически.'
+        }),
+        ('Цепочка пополнения депозита Островка (USDT → USD)', {
+            'fields': (
+                ('misha_percent', 'extra_exchange_percent'),
+                'xbo_rate',
+                ('almashrab_fixed_usd', 'abcex_fixed_usd'),
+            ),
+            'description': 'Комиссии при пополнении долларового депозита Островка криптой.'
+        }),
+        ('Калькулятор пополнения', {
+            'fields': ('preview_amount_usd', 'topup_preview'),
+            'description': 'Введите сумму, которую должен получить Островок, и сохраните — ниже расчёт.'
+        }),
+    )
+
+    @admin.display(description="Расчёт пополнения")
+    def topup_preview(self, obj):
+        if not obj or not obj.pk:
+            return "Сохраните настройки, чтобы увидеть расчёт."
+        b = obj.compute_ostrovok_topup(obj.preview_amount_usd)
+        return format_html(
+            '<div style="line-height:1.9;font-size:14px;">'
+            'Островок получит: <b>{} USD</b><br>'
+            'Нужно отправить: <b style="color:#1a7f37;font-size:16px;">{} USDT</b>'
+            '<hr style="margin:8px 0;border:none;border-top:1px solid #ddd;">'
+            'Комиссия Миши ({}%): {} ₮<br>'
+            'Потеря на курсе XBO: {} ₮<br>'
+            'Доп. комиссия ({}%): {} ₮<br>'
+            'AL MASHRAB → Островок: {} USD<br>'
+            'ABCex/Aifory: {} USD'
+            '<hr style="margin:8px 0;border:none;border-top:1px solid #ddd;">'
+            '<b>Итого комиссий: {} USD ({}%)</b>'
+            '</div>',
+            b['net_usd'], b['usdt_to_send'],
+            obj.misha_percent, b['misha'],
+            b['xbo_loss'],
+            obj.extra_exchange_percent, b['extra'],
+            b['almashrab'], b['abcex'],
+            b['total_commission'], b['total_percent'],
+        )
 
     def has_add_permission(self, request):
         # Синглтон: запрещаем создавать второй объект, если уже есть

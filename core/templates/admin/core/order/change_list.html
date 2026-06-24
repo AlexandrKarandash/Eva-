@@ -1,0 +1,24 @@
+{% extends "admin/change_list.html" %}
+{% block result_list %}
+  {% if finance_summary %}
+  <div style="margin:0 0 14px;padding:16px 20px;border-radius:12px;background:#f6f8fa;border:1px solid #d0d7de;font-size:14px;line-height:1.7;">
+    <div style="font-weight:600;margin-bottom:6px;">💰 Финансовая сводка (по отфильтрованным заказам)</div>
+    <div>
+      Оплаченных/подтверждённых: <b>{{ finance_summary.count_paid }}</b> из {{ finance_summary.count_all }}
+      &nbsp;·&nbsp; Выручка: <b>{{ finance_summary.revenue }} ₮</b>
+      &nbsp;·&nbsp; Себестоимость ETG: {{ finance_summary.cost }} ₮
+      &nbsp;·&nbsp; Прибыль: <b style="color:#1a7f37">{{ finance_summary.profit }} ₮</b>
+      &nbsp;·&nbsp; Средняя маржа: <b>{{ finance_summary.margin }}%</b>
+    </div>
+    {% if finance_summary.count_refunded %}
+    <div style="margin-top:4px;color:#cf222e;">
+      Возвраты: {{ finance_summary.count_refunded }} на сумму {{ finance_summary.refunded_sum }} ₮
+    </div>
+    {% endif %}
+    <div style="margin-top:6px;color:#656d76;font-size:12px;">
+      Подсказка: используйте фильтры справа (статус, дата) — сводка пересчитается по выборке.
+    </div>
+  </div>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

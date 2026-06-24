@@ -1,4 +1,6 @@
+from decimal import Decimal
 from django.contrib import admin, messages
+from django.db.models import Sum
 from django.utils.html import format_html
 from django.urls import reverse
 from django.shortcuts import render
@@ -80,13 +82,70 @@ class HotelRoomStaticInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    # Добавили voucher_status в список отображения
+    change_list_template = 'admin/core/order/change_list.html'
+
+    # Статусы, которые считаем реальной выручкой (деньги получены/бронь идёт)
+    REVENUE_STATUSES = (
+        OrderStatus.PAID,
+        OrderStatus.BOOKING,
+        OrderStatus.VOUCHER_ISSUED,
+    )
+
     list_display = (
-        'id_short', 'status_colored', 'voucher_status', 'user_email', 
-        'hotel_name_short', 'amount_display', 'created_at'
+        'id_short', 'status_colored', 'voucher_status', 'user_email',
+        'hotel_name_short', 'revenue_col', 'cost_col', 'profit_col', 'margin_col', 'created_at'
     )
     list_filter = ('status', 'voucher_status', 'created_at', 'check_in')
     search_fields = ('id', 'user_email', 'hotel_name', 'emerging_booking_id')
+
+    @admin.display(description="Клиент заплатил", ordering='amount_usdt')
+    def revenue_col(self, obj):
+        return format_html('{} ₮', obj.amount_usdt)
+
+    @admin.display(description="Себестоимость ETG", ordering='cost_price_usdt')
+    def cost_col(self, obj):
+        return format_html('{} ₮', obj.cost_price_usdt)
+
+    @admin.display(description="Прибыль")
+    def profit_col(self, obj):
+        profit = (obj.amount_usdt or Decimal('0')) - (obj.cost_price_usdt or Decimal('0'))
+        color = '#1a7f37' if profit >= 0 else '#cf222e'
+        return format_html('<b style="color:{}">{} ₮</b>', color, profit)
+
+    @admin.display(description="Маржа")
+    def margin_col(self, obj):
+        if obj.amount_usdt:
+            margin = ((obj.amount_usdt - (obj.cost_price_usdt or Decimal('0'))) / obj.amount_usdt) * 100
+            return f"{margin:.1f}%"
+        return "—"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        paid = qs.filter(status__in=self.REVENUE_STATUSES)
+        agg = paid.aggregate(rev=Sum('amount_usdt'), cost=Sum('cost_price_usdt'))
+        rev = agg['rev'] or Decimal('0')
+        cost = agg['cost'] or Decimal('0')
+        profit = rev - cost
+        margin = (profit / rev * 100) if rev else Decimal('0')
+        refunded = qs.filter(status=OrderStatus.REFUNDED)
+        refunded_sum = refunded.aggregate(s=Sum('amount_usdt'))['s'] or Decimal('0')
+
+        response.context_data['finance_summary'] = {
+            'count_all': qs.count(),
+            'count_paid': paid.count(),
+            'revenue': rev.quantize(Decimal('0.01')),
+            'cost': cost.quantize(Decimal('0.01')),
+            'profit': profit.quantize(Decimal('0.01')),
+            'margin': round(margin, 1),
+            'count_refunded': refunded.count(),
+            'refunded_sum': refunded_sum.quantize(Decimal('0.01')),
+        }
+        return response
     
     actions = ['update_etg_status', 'mark_refunded']
 

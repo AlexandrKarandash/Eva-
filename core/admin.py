@@ -528,6 +528,10 @@ class MarkupSettingsAdmin(admin.ModelAdmin):
             'fields': ('preview_amount_usd', 'topup_preview'),
             'description': 'Введите сумму, которую должен получить Островок, и сохраните — ниже расчёт.'
         }),
+        ('Контроль минимального баланса депозита', {
+            'fields': (('min_balance_usd', 'balance_control_enabled'),),
+            'description': 'При включённом контроле в Казне покажется статус LOW, если баланс ниже порога.'
+        }),
     )
 
     @admin.display(description="Расчёт пополнения")
@@ -609,21 +613,38 @@ class FinanceDashboardAdmin(_FinanceAdminBase):
 @admin.register(Treasury)
 class TreasuryAdmin(_FinanceAdminBase):
     def changelist_view(self, request, extra_context=None):
+        from django.db.models import Sum as _Sum
         all_summary = finance.summarize('all')
         try:
-            balance = abcex_service.get_usdt_balance()
+            abcex_balance = abcex_service.get_usdt_balance()
         except Exception:
-            balance = None
-        # Сбивка: фактический баланс ABCEX vs расчётный (получено - возвраты - комиссии ABCEX)
-        computed = all_summary['revenue'] - all_summary['refunded_sum'] - all_summary['abcex_fee']
-        discrepancy = (balance - computed) if balance is not None else None
+            abcex_balance = None
+
+        deposit_balance, threshold, is_low, control_on = treasury.balance_status()
+
+        # Итоги по журналу движений депозита
+        mv = BalanceMovement.objects.all()
+        topups = mv.filter(type=MovementType.TOPUP).aggregate(s=_Sum('amount'))['s'] or Decimal('0')
+        spends = mv.filter(type=MovementType.BOOKING_SPEND).aggregate(s=_Sum('amount'))['s'] or Decimal('0')
+        refunds = mv.filter(type=MovementType.REFUND).aggregate(s=_Sum('amount'))['s'] or Decimal('0')
+        adjustments = mv.filter(type=MovementType.ADJUSTMENT).aggregate(s=_Sum('amount'))['s'] or Decimal('0')
+        last_movements = mv[:8]
+
         ctx = dict(
             self.admin_site.each_context(request),
             title="Финансы · Казна",
             s=all_summary,
-            abcex_balance=balance,
-            computed=computed,
-            discrepancy=discrepancy,
+            abcex_balance=abcex_balance,
+            deposit_balance=deposit_balance,
+            threshold=threshold,
+            is_low=is_low,
+            control_on=control_on,
+            topups=topups.quantize(Decimal('0.01')),
+            spends=spends.quantize(Decimal('0.01')),
+            refunds=refunds.quantize(Decimal('0.01')),
+            adjustments=adjustments.quantize(Decimal('0.01')),
+            last_movements=last_movements,
+            movements_count=mv.count(),
         )
         return TemplateResponse(request, "admin/core/treasury.html", ctx)
 
@@ -639,3 +660,104 @@ class FinanceReportAdmin(_FinanceAdminBase):
             period=period,
         )
         return TemplateResponse(request, "admin/core/finance_report.html", ctx)
+
+
+# ============================================================================
+#  КАЗНА: журнал движений + заявки на пополнение
+# ============================================================================
+from django.utils import timezone as _tz
+from . import treasury
+from .models import BalanceMovement, MovementType, TopupRequest, TopupStatus
+
+
+@admin.register(BalanceMovement)
+class BalanceMovementAdmin(admin.ModelAdmin):
+    list_display = ('created_at', 'type_colored', 'amount_col', 'balance_before', 'balance_after', 'initiator', 'source_col', 'comment')
+    list_filter = ('type', 'created_at')
+    search_fields = ('comment', 'initiator', 'source_id')
+    date_hierarchy = 'created_at'
+    fields = ('type', 'amount', 'comment', 'balance_before', 'balance_after', 'initiator', 'created_at')
+    readonly_fields = ('balance_before', 'balance_after', 'initiator', 'created_at')
+
+    _TYPE_COLORS = {
+        MovementType.TOPUP: '#1a7f37', MovementType.REFUND: '#1a7f37',
+        MovementType.BOOKING_SPEND: '#cf222e', MovementType.ADJUSTMENT: '#8250df',
+    }
+
+    @admin.display(description="Тип")
+    def type_colored(self, obj):
+        return format_html('<b style="color:{}">{}</b>', self._TYPE_COLORS.get(obj.type, '#333'), obj.get_type_display())
+
+    @admin.display(description="Сумма", ordering='amount')
+    def amount_col(self, obj):
+        color = '#1a7f37' if (obj.amount or 0) >= 0 else '#cf222e'
+        return format_html('<b style="color:{}">{:+} ₮</b>', color, obj.amount)
+
+    @admin.display(description="Источник")
+    def source_col(self, obj):
+        if not obj.source_type:
+            return "—"
+        return format_html('{} · {}', obj.source_type, (obj.source_id or '')[:12])
+
+    def has_delete_permission(self, request, obj=None):
+        return False  # журнал append-only
+
+    def save_model(self, request, obj, form, change):
+        # Ручное движение (корректировка/начальный остаток): считаем before/after сами
+        if not change:
+            mv = treasury.record_movement(
+                obj.type, obj.amount, initiator=request.user.username or "админ",
+                source_type='manual', comment=obj.comment or "Ручная корректировка",
+            )
+            obj.pk = mv.pk  # чтобы админка показала созданную запись
+        else:
+            super().save_model(request, obj, form, change)
+
+
+@admin.register(TopupRequest)
+class TopupRequestAdmin(admin.ModelAdmin):
+    list_display = ('created_at', 'amount_usd', 'usdt_to_send', 'commission_col', 'status_colored', 'confirmed_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('comment',)
+    actions = ['confirm_topups']
+    fields = ('amount_usd', 'comment', 'status', 'usdt_to_send', 'commission_usd', 'commission_percent', 'topup_breakdown', 'confirmed_at')
+    readonly_fields = ('usdt_to_send', 'commission_usd', 'commission_percent', 'topup_breakdown', 'confirmed_at')
+
+    _ST_COLORS = {
+        TopupStatus.NEW: '#8250df', TopupStatus.PAID: '#bf8700',
+        TopupStatus.CONFIRMED: '#1a7f37', TopupStatus.EXPIRED: '#cf222e',
+    }
+
+    @admin.display(description="Комиссии")
+    def commission_col(self, obj):
+        return format_html('{} ₮ ({}%)', obj.commission_usd, obj.commission_percent)
+
+    @admin.display(description="Статус")
+    def status_colored(self, obj):
+        return format_html('<b style="color:{}">{}</b>', self._ST_COLORS.get(obj.status, '#333'), obj.get_status_display())
+
+    @admin.display(description="Расчёт пополнения")
+    def topup_breakdown(self, obj):
+        if not obj or not obj.amount_usd:
+            return "Укажите сумму и сохраните."
+        b = MarkupSettings.load().compute_ostrovok_topup(obj.amount_usd)
+        return format_html(
+            '<div style="line-height:1.8">Островок получит: <b>{} USD</b><br>'
+            'Нужно отправить: <b style="color:#1a7f37">{} USDT</b><br>'
+            'Миша: {} · XBO: {} · Доп: {} · AL MASHRAB: {} · ABCex: {}<br>'
+            '<b>Итого: {} USD ({}%)</b></div>',
+            b['net_usd'], b['usdt_to_send'], b['misha'], b['xbo_loss'], b['extra'],
+            b['almashrab'], b['abcex'], b['total_commission'], b['total_percent'])
+
+    def save_model(self, request, obj, form, change):
+        obj.recompute()
+        super().save_model(request, obj, form, change)
+
+    @admin.action(description='✅ Подтвердить (зачислить на депозит)')
+    def confirm_topups(self, request, queryset):
+        done = 0
+        for t in queryset:
+            if t.status != TopupStatus.CONFIRMED:
+                treasury.confirm_topup(t, initiator=request.user.username or "админ")
+                done += 1
+        self.message_user(request, f"Зачислено заявок: {done}", messages.SUCCESS)

@@ -409,6 +409,14 @@ class MarkupSettings(models.Model):
         max_digits=12, decimal_places=2, default=Decimal("5000.00"),
         verbose_name="Сумма для предпросмотра расчёта, USD"
     )
+    # --- Контроль минимального баланса депозита ETG ---
+    min_balance_usd = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00"),
+        verbose_name="Минимальный порог баланса депозита, USD"
+    )
+    balance_control_enabled = models.BooleanField(
+        default=False, verbose_name="Включить контроль минимального баланса"
+    )
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -459,6 +467,74 @@ class MarkupSettings(models.Model):
             "total_commission": q(total),
             "total_percent": q(total / net * 100) if net else D("0.00"),
         }
+
+
+class MovementType(models.TextChoices):
+    TOPUP = 'topup', 'Пополнение депозита'
+    BOOKING_SPEND = 'booking_spend', 'Списание за бронь'
+    REFUND = 'refund', 'Возврат (бронь отменена)'
+    ADJUSTMENT = 'adjustment', 'Корректировка вручную'
+
+
+class BalanceMovement(models.Model):
+    """Журнал движений баланса депозита ETG (USD). Append-only, с before/after."""
+    type = models.CharField(max_length=20, choices=MovementType.choices, verbose_name="Тип")
+    amount = models.DecimalField(max_digits=14, decimal_places=2, verbose_name="Сумма (со знаком), USD")
+    balance_before = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="Баланс до")
+    balance_after = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="Баланс после")
+    initiator = models.CharField(max_length=150, default="система", verbose_name="Инициатор")
+    source_type = models.CharField(max_length=20, blank=True, verbose_name="Тип источника")  # order/topup/manual
+    source_id = models.CharField(max_length=64, blank=True, verbose_name="ID источника")
+    comment = models.CharField(max_length=255, blank=True, verbose_name="Комментарий")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата")
+
+    class Meta:
+        verbose_name = "Движение баланса"
+        verbose_name_plural = "📒 Журнал движений баланса"
+        ordering = ['-created_at', '-id']
+
+    def __str__(self):
+        return f"{self.get_type_display()}: {self.amount:+} USD"
+
+
+class TopupStatus(models.TextChoices):
+    NEW = 'new', 'Новая'
+    PAID = 'paid', 'Оплачена (USDT отправлен)'
+    CONFIRMED = 'confirmed', 'Подтверждена (зачислена на депозит)'
+    EXPIRED = 'expired', 'Истекла / отменена'
+
+
+class TopupRequest(models.Model):
+    """Заявка на пополнение депозита Островка. При подтверждении создаёт движение +."""
+    amount_usd = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Островок получит, USD")
+    usdt_to_send = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="Нужно отправить, USDT")
+    commission_usd = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Комиссии цепочки, USD")
+    commission_percent = models.DecimalField(max_digits=6, decimal_places=2, default=0, verbose_name="Комиссии, %")
+    status = models.CharField(max_length=15, choices=TopupStatus.choices, default=TopupStatus.NEW, verbose_name="Статус")
+    comment = models.CharField(max_length=255, blank=True, verbose_name="Комментарий")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создана")
+    confirmed_at = models.DateTimeField(null=True, blank=True, verbose_name="Подтверждена")
+    movement = models.ForeignKey('BalanceMovement', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Движение")
+
+    class Meta:
+        verbose_name = "Заявка на пополнение"
+        verbose_name_plural = "➕ Заявки на пополнение"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Пополнение {self.amount_usd} USD ({self.get_status_display()})"
+
+    def recompute(self):
+        """Пересчёт USDT и комиссий по текущей финмодели."""
+        b = MarkupSettings.load().compute_ostrovok_topup(self.amount_usd)
+        self.usdt_to_send = b['usdt_to_send']
+        self.commission_usd = b['total_commission']
+        self.commission_percent = b['total_percent']
+
+    def save(self, *args, **kwargs):
+        if self.amount_usd and not self.usdt_to_send:
+            self.recompute()
+        super().save(*args, **kwargs)
 
 
 # --- Прокси-модели для финансовых разделов в админке (кастомные страницы) ---

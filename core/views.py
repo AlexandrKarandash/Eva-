@@ -14,6 +14,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
 from core.email_processor import VoucherEmailProcessor, issue_aifory_voucher
+from core import treasury
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -582,6 +583,7 @@ class BookingFinishView(APIView):
             order.save()
             notify_status_change(order, title="Бронирование завершено!")
             issue_aifory_voucher(order)
+            treasury.record_booking_spend(order)  # списание депозита ETG (журнал казны)
             return Response({"status": "success", "order_id": order_id_from_etg, "data": data})
 
         if booking_failed:
@@ -632,6 +634,7 @@ class BookingStatusCheckView(APIView):
 
             # Генерируем и шлём клиенту ваучер Aifory (с ценой с наценкой)
             issue_aifory_voucher(order)
+            treasury.record_booking_spend(order)  # списание депозита ETG (журнал казны)
 
             return Response({"status": "completed", "order_id": etg_id, "data": data})
 
@@ -946,6 +949,7 @@ class CancelAfterPaymentView(APIView):
         order.status = OrderStatus.REFUNDED
         order.save(update_fields=["status"])
         notify_status_change(order, title="Бронирование отменено, возврат оформлен")
+        treasury.record_booking_refund(order)  # возврат на депозит ETG (журнал казны)
 
         return Response(
             {

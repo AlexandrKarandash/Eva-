@@ -4,13 +4,16 @@
   .fin-tabs{display:flex;gap:8px;margin:0 0 18px}
   .fin-tabs a{padding:8px 16px;border-radius:20px;background:#eee;color:#333;text-decoration:none;font-size:14px}
   .fin-tabs a.active{background:#c79a3a;color:#fff}
-  .fin-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+  .fin-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px}
   .fin-card{background:#fff;border:1px solid #e3e3e3;border-radius:14px;padding:18px}
   .fin-card .lbl{color:#777;font-size:13px;margin-bottom:6px}
-  .fin-card .val{font-size:26px;font-weight:700}
+  .fin-card .val{font-size:25px;font-weight:700}
   .fin-card .sub{color:#888;font-size:12px;margin-top:4px}
-  .fin-green{color:#1a7f37}
+  .fin-green{color:#1a7f37}.fin-red{color:#cf222e}
   .fin-sec{color:#888;font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 10px;font-weight:600}
+  .badge{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+  .badge.up{background:#e6f4ea;color:#1a7f37}.badge.down{background:#fde8e8;color:#cf222e}.badge.flat{background:#eee;color:#777}
+  .fin-chart{background:#fff;border:1px solid #e3e3e3;border-radius:14px;padding:18px;margin-bottom:22px}
 </style>
 
 <h1>💰 Финансы · Дашборд <span style="font-size:14px;color:#888">({{ summary.label }})</span></h1>
@@ -22,28 +25,64 @@
   <a href="?period=all"   class="{% if period == 'all' %}active{% endif %}">Всё время</a>
 </div>
 
-<div class="fin-sec">Оборот и прибыль</div>
+{% with d=comparison.deltas %}
 <div class="fin-cards">
-  <div class="fin-card"><div class="lbl">Оборот (выручка)</div><div class="val">{{ summary.revenue }} ₮</div><div class="sub">{{ summary.count_paid }} оплаченных броней</div></div>
-  <div class="fin-card"><div class="lbl">Себестоимость ETG</div><div class="val">{{ summary.cost }} ₮</div></div>
-  <div class="fin-card"><div class="lbl">Комиссия ABCEX</div><div class="val">{{ summary.abcex_fee }} ₮</div></div>
-  <div class="fin-card"><div class="lbl">Валовая прибыль</div><div class="val fin-green">{{ summary.gross_profit }} ₮</div><div class="sub">выручка − ETG − ABCEX</div></div>
+  <div class="fin-card"><div class="lbl">Баланс депозита ETG</div><div class="val">{{ deposit_balance }} USD</div><div class="sub">главный баланс</div></div>
+
+  <div class="fin-card"><div class="lbl">Заказы (оплачено)</div><div class="val">{{ summary.count_paid }}</div>
+    {% if comparison.has_prev %}{% if d.count > 0 %}<span class="badge up">↑ {{ d.count }}%</span>{% elif d.count < 0 %}<span class="badge down">↓ {{ d.count }}%</span>{% else %}<span class="badge flat">0%</span>{% endif %}<div class="sub">к прошлому периоду</div>{% endif %}</div>
+
+  <div class="fin-card"><div class="lbl">Выручка (оборот)</div><div class="val">{{ summary.revenue }} ₮</div>
+    {% if comparison.has_prev %}{% if d.revenue > 0 %}<span class="badge up">↑ {{ d.revenue }}%</span>{% elif d.revenue < 0 %}<span class="badge down">↓ {{ d.revenue }}%</span>{% else %}<span class="badge flat">0%</span>{% endif %}{% endif %}</div>
+
+  <div class="fin-card"><div class="lbl">Себестоимость ETG</div><div class="val">{{ summary.cost }} ₮</div>
+    {% if comparison.has_prev %}{% if d.cost > 0 %}<span class="badge down">↑ {{ d.cost }}%</span>{% elif d.cost < 0 %}<span class="badge up">↓ {{ d.cost }}%</span>{% else %}<span class="badge flat">0%</span>{% endif %}{% endif %}</div>
+
+  <div class="fin-card"><div class="lbl">Чистая прибыль</div><div class="val fin-green">{{ summary.net_profit }} ₮</div>
+    {% if comparison.has_prev %}{% if d.net_profit > 0 %}<span class="badge up">↑ {{ d.net_profit }}%</span>{% elif d.net_profit < 0 %}<span class="badge down">↓ {{ d.net_profit }}%</span>{% else %}<span class="badge flat">0%</span>{% endif %}{% endif %}</div>
+</div>
+{% endwith %}
+
+<div class="fin-chart">
+  <div class="fin-sec">График: заказы, выручка, себестоимость, прибыль</div>
+  <canvas id="finChart" height="90"></canvas>
 </div>
 
-<div class="fin-sec">Чистая прибыль (с учётом цепочки Островка)</div>
+<div class="fin-sec">Детализация прибыли</div>
 <div class="fin-cards">
-  <div class="fin-card"><div class="lbl">Комиссии цепочки (оценка)</div><div class="val">{{ summary.chain_cost }} ₮</div><div class="sub">≈ {{ summary.chain_percent }}% на пополнение</div></div>
-  <div class="fin-card"><div class="lbl">Чистая прибыль</div><div class="val fin-green">{{ summary.net_profit }} ₮</div><div class="sub">после всех комиссий</div></div>
+  <div class="fin-card"><div class="lbl">Валовая прибыль</div><div class="val fin-green">{{ summary.gross_profit }} ₮</div><div class="sub">выручка − ETG − ABCEX</div></div>
+  <div class="fin-card"><div class="lbl">Комиссии цепочки (оценка)</div><div class="val">{{ summary.chain_cost }} ₮</div><div class="sub">≈ {{ summary.chain_percent }}%</div></div>
+  <div class="fin-card"><div class="lbl">Комиссия ABCEX</div><div class="val">{{ summary.abcex_fee }} ₮</div></div>
   <div class="fin-card"><div class="lbl">Средняя маржа</div><div class="val">{{ summary.margin }}%</div></div>
   <div class="fin-card"><div class="lbl">Средний чек</div><div class="val">{{ summary.avg_check }} ₮</div></div>
+  <div class="fin-card"><div class="lbl">Наценка</div><div class="val">{{ summary.markup_percent }}%</div><div class="sub">меняется в «Финмодель»</div></div>
+  <div class="fin-card"><div class="lbl">Баланс ABCEX (USDT)</div><div class="val">{% if abcex_balance is not None %}{{ abcex_balance }} ₮{% else %}—{% endif %}</div></div>
 </div>
 
-<div class="fin-sec">Настройки и баланс</div>
-<div class="fin-cards">
-  <div class="fin-card"><div class="lbl">Наценка (текущая)</div><div class="val">{{ summary.markup_percent }}%</div><div class="sub">меняется в «Финмодель»</div></div>
-  <div class="fin-card"><div class="lbl">Баланс USDT в ABCEX</div><div class="val">{% if abcex_balance is not None %}{{ abcex_balance }} ₮{% else %}—{% endif %}</div><div class="sub">по API</div></div>
-  {% if summary.count_refunded %}
-  <div class="fin-card"><div class="lbl">Возвраты</div><div class="val" style="color:#cf222e">{{ summary.refunded_sum }} ₮</div><div class="sub">{{ summary.count_refunded }} шт</div></div>
-  {% endif %}
-</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  (function(){
+    var data = {{ chart|safe }};
+    var el = document.getElementById('finChart');
+    if(!el || typeof Chart === 'undefined' || !data.labels.length) {
+      if(el){ el.parentNode.insertAdjacentHTML('beforeend','<p style="color:#888">Нет данных за период для графика.</p>'); }
+      return;
+    }
+    new Chart(el, {
+      data: {
+        labels: data.labels,
+        datasets: [
+          {type:'bar', label:'Заказы', data:data.orders, backgroundColor:'rgba(130,80,223,.3)', yAxisID:'y1', order:3},
+          {type:'line', label:'Выручка ₮', data:data.revenue, borderColor:'#6c5ce7', tension:.3, order:1},
+          {type:'line', label:'Себестоимость ₮', data:data.cost, borderColor:'#c79a3a', tension:.3, order:1},
+          {type:'line', label:'Прибыль ₮', data:data.profit, borderColor:'#1a7f37', tension:.3, order:0}
+        ]
+      },
+      options: {
+        responsive:true, interaction:{mode:'index',intersect:false},
+        scales:{ y:{position:'left'}, y1:{position:'right', grid:{drawOnChartArea:false}, title:{display:true,text:'Заказы'}} }
+      }
+    });
+  })();
+</script>
 {% endblock %}

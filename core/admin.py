@@ -595,17 +595,22 @@ class _FinanceAdminBase(admin.ModelAdmin):
 @admin.register(FinanceDashboard)
 class FinanceDashboardAdmin(_FinanceAdminBase):
     def changelist_view(self, request, extra_context=None):
+        import json as _json
         period = self._period(request)
         try:
-            balance = abcex_service.get_usdt_balance()
+            abcex_balance = abcex_service.get_usdt_balance()
         except Exception:
-            balance = None
+            abcex_balance = None
+        deposit_balance, _thr, _low, _on = treasury.balance_status()
         ctx = dict(
             self.admin_site.each_context(request),
             title="Финансы · Дашборд",
             summary=finance.summarize(period),
+            comparison=finance.compare(period if period != 'all' else 'month'),
+            chart=_json.dumps(finance.daily_series(period)),
             period=period,
-            abcex_balance=balance,
+            abcex_balance=abcex_balance,
+            deposit_balance=deposit_balance,
         )
         return TemplateResponse(request, "admin/core/finance_dashboard.html", ctx)
 

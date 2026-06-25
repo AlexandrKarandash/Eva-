@@ -21,10 +21,30 @@ def record_movement(mtype, amount, initiator="система", source_type="", s
     last = BalanceMovement.objects.select_for_update().order_by('-created_at', '-id').first()
     before = last.balance_after if last else Decimal('0.00')
     after = before + amount
-    return BalanceMovement.objects.create(
+    mv = BalanceMovement.objects.create(
         type=mtype, amount=amount, balance_before=before, balance_after=after,
         initiator=initiator, source_type=source_type, source_id=source_id, comment=comment,
     )
+    _maybe_low_balance_alert(before, after)
+    return mv
+
+
+def _maybe_low_balance_alert(before, after):
+    """Если включён контроль и баланс ПЕРЕСЁК порог сверху вниз — шлём Telegram-алерт."""
+    try:
+        s = MarkupSettings.load()
+        if not s.balance_control_enabled:
+            return
+        threshold = s.min_balance_usd or Decimal('0')
+        if before >= threshold and after < threshold:
+            from .utils import send_telegram_notification
+            send_telegram_notification(
+                f"⚠️ <b>Низкий баланс депозита</b>\n"
+                f"Баланс: <b>{after} USD</b> (порог {threshold} USD).\n"
+                f"Пополните депозит Островка, иначе бронирования остановятся."
+            )
+    except Exception:
+        pass
 
 
 def _already_recorded(source_id, mtype):

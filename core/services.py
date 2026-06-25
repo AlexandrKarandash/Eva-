@@ -1651,10 +1651,23 @@ class AbcexPaymentService:
                             continue
                         
                         if tx_amount >= expected_decimal - amount_tolerance:
+                            # Извлекаем комиссию ABCEX за платёж (поле может называться по-разному)
+                            fee = Decimal("0")
+                            for k in ("fee", "feeAmount", "commission", "serviceFee",
+                                      "serviceCommission", "networkFee", "feeValuation"):
+                                v = tx.get(k)
+                                if v not in (None, ""):
+                                    try:
+                                        fee = Decimal(str(v))
+                                        break
+                                    except (InvalidOperation, TypeError, ValueError):
+                                        pass
+                            logger.info("ABCEX tx keys=%s | fee=%s", list(tx.keys()), fee)
                             return {
-                                "paid": True, 
-                                "txId": tx.get('txId'), 
-                                "actual_amount": tx_amount
+                                "paid": True,
+                                "txId": tx.get('txId'),
+                                "actual_amount": tx_amount,
+                                "fee": fee,
                             }
                         else:
                             logger.warning(f"ABCEX: Платеж найден, но сумма меньше! Ожидалось {expected_decimal}, пришло {tx_amount}")

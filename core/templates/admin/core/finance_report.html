@@ -21,6 +21,10 @@
   <a href="?period=all"   class="{% if period == 'all' %}active{% endif %}">Всё время</a>
 </div>
 
+<p style="margin:0 0 16px">
+  <a href="/admin-export/orders.csv?period={{ period }}" style="display:inline-block;padding:8px 16px;border-radius:10px;background:#1a7f37;color:#fff;text-decoration:none;font-size:13px">⬇️ Скачать заказы за период (CSV)</a>
+</p>
+
 <table class="fin">
   <tr><th>Показатель</th><th style="text-align:right">USDT</th></tr>
   <tr><td>Выручка ({{ summary.count_paid }} броней)</td><td class="num">{{ summary.revenue }}</td></tr>

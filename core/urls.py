@@ -16,6 +16,10 @@ urlpatterns = [
     path('payment.html', views.payment_view, name='payment_html'),
 
 
+    # Экспорт финансовых отчётов (staff)
+    path('admin-export/orders.csv', views.export_orders_csv, name='export_orders_csv'),
+    path('admin-export/movements.csv', views.export_movements_csv, name='export_movements_csv'),
+
     # API hotels
     path('api/hotels/search/', views.HotelSearchView.as_view(), name='hotel-search'),
     path('api/hotels/nearby-places/', views.hotel_nearby_places_view, name='hotel-nearby-places'),

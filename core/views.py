@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from core.email_processor import VoucherEmailProcessor, issue_aifory_voucher
 from core import treasury
@@ -871,12 +871,18 @@ class CheckPaymentStatusView(APIView):
                 if not tx_record:
                     return Response({"error": "Данные платежа не найдены"}, status=404)
 
-                order.status = OrderStatus.PAID 
+                order.status = OrderStatus.PAID
                 order.paid_at = order.paid_at or timezone.now()
-                order.save(update_fields=["status", "paid_at"])
-                
+                # Комиссия ABCEX за платёж (для учёта прибыли) — из ответа транзакции
+                fee = payment_info.get("fee")
+                if fee:
+                    order.abcex_fee_usdt = fee
+                    order.save(update_fields=["status", "paid_at", "abcex_fee_usdt"])
+                else:
+                    order.save(update_fields=["status", "paid_at"])
+
                 tx_record.confirmed = True
-                tx_record.tx_hash = payment_info.get("txId") 
+                tx_record.tx_hash = payment_info.get("txId")
                 tx_record.save()
                 updated_to_paid = True
 
@@ -1000,3 +1006,53 @@ class InboundEmailWebhookView(APIView):
         VoucherEmailProcessor.process_inbound_email(inbound_email_obj, partner_file=partner_file)
         
         return Response({"status": "accepted", "email_id": str(inbound_email_obj.id)}, status=200)
+
+# ============================================================================
+#  Экспорт финансовых отчётов в CSV (только для staff)
+# ============================================================================
+import csv as _csv
+from django.contrib.admin.views.decorators import staff_member_required
+
+
+@staff_member_required
+def export_orders_csv(request):
+    from core import finance
+    period = request.GET.get('period', 'all')
+    start, _label = finance.period_range(period)
+    qs = Order.objects.all().order_by('-created_at')
+    if start is not None:
+        qs = qs.filter(created_at__gte=start)
+
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename="orders_{period}.csv"'
+    response.write('﻿')  # BOM для корректной кириллицы в Excel
+    w = _csv.writer(response, delimiter=';')
+    w.writerow(['ID заказа', 'Дата', 'Статус', 'Отель', 'Email клиента',
+                'Клиент заплатил, USDT', 'Себестоимость ETG', 'Комиссия ABCEX',
+                'Наценка, %', 'Прибыль (чистая)', 'ETG order_id'])
+    for o in qs:
+        profit = (o.amount_usdt or Decimal('0')) - (o.cost_price_usdt or Decimal('0')) - (o.abcex_fee_usdt or Decimal('0'))
+        w.writerow([
+            str(o.id), o.created_at.strftime('%d.%m.%Y %H:%M'), o.get_status_display(),
+            o.hotel_name, o.user_email, o.amount_usdt, o.cost_price_usdt,
+            o.abcex_fee_usdt or 0, o.markup_percent or 0, profit, o.emerging_booking_id or '',
+        ])
+    return response
+
+
+@staff_member_required
+def export_movements_csv(request):
+    from core.models import BalanceMovement
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="balance_movements.csv"'
+    response.write('﻿')
+    w = _csv.writer(response, delimiter=';')
+    w.writerow(['Дата', 'Тип', 'Сумма USD', 'Баланс до', 'Баланс после',
+                'Инициатор', 'Источник', 'Комментарий'])
+    for m in BalanceMovement.objects.all().order_by('-created_at'):
+        src = f"{m.source_type}:{m.source_id}" if m.source_type else ''
+        w.writerow([
+            m.created_at.strftime('%d.%m.%Y %H:%M'), m.get_type_display(), m.amount,
+            m.balance_before, m.balance_after, m.initiator, src, m.comment,
+        ])
+    return response

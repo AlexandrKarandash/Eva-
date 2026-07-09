@@ -241,6 +241,9 @@ def payment_view(request):
 def index_view(request):
     return render(request, 'index.html')
 
+def landing_view(request):
+    return render(request, 'landing.html')
+
 
 class HotelSearchView(APIView):
     permission_classes = [AllowAny]

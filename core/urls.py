@@ -6,6 +6,9 @@ urlpatterns = [
     path('', views.index_view, name='index'),
     path('index.html', views.index_view, name='index_html'),
 
+    path('landing/', views.landing_view, name='landing'),
+    path('landing.html', views.landing_view, name='landing_html'),
+
     path('catalog/', views.catalog_view, name='catalog'),
     path('catalog.html', views.catalog_view, name='catalog_html'),
 

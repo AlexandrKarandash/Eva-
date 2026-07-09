@@ -101,84 +101,67 @@
 				</div>
 
 				<div class="hero__visual reveal" data-d="1">
-					<div class="hero-card">
-						<div class="hero-card__img">
-							<img src="{% static 'images/popular/2/popular-1.jpg' %}" alt="Отель в Париже">
-							<span class="hero-card__badge">
-								<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-								Париж, Франция
-							</span>
-						</div>
-						<div class="hero-card__row">
+					<div class="bookcard" id="search">
+						<div class="bookcard__head">
 							<div>
-								<div class="hero-card__place">Hôtel Le Marais</div>
-								<div class="hero-card__meta">Центр города · 8–12 апреля · 2 гостя</div>
+								<p class="bookcard__title">Найдите отель</p>
+								<p class="bookcard__sub">Бронирование с оплатой криптой</p>
 							</div>
-							<div class="hero-card__stars" aria-hidden="true">★★★★★</div>
-						</div>
-						<div class="hero-card__foot">
-							<div class="hero-card__price">
-								<b>128 USDT</b> <span>/ ночь</span>
-							</div>
-							<span class="hero-card__pay">
+							<span class="bookcard__badge">
 								<img src="{% static 'images/tether.svg' %}" alt="">Оплата криптой
 							</span>
 						</div>
+						<form class="bookcard__form" action="#" onsubmit="return false">
+							<label class="bookfield">
+								<span class="bookfield__label">Направление</span>
+								<span class="bookfield__value">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+									Москва <small>· Россия</small>
+								</span>
+							</label>
+							<div class="bookfield-row">
+								<label class="bookfield">
+									<span class="bookfield__label">Заезд</span>
+									<span class="bookfield__value">
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/></svg>
+										8 апр
+									</span>
+								</label>
+								<label class="bookfield">
+									<span class="bookfield__label">Выезд</span>
+									<span class="bookfield__value">
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/></svg>
+										12 апр
+									</span>
+								</label>
+							</div>
+							<label class="bookfield">
+								<span class="bookfield__label">Гости и номера</span>
+								<span class="bookfield__value">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M17 5.5a3 3 0 0 1 0 5.6M22 20a5.5 5.5 0 0 0-4-5.3"/></svg>
+									2 гостя <small>· 1 номер</small>
+								</span>
+							</label>
+							<button type="submit" class="btn btn--primary btn--block btn--lg">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+								Найти отель
+							</button>
+						</form>
+						<div class="bookcard__pay">
+							<span>Принимаем к оплате</span>
+							<div class="bookcard__coins">USDT · BTC · ETH · TON</div>
+						</div>
 					</div>
 
-					<div class="float-card float-card--1">
-						<span class="float-card__ic">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-						</span>
-						<div><b>Ваучер выдан</b><small>Бронь подтверждена</small></div>
-					</div>
-					<div class="float-card float-card--2">
-						<span class="float-card__ic">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-						</span>
-						<div><b>Оплата получена</b><small>128 USDT · TRC-20</small></div>
+					<div class="hero__reassure">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+						<span>Мгновенный ваучер после оплаты · Бесплатная отмена по тарифу</span>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Search widget -->
-		<section class="container" id="search">
-			<div class="searchbar reveal">
-				<form class="searchbar__card" action="#" onsubmit="return false">
-					<label class="searchbar__field">
-						<span class="searchbar__label">Направление</span>
-						<span class="searchbar__value">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-							Москва
-						</span>
-						<span class="searchbar__sub">Россия</span>
-					</label>
-					<label class="searchbar__field">
-						<span class="searchbar__label">Заезд</span>
-						<span class="searchbar__value">8 апр 2026</span>
-						<span class="searchbar__sub">Понедельник</span>
-					</label>
-					<label class="searchbar__field">
-						<span class="searchbar__label">Выезд</span>
-						<span class="searchbar__value">12 апр 2026</span>
-						<span class="searchbar__sub">4 ночи</span>
-					</label>
-					<label class="searchbar__field">
-						<span class="searchbar__label">Гости</span>
-						<span class="searchbar__value">2 гостя</span>
-						<span class="searchbar__sub">1 номер</span>
-					</label>
-					<button type="submit" class="btn btn--primary btn--lg searchbar__btn">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-						Найти
-					</button>
-				</form>
-				<div class="searchbar__hint">
-					Популярное: <a href="#dest">Дубай</a> · <a href="#dest">Париж</a> · <a href="#dest">Стамбул</a> · <a href="#dest">Пхукет</a>
-				</div>
-			</div>
-		</section>
+		<!-- Booking form moved into the hero (right side) -->
 
 		<!-- Crypto band -->
 		<section class="crypto-band section--tight">
